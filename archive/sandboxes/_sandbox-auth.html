@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Песочница · Авторизация по SMS</title>
+<link rel="stylesheet" href="../assets/css/fonts.css">
+<link rel="stylesheet" href="../assets/css/tokens.css">
+<link rel="stylesheet" href="../assets/css/kit.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:var(--font-body);background:var(--surface-page);color:var(--text-primary);line-height:1.5}
+
+  /* ───────────────────────────────────────────────────────────
+     ДВИЖОК МОДАЛКИ — перенос .cbm-* из usluga.html 1-в-1 (десктоп),
+     чтобы авторизация была тем же компонентом, что форма заявки/ЧАВО.
+     ─────────────────────────────────────────────────────────── */
+  .cbm-back{position:fixed;inset:0;background:rgba(17,17,17,.42);opacity:0;visibility:hidden;transition:opacity .18s,visibility .18s;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+  .cbm-back.show{opacity:1;visibility:visible}
+  .cbm{position:relative;width:100%;max-width:384px;background:var(--surface-card);border-radius:var(--radius-outside);box-shadow:var(--shadow-lg);padding:28px 26px 22px;transform:translateY(8px) scale(.985);transition:transform .2s}
+  .cbm-back.show .cbm{transform:none}
+  .cbm-x{position:absolute;top:14px;right:14px;width:30px;height:30px;border:none;background:var(--surface-subtle);border-radius:var(--radius-md);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s}
+  .cbm-x:hover{background:var(--border);color:var(--text-primary)}
+  .cbm-x svg{width:15px;height:15px}
+  .cbm-title{font-family:var(--font-head);font-size:var(--t-h3);line-height:var(--t-h3-lh);letter-spacing:var(--t-h3-ls);text-transform:uppercase;font-weight:700;color:var(--text-primary);margin:0}
+  .cbm-sub{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-secondary);margin:var(--sp-8) 0 0}
+  .cbm-sub b{color:var(--text-primary);font-weight:600;white-space:nowrap}
+  /* номер вторым планом в заголовке — тот же шрифт/капс, серым (как услуга в форме заявки) */
+  .cbm-title .phone{display:block;color:var(--text-secondary);margin-top:3px}
+  .cbm form{margin-top:18px;display:flex;flex-direction:column;gap:13px}
+  .cbm-field{display:flex;flex-direction:column;gap:6px}
+  .cbm-lbl{font-size:var(--t-small);line-height:var(--t-small-lh);font-weight:600;color:var(--text-primary)}
+  .cbm-lbl i{color:var(--danger);font-style:normal}
+  .cbm input[type=tel]{height:46px;border:1px solid var(--border-strong);border-radius:var(--radius-md);padding:0 14px;font-family:inherit;font-size:var(--t-ui);color:var(--text-primary);outline:none;transition:border-color .15s,box-shadow .15s;width:100%}
+  .cbm input[type=tel]:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  .cbm input::placeholder{color:var(--text-tertiary)}
+  .cbm-field.invalid input{border-color:var(--danger)}
+  .cbm-field.invalid input:focus{box-shadow:0 0 0 3px rgba(224,72,58,.12)}
+  .cbm-err{display:none;font-size:var(--t-micro);line-height:var(--t-micro-lh);color:var(--danger)}
+  .cbm-field.invalid .cbm-err{display:block}
+  .cbm-check{display:flex;gap:var(--sp-10);align-items:flex-start;cursor:pointer;font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-secondary);min-height:44px;padding-block:var(--sp-6)}
+  .cbm-check input{margin-top:1px}
+  .cbm-check.invalid{color:var(--danger)}
+  .cbm-check.invalid .mk-check{border-color:var(--danger)}
+  .cbm-check a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
+  .cbm-check a:hover{color:var(--text-primary)}
+
+  /* ───────────────────────────────────────────────────────────
+     АВТОРИЗАЦИЯ — надстройка над .cbm: шаги, код, таймер, «назад».
+     ─────────────────────────────────────────────────────────── */
+  .auth-step[hidden]{display:none}
+  /* «Изменить номер» — назад к шагу 1 */
+  /* «Изменить номер» / «Отправить код повторно» — обе .mk-btn--link (dashed) из кита */
+  /* 4 ячейки кода */
+  .auth-code{display:flex;gap:10px;margin-top:18px}
+  .auth-cell{flex:1;min-width:0;height:60px;text-align:center;font-family:var(--font-head);font-weight:700;
+    font-size:26px;color:var(--text-primary);border:1px solid var(--border-strong);border-radius:var(--radius-md);
+    background:var(--surface-card);outline:none;transition:border-color .15s,box-shadow .15s}
+  .auth-cell:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  .auth-cell.filled{border-color:var(--text-tertiary)}
+  .auth-code.invalid .auth-cell{border-color:var(--danger);color:var(--danger)}
+  .auth-code.invalid .auth-cell:focus{box-shadow:0 0 0 3px rgba(224,72,58,.12)}
+  @keyframes auth-shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+  .auth-code.shake{animation:auth-shake .4s}
+  @media(prefers-reduced-motion:reduce){.auth-code.shake{animation:none}}
+  .auth-code-err{margin-top:9px}
+  .auth-code-err.show{display:block}
+  /* таймер / повторная отправка */
+  .auth-resend{margin-top:14px;min-height:20px;font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-tertiary)}
+  .auth-resend .mk-btn--link{font-size:var(--t-small)}
+  .auth-resent{color:var(--brand-text);font-weight:600}
+  /* кнопка-загрузка (спиннер) */
+  .mk-btn.is-loading{color:transparent!important;pointer-events:none;position:relative}
+  .mk-btn.is-loading::after{content:"";position:absolute;width:18px;height:18px;border:2px solid currentColor;
+    border-right-color:transparent;border-radius:50%;color:var(--on-brand);animation:auth-spin .6s linear infinite}
+  @keyframes auth-spin{to{transform:rotate(360deg)}}
+  /* УСПЕХ — 1-в-1 с формой заявки (.cbm-done): жёлтый скруглённый квадрат, лид, квитанция, «Хорошо» */
+  .cbm-done{text-align:center;padding:8px 4px 4px}
+  .cbm-done-ic{width:40px;height:40px;border-radius:var(--radius-md);background:var(--brand);color:var(--text-primary);display:flex;align-items:center;justify-content:center;margin:0 auto var(--sp-12)}
+  .cbm-done-ic svg{width:22px;height:22px}
+  .cbm-done-lead{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-secondary);margin-top:var(--sp-6)}
+  .cbm-done-list{margin:var(--sp-16) 0 var(--sp-12);text-align:left;background:var(--surface-on-light);border-radius:var(--radius-md);padding:var(--sp-4) var(--sp-12)}
+  .cbm-done-list > div{display:flex;align-items:baseline;gap:var(--sp-12);padding:var(--sp-8) 0}
+  .cbm-done-list > div + div{border-top:1px solid var(--border)}
+  .cbm-done-list dt{flex:0 0 auto;font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-secondary)}
+  .cbm-done-list dd{margin:0;flex:1 1 auto;min-width:0;text-align:right;font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-primary);font-weight:600;overflow-wrap:anywhere}
+  .cbm-done .cbm-submit{width:100%;margin-top:0}
+  .cbm form .mk-btn{width:100%;margin-top:5px}
+  .auth-step .mk-btn--primary{width:100%}
+  /* шаг 2 не обёрнут в form (нет gap) — отступ до кнопки «Войти» задаём явно */
+  .auth-step[data-step="2"] .mk-btn--primary{margin-top:20px}
+
+  /* мобилка: модалка → нижняя шторка */
+  @media(max-width:560px){
+    .cbm-back{align-items:flex-end;padding:0}
+    .cbm{max-width:none;border-radius:var(--radius-outside) var(--radius-outside) 0 0;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translateY(100%)}
+    .cbm-back.show .cbm{transform:none}
+    input,select{font-size:16px!important}   /* iOS не зумит при фокусе */
+  }
+
+  /* ───────── МИНИ-ШАПКА (триггер ЛК/Войти как в usluga: .hbtn) ───────── */
+  .mh{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:10px 24px;background:var(--surface-card);border-bottom:1px solid var(--border)}
+  .mh__logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text-primary);
+    font-family:var(--font-head);font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:15px}
+  .mh__logo img{height:24px}
+  .hactions{display:flex;align-items:center;gap:2px;flex-shrink:0}
+  .hbtn{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text-primary);cursor:pointer;
+    font-family:inherit;font-size:var(--t-label);line-height:var(--t-label-lh);font-weight:400;position:relative;
+    padding:5px 8px;border:none;background:none;border-radius:var(--radius-md);transition:background .15s,color .15s;min-width:56px}
+  .hbtn:hover{background:var(--surface-subtle)}
+  .hbtn:focus-visible{outline:2px solid var(--brand-dark);outline-offset:2px}
+  .hbtn .ci{width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+  .hbtn--in .ci{color:var(--brand-text)}
+  .mh__user{position:relative}
+  .mh__user[hidden]{display:none}
+  .umenu{position:absolute;right:0;top:calc(100% + 6px);min-width:210px;background:var(--surface-card);
+    border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);padding:6px;z-index:50;display:none}
+  .umenu.show{display:block}
+  .umenu__head{padding:8px 10px 8px;font-size:var(--t-caption);color:var(--text-tertiary);border-bottom:1px solid var(--border);margin-bottom:4px}
+  .umenu__head b{display:block;color:var(--text-primary);font-size:var(--t-ui);font-weight:600;margin-top:2px}
+  .umenu button{display:flex;width:100%;align-items:center;gap:9px;padding:9px 10px;border:none;background:none;
+    border-radius:var(--radius-inside);cursor:pointer;font:inherit;font-size:var(--t-small);color:var(--text-primary);text-align:left}
+  .umenu button:hover{background:var(--surface-subtle)}
+  .umenu button svg{width:17px;height:17px;color:var(--text-secondary)}
+  /* фидбек повтора отправки */
+  .auth-sent{color:var(--brand-text);font-weight:600}
+
+  /* ───────── СТЕНД (обёртка песочницы, в прод не идёт) ───────── */
+  .stand{max-width:1160px;margin:0 auto;padding:40px 24px 80px}
+  .stand__eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-tertiary)}
+  .stand h1{font-family:var(--font-head);font-weight:700;text-transform:uppercase;font-size:var(--t-h1);line-height:1.02;margin:8px 0 0}
+  .stand__lead{color:var(--text-secondary);max-width:60ch;margin:12px 0 0}
+  .stand__try{margin:22px 0 44px}
+  .stand h2{font-family:var(--font-head);font-weight:700;text-transform:uppercase;font-size:var(--t-h3);margin:52px 0 4px}
+  .stand__note{color:var(--text-secondary);font-size:var(--t-small);margin:0 0 22px}
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:22px}
+  .gcell{background:var(--surface-subtle);border:1px solid var(--border);border-radius:var(--radius-outside);padding:18px;display:flex;flex-direction:column;gap:12px}
+  .gcell__label{font-size:var(--t-caption);font-weight:600;color:var(--text-primary)}
+  .gcell__label span{color:var(--text-tertiary);font-weight:400}
+  /* в галерее .cbm показываем статично, без бэкдропа/анимации */
+  .gcell .cbm{position:static;transform:none;box-shadow:var(--shadow-md);max-width:none}
+</style>
+</head>
+<body>
+
+  <!-- МИНИ-ШАПКА: триггер входа + вошедшее состояние -->
+  <header class="mh">
+    <a class="mh__logo" href="#"><img src="../assets/mdmprint-logo.svg" alt="MDMprint" width="77" height="26"> Стенд</a>
+    <div class="hactions">
+      <button type="button" class="hbtn" id="hbtnLogin" title="Войти">
+        <span class="ci"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c.5-3.4 3.3-5.4 7-5.4s6.5 2 7 5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+        Войти
+      </button>
+      <div class="mh__user" id="hUser" hidden>
+        <button type="button" class="hbtn hbtn--in" id="hbtnUser" title="Личный кабинет" aria-haspopup="true" aria-expanded="false">
+          <span class="ci"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c.5-3.4 3.3-5.4 7-5.4s6.5 2 7 5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+          <span id="hUserLbl">Кабинет</span>
+        </button>
+        <div class="umenu" id="uMenu" role="menu">
+          <div class="umenu__head">Вы вошли<b id="uMenuPhone">+7 (999) 123-45-67</b></div>
+          <button type="button" id="btnLogout" role="menuitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M16 17l5-5-5-5M21 12H9"/></svg>Выйти</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="stand">
+    <div class="stand__eyebrow">Песочница · MDMprint</div>
+    <h1>Авторизация по SMS</h1>
+    <p class="stand__lead">Два шага: телефон + согласие → код из SMS. Повтор кода через минуту, «назад» — сменить номер.
+      Тот же компонент-модалка <code>.cbm</code>, что форма заявки/ЧАВО. На мобилке — нижняя шторка.
+      <b>Тестовый код: 1234.</b></p>
+    <div class="stand__try">
+      <button class="mk-btn mk-btn--primary" id="openAuth">Войти (интерактив)</button>
+    </div>
+
+    <h2>Шаг 1 — телефон + согласие</h2>
+    <p class="stand__note">Состояния экрана ввода номера.</p>
+    <div class="gallery" id="gallery1"></div>
+
+    <h2>Шаг 2 — код из SMS</h2>
+    <p class="stand__note">Состояния экрана ввода кода: таймер, повтор, ошибки, успех.</p>
+    <div class="gallery" id="gallery2"></div>
+  </main>
+
+  <!-- ИНТЕРАКТИВНАЯ МОДАЛКА -->
+  <div class="cbm-back" id="authBack" aria-hidden="true">
+    <div class="cbm" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="cbm-x" id="authClose" aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+
+      <!-- ШАГ 1 -->
+      <section class="auth-step" data-step="1">
+        <h2 class="cbm-title" id="authTitle">Вход в личный кабинет</h2>
+        <p class="cbm-sub">Введите номер телефона — пришлём код в SMS.</p>
+        <form id="phoneForm" novalidate>
+          <div class="cbm-field" id="fPhone">
+            <label class="cbm-lbl" for="iPhone">Телефон <i>*</i></label>
+            <input type="tel" id="iPhone" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__">
+            <span class="cbm-err" id="ePhone">Введите номер полностью</span>
+          </div>
+          <label class="cbm-check" id="fConsent">
+            <input type="checkbox" class="mk-check" id="iConsent">
+            <span>Соглашаюсь с <a href="#" onclick="return false">политикой обработки персональных данных</a> и получением кода в SMS</span>
+          </label>
+          <span class="cbm-err" id="eForm"></span>
+          <button type="submit" class="mk-btn mk-btn--primary" id="btnGetCode">Получить код</button>
+        </form>
+      </section>
+
+      <!-- ШАГ 2 -->
+      <section class="auth-step" data-step="2" hidden>
+        <h2 class="cbm-title">Введите код из SMS<span class="phone" id="phoneEcho">+7 (999) 123-45-67</span></h2>
+        <p class="cbm-sub"><button type="button" class="mk-btn mk-btn--link" id="btnBack">Изменить номер</button></p>
+        <div class="auth-code" id="codeBox">
+          <input class="auth-cell" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="Цифра 1">
+          <input class="auth-cell" inputmode="numeric" maxlength="1" aria-label="Цифра 2">
+          <input class="auth-cell" inputmode="numeric" maxlength="1" aria-label="Цифра 3">
+          <input class="auth-cell" inputmode="numeric" maxlength="1" aria-label="Цифра 4">
+        </div>
+        <span class="cbm-err auth-code-err" id="eCode" role="alert" aria-live="assertive">Неверный код</span>
+        <div class="auth-resend" id="resendBox" aria-live="polite">
+          <span id="timerTx">Отправить код повторно через 1:00</span>
+          <button type="button" class="mk-btn mk-btn--link" id="btnResend" hidden>Отправить код повторно</button>
+        </div>
+        <button type="button" class="mk-btn mk-btn--primary" id="btnVerify" disabled>Войти</button>
+      </section>
+
+      <!-- УСПЕХ — как в форме заявки (.cbm-done) -->
+      <section class="auth-step" data-step="done" hidden>
+        <div class="cbm-done">
+          <div class="cbm-done-ic"><svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h2 class="cbm-title">Вход выполнен</h2>
+          <p class="cbm-done-lead">Профиль и история заказов теперь в личном кабинете</p>
+          <dl class="cbm-done-list"><div><dt>Телефон</dt><dd id="doneEcho">+7 (999) 123-45-67</dd></div></dl>
+          <button type="button" class="cbm-submit mk-btn mk-btn--primary" id="btnDone">Хорошо</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+<script>
+(function(){
+  'use strict';
+  const $ = s => document.querySelector(s);
+  const TEST_CODE = '1234', RESEND_SEC = 60;
+
+  // ── маска телефона ──
+  function digits(v){ let d=v.replace(/\D/g,''); if(d[0]==='8')d='7'+d.slice(1); if(d[0]!=='7')d=d?('7'+d):''; return d.slice(0,11); }
+  function fmtPhone(v){ const d=digits(v); if(!d) return ''; let r='+7'; if(d.length>1)r+=' ('+d.slice(1,4); if(d.length>=4)r+=')'; if(d.length>4)r+=' '+d.slice(4,7); if(d.length>=7)r+='-'+d.slice(7,9); if(d.length>=9)r+='-'+d.slice(9,11); return r; }
+  const isValidPhone = v => digits(v).length===11;
+
+  // ── управление модалкой/шагами ──
+  const back=$('#authBack'), steps=[...back.querySelectorAll('.auth-step')];
+  const show = n => steps.forEach(s=>s.hidden = s.dataset.step!==String(n));
+  let timerId=null, currentPhone='';
+
+  function open(){ back.classList.add('show'); back.setAttribute('aria-hidden','false'); resetAll(); }
+  function close(){ back.classList.remove('show'); back.setAttribute('aria-hidden','true'); stopTimer(); }
+  function resetAll(){ show(1); const p=$('#iPhone'); p.value=''; $('#iConsent').checked=false;
+    $('#fPhone').classList.remove('invalid'); $('#fConsent').classList.remove('invalid'); $('#eForm').textContent=''; p.focus(); }
+
+  $('#openAuth').addEventListener('click', open);
+  $('#authClose').addEventListener('click', close);
+  back.addEventListener('click', e=>{ if(e.target===back) close(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && back.classList.contains('show')) close(); });
+
+  // ── ШАГ 1 ──
+  const iPhone=$('#iPhone');
+  iPhone.addEventListener('input', ()=>{ iPhone.value=fmtPhone(iPhone.value); $('#fPhone').classList.remove('invalid'); });
+  $('#phoneForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    let ok=true;
+    if(!isValidPhone(iPhone.value)){ $('#fPhone').classList.add('invalid'); ok=false; } else $('#fPhone').classList.remove('invalid');
+    if(!$('#iConsent').checked){ $('#fConsent').classList.add('invalid'); ok=false; } else $('#fConsent').classList.remove('invalid');
+    if(!ok) return;
+    // имитация отправки SMS
+    const btn=$('#btnGetCode'); btn.classList.add('is-loading'); btn.disabled=true; $('#eForm').textContent='';
+    setTimeout(()=>{
+      btn.classList.remove('is-loading'); btn.disabled=false;
+      currentPhone=iPhone.value; $('#phoneEcho').textContent=currentPhone;
+      show(2); startTimer(); clearCode(); cells[0].focus();
+    }, 700);
+  });
+
+  // ── ШАГ 2: ячейки кода ──
+  const codeBox=$('#codeBox'), cells=[...codeBox.querySelectorAll('.auth-cell')], eCode=$('#eCode'), btnVerify=$('#btnVerify');
+  const codeVal = () => cells.map(c=>c.value).join('');
+  function clearCode(){ cells.forEach(c=>{c.value='';c.classList.remove('filled');}); codeBox.classList.remove('invalid'); eCode.classList.remove('show'); btnVerify.disabled=true; }
+  function syncCode(){ cells.forEach(c=>c.classList.toggle('filled', !!c.value)); btnVerify.disabled = codeVal().length!==4; }
+  cells.forEach((c,i)=>{
+    c.addEventListener('input', ()=>{ c.value=c.value.replace(/\D/g,'').slice(0,1); codeBox.classList.remove('invalid'); eCode.classList.remove('show');
+      if(c.value && i<cells.length-1) cells[i+1].focus(); syncCode(); if(codeVal().length===4) verify(); });
+    c.addEventListener('keydown', e=>{ if(e.key==='Backspace' && !c.value && i>0){ cells[i-1].focus(); cells[i-1].value=''; syncCode(); } });
+    c.addEventListener('paste', e=>{ e.preventDefault(); const d=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,4);
+      d.split('').forEach((n,k)=>{ if(cells[k]) cells[k].value=n; }); syncCode(); (cells[Math.min(d.length,3)]||cells[3]).focus(); if(codeVal().length===4) verify(); });
+  });
+  function verify(){
+    btnVerify.classList.add('is-loading'); btnVerify.disabled=true;
+    setTimeout(()=>{
+      btnVerify.classList.remove('is-loading');
+      if(codeVal()===TEST_CODE){ stopTimer(); $('#doneEcho').textContent=currentPhone; show('done'); $('#btnDone').focus(); }
+      else{ codeBox.classList.add('invalid','shake'); eCode.textContent='Неверный код'; eCode.classList.add('show');
+        setTimeout(()=>codeBox.classList.remove('shake'),400); btnVerify.disabled=false; }
+    }, 650);
+  }
+  $('#btnVerify').addEventListener('click', ()=>{ if(codeVal().length===4) verify(); });
+  $('#btnBack').addEventListener('click', ()=>{ stopTimer(); show(1); iPhone.focus(); });
+  // «Хорошо» на экране успеха → закрыть + вошедшее состояние (как «Хорошо» в форме заявки)
+  $('#btnDone').addEventListener('click', ()=>{ close(); doLogin(currentPhone); });
+
+  // ── таймер повторной отправки ──
+  function fmtTime(s){ return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+  function startTimer(){
+    stopTimer(); let left=RESEND_SEC; const tx=$('#timerTx'), btn=$('#btnResend');
+    tx.hidden=false; tx.classList.remove('auth-resent'); btn.hidden=true; tx.textContent='Отправить код повторно через '+fmtTime(left);
+    timerId=setInterval(()=>{ left--; if(left<=0){ stopTimer(); tx.hidden=true; btn.hidden=false; } else tx.textContent='Отправить код повторно через '+fmtTime(left); }, 1000);
+  }
+  function stopTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
+  $('#btnResend').addEventListener('click', ()=>{ clearCode();
+    const tx=$('#timerTx'), btn=$('#btnResend');
+    btn.hidden=true; tx.hidden=false; tx.textContent='Код отправлен повторно'; tx.classList.add('auth-sent');
+    setTimeout(()=>{ tx.classList.remove('auth-sent'); startTimer(); }, 1600); cells[0].focus(); });
+
+  // ── ШАПКА: вход/выход ──
+  const hUser=$('#hUser'), hbtnLogin=$('#hbtnLogin'), uMenu=$('#uMenu'), hbtnUser=$('#hbtnUser');
+  const last4 = p => { const d=p.replace(/\D/g,''); return '···'+d.slice(-4,-2)+'-'+d.slice(-2); };
+  function doLogin(p){ hbtnLogin.hidden=true; hUser.hidden=false; $('#hUserLbl').textContent=last4(p); $('#uMenuPhone').textContent=p; }
+  function doLogout(){ hUser.hidden=true; hbtnLogin.hidden=false; uMenu.classList.remove('show'); hbtnUser.setAttribute('aria-expanded','false'); }
+  hbtnLogin.addEventListener('click', open);
+  hbtnUser.addEventListener('click', e=>{ e.stopPropagation(); const o=uMenu.classList.toggle('show'); hbtnUser.setAttribute('aria-expanded', o?'true':'false'); });
+  $('#btnLogout').addEventListener('click', doLogout);
+  document.addEventListener('click', e=>{ if(!hUser.contains(e.target)){ uMenu.classList.remove('show'); hbtnUser.setAttribute('aria-expanded','false'); } });
+
+  // ── фокус-трап внутри модалки ──
+  back.addEventListener('keydown', e=>{ if(e.key!=='Tab') return;
+    const f=[...back.querySelectorAll('button,a[href],input')].filter(el=>!el.disabled && el.offsetParent!==null);
+    if(!f.length) return; const first=f[0], last=f[f.length-1];
+    if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); } });
+
+  /* ───────── ГАЛЕРЕЯ СОСТОЯНИЙ (клонируем модалку и приводим в нужный вид) ───────── */
+  function tpl(){ const c=back.querySelector('.cbm').cloneNode(true); c.querySelector('.cbm-x').remove();
+    c.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id')); return c; }  /* без id — иначе дубли ломают интерактив */
+  function only(card,n){ [...card.querySelectorAll('.auth-step')].forEach(s=>s.hidden=s.dataset.step!==String(n)); }
+  function setCode(card,str,filledOnly){ const cs=[...card.querySelectorAll('.auth-cell')]; cs.forEach((c,i)=>{ c.value=str[i]||''; c.classList.toggle('filled',!!c.value); }); }
+  function cell(label,note,build){ const w=document.createElement('div'); w.className='gcell';
+    const l=document.createElement('div'); l.className='gcell__label'; l.innerHTML=label+(note?' <span>· '+note+'</span>':''); w.appendChild(l);
+    const card=tpl(); build(card); w.appendChild(card); return w; }
+
+  const S1=[
+    ['Пустой','по умолчанию', c=>{ only(c,1); }],
+    ['Заполнен, готов', 'валидно', c=>{ only(c,1); c.querySelector('#iPhone,[type=tel]').value='+7 (999) 123-45-67'; c.querySelector('.mk-check').checked=true; }],
+    ['Ошибка номера','неполный', c=>{ only(c,1); const f=c.querySelector('.cbm-field'); f.classList.add('invalid'); c.querySelector('[type=tel]').value='+7 (999) 12'; f.querySelector('.cbm-err').textContent='Введите номер полностью'; }],
+    ['Нет согласия','обязательное', c=>{ only(c,1); c.querySelector('[type=tel]').value='+7 (999) 123-45-67'; c.querySelector('.cbm-check').classList.add('invalid'); }],
+    ['Отправка кода','loading', c=>{ only(c,1); c.querySelector('[type=tel]').value='+7 (999) 123-45-67'; c.querySelector('.mk-check').checked=true; const b=c.querySelector('.mk-btn--primary'); b.classList.add('is-loading'); b.disabled=true; }],
+    ['SMS не ушла','ошибка сервера', c=>{ only(c,1); c.querySelector('[type=tel]').value='+7 (999) 123-45-67'; c.querySelector('.mk-check').checked=true; c.querySelector('#eForm,.auth-step[data-step="1"] .cbm-err:last-of-type'); const e=c.querySelectorAll('.auth-step[data-step="1"] .cbm-err'); const fe=e[e.length-1]; fe.textContent='Не удалось отправить код. Попробуйте ещё раз'; fe.style.display='block'; }],
+  ];
+  const S2=[
+    ['Код отправлен','таймер идёт', c=>{ only(c,2); }],
+    ['Ввод кода','заполняется', c=>{ only(c,2); setCode(c,'12'); }],
+    ['Неверный код','ошибка', c=>{ only(c,2); setCode(c,'1235'); const b=c.querySelector('.auth-code'); b.classList.add('invalid'); const e=c.querySelector('.auth-code-err'); e.textContent='Неверный код'; e.classList.add('show'); }],
+    ['Код истёк','ошибка', c=>{ only(c,2); setCode(c,'1234'); const b=c.querySelector('.auth-code'); b.classList.add('invalid'); const e=c.querySelector('.auth-code-err'); e.textContent='Код истёк — запросите новый'; e.classList.add('show'); }],
+    ['Много попыток','блокировка', c=>{ only(c,2); const b=c.querySelector('.auth-code'); b.classList.add('invalid'); const e=c.querySelector('.auth-code-err'); e.textContent='Слишком много попыток. Запросите новый код'; e.classList.add('show'); c.querySelectorAll('.auth-cell').forEach(x=>x.disabled=true); }],
+    ['Проверка','loading', c=>{ only(c,2); setCode(c,'1234'); const b=c.querySelector('.mk-btn--primary'); b.classList.add('is-loading'); b.disabled=true; }],
+    ['Повтор доступен','минута прошла', c=>{ only(c,2); c.querySelector('#timerTx,.auth-resend span')?.remove(); const btn=c.querySelector('.mk-btn--link'); if(btn) btn.hidden=false; }],
+    ['Успех','вход выполнен', c=>{ only(c,'done'); }],
+  ];
+  const g1=$('#gallery1'), g2=$('#gallery2');
+  S1.forEach(s=>g1.appendChild(cell(s[0],s[1],s[2])));
+  S2.forEach(s=>g2.appendChild(cell(s[0],s[1],s[2])));
+})();
+</script>
+</body>
+</html>

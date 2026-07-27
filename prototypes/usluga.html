@@ -1151,6 +1151,59 @@
   .cbm-check a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
   .cbm-check a:hover{color:var(--text-primary)}
   .cbm-check em{color:var(--text-tertiary);font-style:normal}
+
+  /* ── АВТОРИЗАЦИЯ ПО SMS (надстройка над .cbm; .cbm-done* уже есть выше) ── */
+  .auth-step[hidden]{display:none}
+  .cbm-title .phone{display:block;color:var(--text-secondary);margin-top:3px}
+  .auth-code{display:flex;gap:10px;margin-top:18px}
+  .auth-cell{flex:1;min-width:0;height:60px;text-align:center;font-family:var(--font-head);font-weight:700;font-size:26px;color:var(--text-primary);border:1px solid var(--border-strong);border-radius:var(--radius-md);background:var(--surface-card);outline:none;transition:border-color .15s,box-shadow .15s}
+  .auth-cell:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  .auth-cell.filled{border-color:var(--text-tertiary)}
+  .auth-code.invalid .auth-cell{border-color:var(--danger);color:var(--danger)}
+  .auth-code.invalid .auth-cell:focus{box-shadow:0 0 0 3px rgba(224,72,58,.12)}
+  @keyframes authShake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+  .auth-code.shake{animation:authShake .4s}
+  @media(prefers-reduced-motion:reduce){.auth-code.shake{animation:none}}
+  .auth-code-err{margin-top:9px}
+  .auth-code-err.show{display:block}
+  .auth-resend{margin-top:14px;min-height:20px;font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-tertiary)}
+  .auth-resend .mk-btn--link{font-size:var(--t-small)}
+  .auth-sent{color:var(--brand-text);font-weight:600}
+  .auth-step[data-step="2"] .mk-btn--primary{margin-top:20px}
+  /* спиннер на кнопке (у форм usluga своего не было) */
+  .mk-btn.is-loading{color:transparent!important;pointer-events:none;position:relative}
+  .mk-btn.is-loading::after{content:"";position:absolute;width:18px;height:18px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;color:var(--on-brand);animation:authSpin .6s linear infinite}
+  @keyframes authSpin{to{transform:rotate(360deg)}}
+  /* ── ШАПКА: вошедшее состояние (инициалы фирм. шрифтом / имя) + меню ЛК ── */
+  .huser{position:relative;display:flex}
+  /* инициалы — просто буквы AttractiveCond (без кружка), вместо иконки */
+  .u-av{display:none;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;
+    color:var(--text-primary);text-transform:uppercase;line-height:1}
+  .hbtn > .u-av{height:22px;font-size:16px}
+  .huser.has-name .hbtn > .ci{display:none}
+  .huser.has-name .hbtn > .u-av{display:flex}
+  /* мобилка: в шапке ВСЕГДА дефолт-иконка (без инициалов), независимо от входа */
+  @media(max-width:1023px){
+    .hactions .huser.has-name .hbtn > .ci{display:flex}
+    .hactions .huser.has-name .hbtn > .u-av{display:none}
+  }
+  /* выпадашка над нижним баром (тот же приём, что body.search-open header) */
+  header:has(.umenu.show){z-index:60}
+  .umenu{position:absolute;right:0;top:calc(100% + 8px);min-width:248px;background:var(--surface-card);
+    border:1px solid var(--border);border-radius:var(--radius-outside);box-shadow:var(--shadow-lg);padding:8px;z-index:120;display:none}
+  .umenu.show{display:block}
+  .umenu__head{padding:6px 10px 10px}
+  .umenu__id{display:flex;flex-direction:column;min-width:0}
+  .umenu__id b{font-size:var(--t-ui);font-weight:600;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .umenu__id span{font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-tertiary)}
+  .umenu__sep{height:1px;background:var(--border);margin:6px 4px}
+  .umenu__item{display:flex;width:100%;align-items:center;gap:11px;padding:10px;border:none;background:none;
+    border-radius:var(--radius-md);cursor:pointer;font:inherit;font-size:var(--t-small);color:var(--text-primary);text-align:left}
+  .umenu__item:hover{background:var(--surface-subtle)}
+  .umenu__item svg{width:18px;height:18px;color:var(--text-secondary);flex-shrink:0}
+  /* мобильная шторка: активный шаг = скролл-слой [data-role] (как у родных форм);
+     нижний отступ + safe-area — чтобы кнопка не липла к краю экрана */
+  @media(max-width:1023px){ #authBack .cbm > [data-role]{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--sp-20) + env(safe-area-inset-bottom,0px))} }
   /* .cbm-submit = .mk-btn--primary; своё — растяжка по ширине формы */
   .cbm-submit{width:100%;margin-top:3px}
   /* ОШИБКА ОТПРАВКИ — четвёртое состояние формы (было три: пусто / ошибка полей / успех).
@@ -2159,10 +2212,23 @@
           <span class="ci"><svg class="" width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="5" y="2.5" width="14" height="19" rx="2.2" stroke="currentColor" stroke-width="1.7"/><rect x="8" y="5.5" width="8" height="3.4" rx="1" stroke="currentColor" stroke-width="1.5"/><circle cx="9.5" cy="13.5" r="1" fill="currentColor"/><circle cx="14.5" cy="13.5" r="1" fill="currentColor"/><circle cx="9.5" cy="17.3" r="1" fill="currentColor"/><circle cx="14.5" cy="17.3" r="1" fill="currentColor"/></svg></span>
           Калькулятор
         </a>
-        <button type="button" class="hbtn m-keep" title="Войти">
-          <span class="ci"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c.5-3.4 3.3-5.4 7-5.4s6.5 2 7 5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
-          Войти
-        </button>
+        <div class="huser m-keep" id="huser">
+          <button type="button" class="hbtn" id="authBtn" title="Войти" aria-haspopup="true" aria-expanded="false">
+            <span class="ci"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c.5-3.4 3.3-5.4 7-5.4s6.5 2 7 5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+            <span class="u-av" id="authAv" aria-hidden="true"></span>
+            <span id="authBtnLbl">Войти</span>
+          </button>
+          <div class="umenu" id="umenu" role="menu">
+            <div class="umenu__head">
+              <span class="umenu__id"><b id="umenuName">Личный кабинет</b><span id="umenuPhone">+7 (999) 123-45-67</span></span>
+            </div>
+            <div class="umenu__sep"></div>
+            <button type="button" class="umenu__item" role="menuitem"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c.5-3.4 3.3-5.4 7-5.4s6.5 2 7 5.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>Личный кабинет</button>
+            <button type="button" class="umenu__item" role="menuitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>Мои заказы</button>
+            <div class="umenu__sep"></div>
+            <button type="button" class="umenu__item" id="logout" role="menuitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M16 17l5-5-5-5M21 12H9"/></svg>Выйти</button>
+          </div>
+        </div>
         <button type="button" class="hbtn m-keep" title="Корзина">
           <span class="ci"><svg width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M3 4h2.2l1.8 11.5a1.5 1.5 0 0 0 1.5 1.3h8.4a1.5 1.5 0 0 0 1.5-1.2L20.5 8H6.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="20" r="1.3" fill="currentColor"/><circle cx="17.5" cy="20" r="1.3" fill="currentColor"/></svg></span>
           <span class="badge">3</span>
@@ -3285,6 +3351,58 @@
           <button type="button" class="cbm-submit mk-btn mk-btn--primary" data-cbm-close>Хорошо</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ── МОДАЛКА: АВТОРИЗАЦИЯ ПО SMS (тот же компонент .cbm, что заявка/звонок) ── -->
+  <div class="cbm-back" id="authBack" aria-hidden="true">
+    <div class="cbm" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+      <button class="cbm-x" type="button" id="authClose" aria-label="Закрыть"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+
+      <section class="auth-step" data-role="step" data-step="1">
+        <h2 class="cbm-title" id="authTitle">Вход в личный кабинет</h2>
+        <p class="cbm-sub">Введите номер телефона — пришлём код в SMS.</p>
+        <form id="phoneForm" novalidate>
+          <div class="cbm-field" id="fPhone">
+            <label class="cbm-lbl" for="iPhone">Телефон <i>*</i></label>
+            <input type="tel" id="iPhone" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__">
+            <span class="cbm-err" id="ePhone">Введите номер полностью</span>
+          </div>
+          <label class="cbm-check" id="fConsent">
+            <input type="checkbox" class="mk-check" id="iConsent">
+            <span>Соглашаюсь с <a href="#" onclick="return false">политикой обработки персональных данных</a> и получением кода в SMS</span>
+          </label>
+          <span class="cbm-err" id="eForm"></span>
+          <button type="submit" class="cbm-submit mk-btn mk-btn--primary" id="btnGetCode">Получить код</button>
+        </form>
+      </section>
+
+      <section class="auth-step" data-role="step" data-step="2" hidden>
+        <h2 class="cbm-title">Введите код из SMS<span class="phone" id="phoneEcho">+7 (999) 123-45-67</span></h2>
+        <p class="cbm-sub"><button type="button" class="mk-btn mk-btn--link" id="btnBack">Изменить номер</button></p>
+        <div class="auth-code" id="codeBox">
+          <input class="auth-cell" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="Цифра 1">
+          <input class="auth-cell" inputmode="numeric" maxlength="1" aria-label="Цифра 2">
+          <input class="auth-cell" inputmode="numeric" maxlength="1" aria-label="Цифра 3">
+          <input class="auth-cell" inputmode="numeric" maxlength="1" aria-label="Цифра 4">
+        </div>
+        <span class="cbm-err auth-code-err" id="eCode" role="alert" aria-live="assertive">Неверный код</span>
+        <div class="auth-resend" id="resendBox" aria-live="polite">
+          <span id="timerTx">Отправить код повторно через 1:00</span>
+          <button type="button" class="mk-btn mk-btn--link" id="btnResend" hidden>Отправить код повторно</button>
+        </div>
+        <button type="button" class="cbm-submit mk-btn mk-btn--primary" id="btnVerify" disabled>Войти</button>
+      </section>
+
+      <section class="auth-step" data-role="step" data-step="done" hidden>
+        <div class="cbm-done">
+          <div class="cbm-done-ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h2 class="cbm-title">Вход выполнен</h2>
+          <p class="cbm-done-lead">Профиль и история заказов теперь в личном кабинете</p>
+          <dl class="cbm-done-list"><div><dt>Телефон</dt><dd id="doneEcho">+7 (999) 123-45-67</dd></div></dl>
+          <button type="button" class="cbm-submit mk-btn mk-btn--primary" id="btnDone">Хорошо</button>
+        </div>
+      </section>
     </div>
   </div>
 
@@ -5346,6 +5464,97 @@
 
   <!-- источник данных для секции отзывов: рендер виджета скрыт, используем только его выдачу -->
   <div class="sw-app" data-app="21070d5461e941a5a3abf339f617ae40" hidden></div>
+  <script>
+  /* ── Авторизация по SMS: 2 шага + вошедшее состояние шапки. Тестовый код 1234. ── */
+  (function(){
+    'use strict';
+    const $ = s => document.querySelector(s);
+    const back = $('#authBack'); if(!back) return;
+    const TEST_CODE='1234', RESEND_SEC=60;
+    const steps=[...back.querySelectorAll('.auth-step')];
+    const show = n => steps.forEach(s=>s.hidden = s.dataset.step!==String(n));
+    let timerId=null, currentPhone='', loggedIn=false;
+
+    function digits(v){ let d=v.replace(/\D/g,''); if(d[0]==='8')d='7'+d.slice(1); if(d[0]!=='7')d=d?('7'+d):''; return d.slice(0,11); }
+    function fmtPhone(v){ const d=digits(v); if(!d) return ''; let r='+7'; if(d.length>1)r+=' ('+d.slice(1,4); if(d.length>=4)r+=')'; if(d.length>4)r+=' '+d.slice(4,7); if(d.length>=7)r+='-'+d.slice(7,9); if(d.length>=9)r+='-'+d.slice(9,11); return r; }
+    const isValidPhone = v => digits(v).length===11;
+
+    function open(){ back.classList.add('show'); back.setAttribute('aria-hidden','false'); resetAll(); }
+    function close(){ back.classList.remove('show'); back.setAttribute('aria-hidden','true'); stopTimer(); }
+    function resetAll(){ show(1); iPhone.value=''; $('#iConsent').checked=false; $('#fPhone').classList.remove('invalid'); $('#fConsent').classList.remove('invalid'); $('#eForm').textContent=''; iPhone.focus(); }
+
+    $('#authClose').addEventListener('click', close);
+    back.addEventListener('click', e=>{ if(e.target===back) close(); });
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape' && back.classList.contains('show')) close(); });
+
+    const iPhone=$('#iPhone');
+    iPhone.addEventListener('input', ()=>{ iPhone.value=fmtPhone(iPhone.value); $('#fPhone').classList.remove('invalid'); });
+    $('#phoneForm').addEventListener('submit', e=>{
+      e.preventDefault(); let ok=true;
+      if(!isValidPhone(iPhone.value)){ $('#fPhone').classList.add('invalid'); ok=false; } else $('#fPhone').classList.remove('invalid');
+      if(!$('#iConsent').checked){ $('#fConsent').classList.add('invalid'); ok=false; } else $('#fConsent').classList.remove('invalid');
+      if(!ok) return;
+      const b=$('#btnGetCode'); b.classList.add('is-loading'); b.disabled=true; $('#eForm').textContent='';
+      setTimeout(()=>{ b.classList.remove('is-loading'); b.disabled=false; currentPhone=iPhone.value; $('#phoneEcho').textContent=currentPhone;
+        show(2); startTimer(); clearCode(); cells[0].focus(); }, 700);
+    });
+
+    const codeBox=$('#codeBox'), cells=[...codeBox.querySelectorAll('.auth-cell')], eCode=$('#eCode'), btnVerify=$('#btnVerify');
+    const codeVal=()=>cells.map(c=>c.value).join('');
+    function clearCode(){ cells.forEach(c=>{c.value='';c.classList.remove('filled');}); codeBox.classList.remove('invalid'); eCode.classList.remove('show'); btnVerify.disabled=true; }
+    function syncCode(){ cells.forEach(c=>c.classList.toggle('filled',!!c.value)); btnVerify.disabled=codeVal().length!==4; }
+    cells.forEach((c,i)=>{
+      c.addEventListener('input', ()=>{ c.value=c.value.replace(/\D/g,'').slice(0,1); codeBox.classList.remove('invalid'); eCode.classList.remove('show');
+        if(c.value && i<cells.length-1) cells[i+1].focus(); syncCode(); if(codeVal().length===4) verify(); });
+      c.addEventListener('keydown', e=>{ if(e.key==='Backspace' && !c.value && i>0){ cells[i-1].focus(); cells[i-1].value=''; syncCode(); } });
+      c.addEventListener('paste', e=>{ e.preventDefault(); const d=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,4);
+        d.split('').forEach((n,k)=>{ if(cells[k]) cells[k].value=n; }); syncCode(); (cells[Math.min(d.length,3)]||cells[3]).focus(); if(codeVal().length===4) verify(); });
+    });
+    function verify(){ btnVerify.classList.add('is-loading'); btnVerify.disabled=true;
+      setTimeout(()=>{ btnVerify.classList.remove('is-loading');
+        if(codeVal()===TEST_CODE){ stopTimer(); $('#doneEcho').textContent=currentPhone; show('done'); $('#btnDone').focus(); }
+        else{ codeBox.classList.add('invalid','shake'); eCode.textContent='Неверный код'; eCode.classList.add('show'); setTimeout(()=>codeBox.classList.remove('shake'),400); btnVerify.disabled=false; }
+      }, 650);
+    }
+    btnVerify.addEventListener('click', ()=>{ if(codeVal().length===4) verify(); });
+    $('#btnBack').addEventListener('click', ()=>{ stopTimer(); show(1); iPhone.focus(); });
+    $('#btnDone').addEventListener('click', ()=>{ close(); doLogin(currentPhone, PROFILE_NAME); });
+
+    function fmtTime(s){ return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); }
+    function startTimer(){ stopTimer(); let left=RESEND_SEC; const tx=$('#timerTx'), b=$('#btnResend');
+      tx.hidden=false; tx.classList.remove('auth-sent'); b.hidden=true; tx.textContent='Отправить код повторно через '+fmtTime(left);
+      timerId=setInterval(()=>{ left--; if(left<=0){ stopTimer(); tx.hidden=true; b.hidden=false; } else tx.textContent='Отправить код повторно через '+fmtTime(left); },1000); }
+    function stopTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
+    $('#btnResend').addEventListener('click', ()=>{ clearCode(); const tx=$('#timerTx'), b=$('#btnResend');
+      b.hidden=true; tx.hidden=false; tx.textContent='Код отправлен повторно'; tx.classList.add('auth-sent');
+      setTimeout(()=>{ tx.classList.remove('auth-sent'); startTimer(); },1600); cells[0].focus(); });
+
+    /* фокус-трап */
+    back.addEventListener('keydown', e=>{ if(e.key!=='Tab') return;
+      const f=[...back.querySelectorAll('button,a[href],input')].filter(el=>!el.disabled && el.offsetParent!==null);
+      if(!f.length) return; const first=f[0], last=f[f.length-1];
+      if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); } });
+
+    /* ── ШАПКА: «Войти» ↔ ЛК. Имя из профиля → инициалы+имя; пусто → иконка+«Кабинет».
+       ДЕМО: имя профиля (в реале — с бэка). Пусто = сценарий «профиль не заполнен». ── */
+    const PROFILE_NAME = '';   // имя из профиля (с бэка). Пусто → «Кабинет». 'Иван Иванов' → инициалы «ИИ»
+    const authBtn=$('#authBtn'), authBtnLbl=$('#authBtnLbl'), umenu=$('#umenu'), huser=$('#huser');
+    const authAv=$('#authAv'), umenuName=$('#umenuName'), umenuPhone=$('#umenuPhone');
+    const initials = n => { const p=n.trim().split(/\s+/).filter(Boolean); return p.length ? (p[0][0]+(p[1]?p[1][0]:'')).toUpperCase() : ''; };
+    const firstName = n => n.trim().split(/\s+/)[0] || '';
+    function doLogin(phone, name){ loggedIn=true; name=(name||'').trim(); umenuPhone.textContent=phone;
+      if(name){ huser.classList.add('has-name'); authAv.textContent=initials(name);
+        authBtnLbl.textContent=firstName(name); authBtn.title=name; umenuName.textContent=name; }
+      else { huser.classList.remove('has-name'); authBtnLbl.textContent='Кабинет'; authBtn.title='Личный кабинет'; umenuName.textContent='Личный кабинет'; } }
+    function doLogout(){ loggedIn=false; huser.classList.remove('has-name'); authBtnLbl.textContent='Войти'; authBtn.title='Войти'; umenu.classList.remove('show'); authBtn.setAttribute('aria-expanded','false'); }
+    authBtn.addEventListener('click', e=>{ e.stopPropagation(); if(!loggedIn){ open(); return; }
+      const o=umenu.classList.toggle('show'); authBtn.setAttribute('aria-expanded', o?'true':'false'); });
+    $('#logout').addEventListener('click', doLogout);
+    document.addEventListener('click', e=>{ if(huser && !huser.contains(e.target)){ umenu.classList.remove('show'); authBtn.setAttribute('aria-expanded','false'); } });
+  })();
+  </script>
+
   <script src="https://res.smartwidgets.ru/app.js" defer></script>
 
 </body>
