@@ -176,24 +176,58 @@
       min-height:min(46vh,340px);margin:20px -20px 0;--poster-color:transparent}
   }
 
-  /* ── ПЛОЩАДКА СЦЕН: 3–5 моделей, раскладка + ховер-эффекты ── */
-  .scenes{padding-block:clamp(48px,7vw,96px)}
-  .scenes__head{text-align:center;margin-bottom:clamp(28px,4vw,52px)}
-  .scenes__eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.16em;
-    text-transform:uppercase;color:#9a6f00}
-  .scenes__h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
-    font-size:clamp(28px,3.6vw,46px);line-height:1;letter-spacing:-.005em;margin-top:12px}
-  /* ряд стикеров: центрирован, лёгкий «стаггер» по вертикали — как выложенная коллекция */
-  .scenes__row{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;
-    gap:clamp(6px,1.5vw,20px)}
-  .scene{width:clamp(150px,15vw,210px);cursor:pointer;
-    transition:transform .32s cubic-bezier(.34,1.56,.64,1)}
-  .scene:nth-child(even){transform:translateY(-18px)}
-  .scene:hover{transform:translateY(-26px) scale(1.07);z-index:3}
-  .scene:nth-child(even):hover{transform:translateY(-40px) scale(1.07)}
-  .scene model-viewer{width:100%;height:clamp(150px,15vw,210px);--poster-color:transparent}
-  @media(max-width:900px){.scene{width:clamp(130px,40vw,180px)}
-    .scene model-viewer{height:clamp(130px,40vw,180px)}}
+  /* ── 2. ВИДЫ И ПОКРЫТИЯ: лента карточек, уходит за правый край (реф рефдес1) ──
+     Постер-картинка = базовый слой (58КБ на 5 карточек), 3D — апгрейдом поверх. */
+  .forms{padding-block:clamp(48px,7vw,96px)}
+  .forms__head{max-width:var(--v-max);margin:0 auto clamp(24px,3vw,40px);padding-inline:var(--v-pad)}
+  .forms__eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.16em;
+    text-transform:uppercase;color:#8a6a00}
+  .forms h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(28px,3.6vw,46px);line-height:1;margin-top:12px;letter-spacing:-.005em}
+  .forms__note{margin-top:14px;max-width:56ch;color:#5b554a;font-size:15.5px;line-height:1.5}
+  /* лента: горизонтальный скролл со снапом; левый отступ держит сетку, справа карточки уходят за край */
+  .lane{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x proximity;
+    padding:6px max(var(--v-pad),calc((100vw - var(--v-max))/2 + var(--v-pad))) 22px;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .lane::-webkit-scrollbar{display:none}
+  .lane:focus-visible{outline:3px solid #141212;outline-offset:-3px;border-radius:8px}
+  .fcard{flex:0 0 clamp(236px,25vw,292px);scroll-snap-align:start;display:flex;flex-direction:column;
+    background:#fff;border-radius:22px;padding:18px 18px 0;
+    box-shadow:0 1px 0 rgba(20,18,18,.05),0 16px 34px -24px rgba(20,18,18,.55)}
+  .fcard__badge{align-self:flex-start;font-size:11.5px;font-weight:700;letter-spacing:.02em;
+    text-transform:uppercase;color:#4a4136;background:#f2f0ec;border-radius:999px;padding:6px 11px}
+  .fcard h3{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:22px;line-height:1.05;margin-top:14px}
+  .fcard p{font-size:14px;line-height:1.45;color:#6b6355;margin-top:8px;min-height:4.35em}
+  /* поле рендера: подложка карточки — свой бледный тон, плитка с рендера ложится на него */
+  /* padding даёт цветной панели проступить вокруг плитки рендера — иначе тон читается
+     как случайная обводка по краю (реф рефдес1: цвет = поле, продукт лежит внутри) */
+  .fcard__art{position:relative;margin:16px -18px 0;border-radius:0 0 22px 22px;overflow:hidden;
+    aspect-ratio:642/584;padding:9%;display:grid;place-items:center;background:#f6f4f0}
+  .fcard__art>*{grid-area:1/1;width:100%;height:100%;display:block}
+  .fcard__art img{object-fit:contain;transition:opacity .35s ease}
+  .fcard__art model-viewer{--poster-color:transparent}
+  .fcard--glow   .fcard__art{background:#141212}
+  .fcard--pill   .fcard__art{background:#f7d9e0}
+  .fcard--diecut .fcard__art{background:#ecdfc4}
+  .fcard--rect   .fcard__art{background:#d6e2f0}
+  .fcard--round  .fcard__art{background:#ffdf8a}
+  /* светящийся: тёмная подложка + зелёный ореол — «как в темноте» (идея из ТЗ) */
+  .fcard--glow .fcard__art::before{content:"";position:absolute;inset:14%;border-radius:50%;
+    background:radial-gradient(circle,rgba(74,255,138,.32),transparent 66%);filter:blur(16px)}
+  /* ручной апгрейд до 3D — работает и на медленной связи, решение за юзером */
+  .fcard__spin{position:absolute;right:12px;bottom:12px;z-index:2;display:inline-flex;align-items:center;
+    gap:7px;font:inherit;font-size:12.5px;font-weight:700;color:#141212;background:rgba(255,255,255,.92);
+    border:0;border-radius:999px;padding:8px 13px;cursor:pointer;
+    box-shadow:0 6px 16px -8px rgba(20,18,18,.5);transition:background .15s ease}
+  .fcard__spin svg{width:13px;height:13px}
+  .fcard__spin:hover{background:#fff}
+  .fcard__spin:focus-visible{outline:3px solid #fff;outline-offset:2px}
+  @media(max-width:860px){
+    .forms__head{padding-inline:20px}
+    .lane{padding-inline:20px;gap:12px;scroll-snap-type:x mandatory}
+    .fcard{flex-basis:min(74vw,300px)}
+  }
 </style>
 </head>
 <body>
@@ -264,23 +298,58 @@
     </div>
   </section>
 
-  <!-- ПЛОЩАДКА СЦЕН: 5 слотов под 3D-модели. Пока во всех один GLB — заменишь src у каждой. -->
-  <section class="scenes">
-    <div class="wrap">
-      <div class="scenes__head">
-        <span class="scenes__eyebrow">Формы и покрытия</span>
-        <h2 class="scenes__h2">Любая форма под ваш бренд</h2>
-      </div>
-      <div class="scenes__row">
-        <div class="scene"><model-viewer src="sticker-glow.glb" alt="Стикер" loading="lazy" reveal="auto" interaction-prompt="none" disable-tap disable-pan disable-zoom environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.15" shadow-intensity="0" camera-orbit="0deg 32deg 130%" min-camera-orbit="auto 0deg auto" data-follow></model-viewer></div>
-        <div class="scene"><model-viewer src="sticker-2.glb" alt="Стикер" loading="lazy" reveal="auto" interaction-prompt="none" disable-tap disable-pan disable-zoom environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.15" shadow-intensity="0" camera-orbit="0deg 32deg 130%" min-camera-orbit="auto 0deg auto" data-follow></model-viewer></div>
-        <div class="scene"><model-viewer src="sticker-3.glb" alt="Стикер" loading="lazy" reveal="auto" interaction-prompt="none" disable-tap disable-pan disable-zoom environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.15" shadow-intensity="0" camera-orbit="0deg 32deg 130%" min-camera-orbit="auto 0deg auto" data-follow></model-viewer></div>
-        <div class="scene"><model-viewer src="sticker-4.glb" alt="Стикер" loading="lazy" reveal="auto" interaction-prompt="none" disable-tap disable-pan disable-zoom environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.15" shadow-intensity="0" camera-orbit="0deg 32deg 130%" min-camera-orbit="auto 0deg auto" data-follow></model-viewer></div>
-        <div class="scene"><model-viewer src="sticker-5.glb" alt="Стикер" loading="lazy" reveal="auto" interaction-prompt="none" disable-tap disable-pan disable-zoom environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.15" shadow-intensity="0" camera-orbit="0deg 32deg 130%" min-camera-orbit="auto 0deg auto" data-follow></model-viewer></div>
-      </div>
+  <!-- 2. ВИДЫ И ПОКРЫТИЯ: лента карточек. Картинка-постер сразу, 3D подгружается апгрейдом. -->
+  <section class="forms" id="vidy">
+    <div class="forms__head">
+      <span class="forms__eyebrow">Виды и покрытия</span>
+      <h2>Любая форма под ваш бренд</h2>
+      <p class="forms__note">Круглые, прямоугольные, пилюли и фигурная высечка по контуру.
+        Покрытия: плёнка, голография, свечение в темноте, эпоксидная и полиуретановая смола.</p>
+    </div>
+    <div class="lane" tabindex="0" role="group" aria-label="Виды стикеров — прокрутите по горизонтали">
+      <article class="fcard fcard--glow" data-model="sticker-glow-3d.glb">
+        <span class="fcard__badge">Светится в темноте</span>
+        <h3>Круглый</h3>
+        <p>Неон и свечение: заметен даже без света. Для гейминга, техники и мерча.</p>
+        <div class="fcard__art">
+          <img src="posters/form-glow.webp" width="642" height="584" alt="Круглый светящийся стикер с надписью «работает не трогай»" loading="lazy" decoding="async">
+        <button class="fcard__spin" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>Покрутить</button>
+        </div>
+      </article>
+      <article class="fcard fcard--pill">
+        <span class="fcard__badge">Логотип и слоган</span>
+        <h3>Пилюля</h3>
+        <p>Вытянутая форма под название бренда — хорошо ложится на бутылку и корпус.</p>
+        <div class="fcard__art">
+          <img src="posters/form-pill.webp" width="642" height="584" alt="Стикер-пилюля с логотипом SALT" loading="lazy" decoding="async">
+        </div>
+      </article>
+      <article class="fcard fcard--diecut">
+        <span class="fcard__badge">Высечка по контуру</span>
+        <h3>Фигурный</h3>
+        <p>Режем точно по рисунку — форма повторяет надпись или силуэт.</p>
+        <div class="fcard__art">
+          <img src="posters/form-diecut.webp" width="642" height="584" alt="Фигурный стикер с надписью mellow, вырезанный по контуру" loading="lazy" decoding="async">
+        </div>
+      </article>
+      <article class="fcard fcard--rect">
+        <span class="fcard__badge">Иллюстрация</span>
+        <h3>Прямоугольный</h3>
+        <p>Со скруглением: место для полной сцены, подписи и деталей.</p>
+        <div class="fcard__art">
+          <img src="posters/form-rect.webp" width="642" height="584" alt="Прямоугольный стикер с иллюстрацией Санкт-Петербурга" loading="lazy" decoding="async">
+        </div>
+      </article>
+      <article class="fcard fcard--round">
+        <span class="fcard__badge">Мерч для бизнеса</span>
+        <h3>Круглый · лого</h3>
+        <p>Логотип в круге — раздатка, упаковка, подарки клиентам.</p>
+        <div class="fcard__art">
+          <img src="posters/form-round.webp" width="642" height="584" alt="Круглый стикер с логотипом NORDA" loading="lazy" decoding="async">
+        </div>
+      </article>
     </div>
   </section>
-
   </main>
 
   <!-- плавающая CTA: заменяет мобильную шапку -->
@@ -319,7 +388,6 @@
     const heroStage = document.querySelector('.hero__stage');
     // герой: в покое РОВНО лицом к нам; наклон «живой», как у сцен (theta ±27°, phi 6..58°)
     if(hero && heroStage) bind(hero, heroStage, {rest:'0deg 0deg 164%', rad:'164%'});
-    document.querySelectorAll('.scene model-viewer[data-follow]').forEach(mv=> bind(mv, mv.closest('.scene')));
   })();
 
   /* Плавающая CTA: показываем, когда кнопка из героя ушла с экрана. */
@@ -395,6 +463,53 @@
     mob.addEventListener('change', sync);
     rm.addEventListener('change', sync);
     sync();
+  })();
+
+  /* Блок «Виды»: постер-картинка отдаётся сразу, 3D — АПГРЕЙД поверх неё.
+     Авто-апгрейд только если связь позволяет (Network Information API): не трогаем
+     тех, кто на 2g/3g или включил экономию трафика. Кнопка «Покрутить» работает всегда —
+     на медленной связи выбор остаётся за юзером, а не за нами. */
+  (function(){
+    const cards = [...document.querySelectorAll('.fcard[data-model]')];
+    if(!cards.length) return;
+    const rm   = matchMedia('(prefers-reduced-motion:reduce)').matches;
+    const conn = navigator.connection || {};
+    const fast = !conn.saveData && (!conn.effectiveType || conn.effectiveType === '4g');
+
+    function upgrade(card){
+      if(card.dataset.up) return;
+      card.dataset.up = '1';
+      const art = card.querySelector('.fcard__art');
+      const img = art.querySelector('img');
+      const btn = art.querySelector('.fcard__spin');
+      if(btn) btn.disabled = true;
+      const mv = document.createElement('model-viewer');
+      const attrs = {
+        src: card.dataset.model, alt: img.alt,
+        'camera-orbit':'0deg 18deg 105%', 'field-of-view':'30deg',
+        'environment-image':'https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr',
+        exposure:'1.0', 'shadow-intensity':'0', 'interaction-prompt':'none',
+        'camera-controls':'', 'disable-pan':'', 'disable-zoom':'', loading:'eager'
+      };
+      if(!rm) Object.assign(attrs, {'auto-rotate':'', 'auto-rotate-delay':'200', 'rotation-per-second':'16deg'});
+      for(const [k,v] of Object.entries(attrs)) mv.setAttribute(k,v);
+      // картинку гасим только когда модель реально отрисовалась — иначе мигнёт пустотой
+      mv.addEventListener('load', ()=>{ img.style.opacity='0'; if(btn) btn.remove(); });
+      mv.addEventListener('error', ()=>{ mv.remove(); img.style.opacity=''; // не вышло — остаёмся на картинке
+        if(btn){ btn.disabled=false; } card.dataset.up=''; });
+      art.appendChild(mv);
+    }
+
+    cards.forEach(c=>{
+      const btn = c.querySelector('.fcard__spin');
+      if(btn) btn.addEventListener('click', ()=> upgrade(c));
+    });
+    if(fast && 'IntersectionObserver' in window){
+      const io = new IntersectionObserver(es=> es.forEach(e=>{
+        if(e.isIntersecting){ upgrade(e.target); io.unobserve(e.target); }
+      }), {rootMargin:'200px'});
+      cards.forEach(c=> io.observe(c));
+    }
   })();
 
 </script>
