@@ -623,11 +623,14 @@
           <form class="calc__lead" id="calcLead" novalidate>
             <fieldset class="fs">
               <legend>Макет</legend>
-              <div class="opts opts--rows" id="art"></div>
               <label class="calc__file" id="fileWrap">
                 <input type="file" id="artFile" accept=".pdf,.ai,.eps,.svg,.png,.jpg,.jpeg,.tif,.tiff,.cdr">
                 <span class="calc__filebtn" id="fileName">Приложить файл</span>
-                <em>PDF, AI, EPS, SVG, PNG, JPG, TIFF, CDR — необязательно</em>
+                <em>PDF, AI, EPS, SVG, PNG, JPG, TIFF, CDR — можно прислать менеджеру позже</em>
+              </label>
+              <label class="calc__ok">
+                <input type="checkbox" class="mk-check" id="needDesign">
+                <span>Нужен дизайн — нарисуем по вашей идее, цену скажет менеджер</span>
               </label>
             </fieldset>
             <label class="calc__f"><span>Имя</span>
@@ -856,11 +859,8 @@
       resin:[['Эпоксидная',1,'Прозрачная линза: объём, глянец, защита рисунка'],
              ['Светящаяся',1.35,'Копит свет и светится в темноте']],
       qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'99999']],
-      // либо макет есть, либо нужен дизайн. Файл не обязателен — можно прислать менеджеру позже
-      art:  [['Макет готов',0,'Приложите файл или пришлёте менеджеру позже'],
-             ['Нужен дизайн',0,'Нарисуем по вашей идее — приложите референсы, если есть']],
     };
-    const S={kind:0,mat:0,size:0,resin:0,qty:2,art:0};
+    const S={kind:0,mat:0,size:0,resin:0,qty:2};
     const $=id=>document.getElementById(id);
     const rub=n=>n.toLocaleString('ru-RU')+' \u20BD';
 
@@ -941,7 +941,7 @@
       $('qtyOut').textContent = q+(packs?' паков':' шт');
     }
     build('kind',F.kind); build('mat',F.mat); build('size',F.size);
-    build('resin',F.resin); build('qty',F.qty); build('art',F.art);
+    build('resin',F.resin); build('qty',F.qty);
     ['single','box'].forEach(id=> $(id).addEventListener('input',calc));
     // имя выбранного файла — вместо надписи на кнопке
     $('artFile').addEventListener('change',e=>{
