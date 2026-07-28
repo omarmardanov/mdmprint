@@ -291,6 +291,14 @@
   /* две колонки — для длинных списков с описаниями */
   .opts--2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,300px));gap:10px;justify-content:start}
   .opts--2col .opt span{max-width:none;width:100%;height:100%}
+  /* все опции в ОДИН ряд, каждая — вертикальная карточка */
+  .opts--row1{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .opts--row1 .opt,.opts--row1 .opt span{width:100%}
+  .opts--row1 .opt span{padding:14px 14px 0}
+  .opts--row1 .opt h4,.opts--row1 .opt__txt{font-size:var(--t-small)}
+  .opts--row1 .opt__desc{font-size:12px;line-height:16px;text-wrap:balance}
+  .opts--row1 .opt__ico{height:72px}
+  @media(max-width:860px){.opts--row1{grid-template-columns:repeat(2,minmax(0,1fr))}}
   /* вертикальная карточка: заголовок → описание → картинка снизу (картинка необязательна) */
   .opts--cards .opt span{flex-direction:column;align-items:stretch;gap:10px;padding:16px 18px 0}
   .opts--cards .opt__txt{width:100%}
@@ -618,7 +626,7 @@
           </fieldset>
           <fieldset class="fs fs--wide">
             <legend>Материал</legend>
-            <div class="opts opts--rows opts--cards" id="mat"></div>
+            <div class="opts opts--row1 opts--cards" id="mat"></div>
           </fieldset>
           <fieldset class="fs fs--wide">
             <legend>Смола</legend>
@@ -938,10 +946,11 @@
   (function(){
     const F={
       kind: [['Стикеры',1,'Отдельные наклейки любой формы'],['Стикерпаки',3.4,'Набор наклеек на одном листе']],
-      mat:  [['Белая плёнка',1,'База: цвета плотные, рисунок не просвечивает'],
-             ['Прозрачная',1.1,'Фон подложки видно — эффект «наклеено прямо на поверхность»'],
-             ['Голографическая',1.45,'Радужный перелив на свету, заметна издалека'],
-             ['Металлик',1.4,'Серебро или золото с зеркальным блеском']],
+      // в один ряд карточки узкие — описания короткие, иначе текст сыпется по слову в строку
+      mat:  [['Белая плёнка',1,'Плотные цвета'],
+             ['Прозрачная',1.1,'Видно поверхность'],
+             ['Голография',1.45,'Радужный перелив'],
+             ['Металлик',1.4,'Зеркальный блеск']],
       // размер = ширина×высота, мм. Коэффициент считается по площади (50×50 = 1.0)
       size: [['30×30',1,null,900],['44×44',1,null,1936],['55×44',1,null,2420],
              ['70×50',1,null,3500],['Свой',null,'99x99']],
