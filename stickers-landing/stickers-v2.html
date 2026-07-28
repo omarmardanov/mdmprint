@@ -706,7 +706,7 @@
       sheet:[['А7',1],['А6',1.4],['А5',2.1]],   // у паков свой размер не задаётся
       resin:[['Эпоксидная',1,'Прозрачная линза: объём, глянец, защита рисунка'],
              ['Светящаяся',1.35,'Копит свет и светится в темноте']],
-      qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'Своё']],
+      qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'99999']],
     };
     const S={kind:0,mat:0,size:0,resin:0,qty:2};
     const $=id=>document.getElementById(id);
@@ -720,9 +720,8 @@
         const desc = (!own && it[2]) ? `<em class="opt__desc">${it[2]}</em>` : '';
         const inner = own
           ? `<input class="opt__inp" id="${key}Own" `+
-            (key==='qty'
-              ? `type="number" inputmode="numeric" min="10" max="100000"`
-              : `type="text" inputmode="numeric" maxlength="5" pattern="[0-9]{1,2}x[0-9]{1,2}"`)+
+            `type="text" inputmode="numeric" maxlength="5" `+
+            (key==='qty' ? `pattern="[0-9]{1,5}"` : `pattern="[0-9]{1,2}x[0-9]{1,2}"`)+
             ` placeholder="${it[2]||'Свой'}" aria-label="${it[2]||'Свой'}">`
           : `<b class="opt__txt">${it[0]}${desc}</b>`+
             `<img class="opt__ico" src="calc-icons/${key}-${i}.webp" alt="" `+
@@ -732,9 +731,11 @@
         if(own){
           const f=l.querySelector('.opt__inp');
           f.addEventListener('focus',()=>{ l.querySelector('input[type=radio]').checked=true; S[key]=i; calc(); });
-          if(key==='size') f.addEventListener('input',()=>{      // маска 99x99: только цифры, «x» после двух
-            const d=f.value.replace(/\D/g,'').slice(0,4);
-            f.value = d.length>2 ? d.slice(0,2)+'x'+d.slice(2) : d;
+          f.addEventListener('input',()=>{                        // маски: 99x99 для размера, только цифры для тиража
+            if(key==='size'){
+              const d=f.value.replace(/\D/g,'').slice(0,4);
+              f.value = d.length>2 ? d.slice(0,2)+'x'+d.slice(2) : d;
+            } else f.value = f.value.replace(/\D/g,'').slice(0,5);
           });
           f.addEventListener('input',()=>{ l.querySelector('input[type=radio]').checked=true; S[key]=i; calc(); });
         }
@@ -767,7 +768,7 @@
       $('singleWrap').hidden=packs;                       // поштучно — только для стикеров
       if(packs) $('single').checked=false;
 
-      const q = qtyOwn ? Math.max(10, +($('qtyOwn')||{}).value||100) : F.qty[S.qty][0];
+      const q = qtyOwn ? Math.min(99999, Math.max(10, +($('qtyOwn')||{}).value||100)) : F.qty[S.qty][0];
       // свой размер: коэффициент линейно от 50 мм (1.0) с шагом как у готовых ступеней
       let area;
       if(packs) area=null;
