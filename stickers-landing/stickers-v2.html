@@ -337,11 +337,13 @@
   .calc__sum{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 12px}
   .calc__unit{font-size:var(--t-small);font-weight:700;color:var(--text-secondary)}
   .calc__unit::before{content:"·";margin-right:9px;color:#c9c0ae}
-  .calc__rows{display:flex;flex-direction:column;gap:8px;margin-top:4px;
-    padding-top:var(--sp-12);border-top:1px solid var(--border)}
-  .calc__row{display:flex;justify-content:space-between;gap:12px;font-size:var(--t-small);
+  /* срок и тираж — два факта в ряд (подпись сверху, значение снизу): линейка не нужна,
+     группы держит расстояние. Прежняя схема «подпись слева / значение справа» читалась как таблица */
+  .calc__rows{display:flex;flex-wrap:wrap;gap:var(--sp-32);margin-top:var(--sp-20)}
+  .calc__row{display:flex;flex-direction:column;gap:3px}
+  .calc__row span{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
     color:var(--text-secondary)}
-  .calc__row b{color:var(--text-primary);font-weight:700}
+  .calc__row b{font-size:var(--t-body);color:var(--text-primary);font-weight:700}
   .calc__cta{margin-top:var(--sp-12);display:inline-flex;align-items:center;justify-content:center;
     background:#FFC100;color:#141212;text-decoration:none;font-weight:800;font-size:16px;
     padding:15px 24px;border-radius:14px}
@@ -354,8 +356,9 @@
   .calc__req{align-self:flex-start;color:#8a6a00;font-size:var(--t-small);font-weight:700;
     text-decoration:underline;text-underline-offset:3px}
   .calc__req:hover{color:#141212}
-  .calc__lead{display:flex;flex-direction:column;gap:var(--sp-12);margin-top:var(--sp-12);
-    padding-top:var(--sp-16);border-top:1px solid var(--border)}
+  /* форму отделяем расстоянием и очень тонкой линией — жёсткая 1px рвала блок */
+  .calc__lead{display:flex;flex-direction:column;gap:var(--sp-12);margin-top:var(--sp-20);
+    padding-top:var(--sp-20);border-top:1px solid rgba(20,18,18,.07)}
   .calc__f{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-secondary)}
   .calc__f input{font:inherit;font-size:15px;color:var(--text-primary);background:var(--surface-card);
     border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px}
@@ -549,7 +552,7 @@
             </div>
           </div>
           <div class="calc__rows">
-            <div class="calc__row"><span>Срок изготовления</span><b id="term">—</b></div>
+            <div class="calc__row"><span>Срок</span><b id="term">—</b></div>
             <div class="calc__row"><span>Тираж</span><b id="qtyOut">—</b></div>
           </div>
           <p class="calc__demo">Точная цена зависит от срока, сложности макета и тиража.
