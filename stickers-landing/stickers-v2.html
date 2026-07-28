@@ -264,12 +264,15 @@
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
   .opt input{position:absolute;opacity:0;width:0;height:0}
   /* картинка в плашке — необязательная: файл calc-icons/<поле>-<индекс>.webp (png в .gitignore!), нет файла — нет иконки */
-  .opt__ico{position:absolute;right:8px;bottom:-14px;width:58px;height:58px;flex:none;
+  .opt__ico{position:absolute;right:10px;bottom:-10px;width:62px;height:62px;flex:none;
     object-fit:contain;object-position:top center;pointer-events:none;
     filter:drop-shadow(0 4px 8px rgba(20,18,18,.35))}
-  .opt span.has-ico{padding-right:70px}
-  .opt span{position:relative;clip-path:inset(-80px 0 0 0);display:inline-flex;align-items:center;padding:10px 15px;border-radius:var(--radius-pill);
-    background:var(--surface-gray);font-size:var(--t-small);font-weight:600;cursor:pointer;
+  .opt span.has-ico{padding-right:78px}
+  /* плашки — крупные скруглённые прямоугольники: срез иконки по низу совпадает с формой */
+  .opt span{position:relative;clip-path:inset(-80px 0 0 0 round 0 0 14px 14px);
+    display:inline-flex;align-items:center;min-height:54px;padding:14px 18px;
+    border-radius:var(--radius-outside);background:var(--surface-gray);
+    font-size:var(--t-body);font-weight:600;cursor:pointer;
     border:1.5px solid transparent;transition:background .15s ease,border-color .15s ease}
   .opt input:checked + span{background:#141212;color:#fff;border-color:#FFC100}
   .opt input:focus-visible + span{outline:3px solid #141212;outline-offset:2px}
