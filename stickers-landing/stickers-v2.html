@@ -319,42 +319,45 @@
   .opt span:hover{background:var(--surface-gray)}
   .opt>input:checked + span:hover{background:#2c2825}
   /* итог */
-  .calc__out{background:#141212;color:#fff;border-radius:var(--radius-outside);padding:var(--sp-24);
-    display:flex;flex-direction:column;gap:var(--sp-12);position:sticky;top:20px}
-  .calc__price{font-family:var(--font-head);font-weight:800;font-size:clamp(34px,4vw,52px);line-height:1}
+  /* итоговая панель: тёплая тёмная (не плоский чёрный), светлый внутренний контур и мягкая тень —
+     чтобы читалась как часть той же системы плашек, а не вставленный блок */
+  /* итог без плашки: лежит прямо на фоне секции, как и остальные шаги */
+  .calc__out{position:sticky;top:20px;display:flex;flex-direction:column;gap:var(--sp-12);
+    color:var(--text-primary)}
+  .calc__price{font-family:var(--font-head);font-weight:800;font-size:clamp(34px,4vw,52px);line-height:1;letter-spacing:-.01em}
   /* цена за штуку — жёлтая наклейка с лёгким поворотом, как стикер */
-  .calc__unit{display:inline-block;margin-top:10px;background:#FFC100;color:#141212;
+  .calc__unit{display:inline-block;align-self:flex-start;margin-top:10px;background:#FFC100;color:#141212;
     font-size:13px;font-weight:800;padding:7px 13px;border-radius:var(--radius-pill);
     transform:rotate(-2.5deg);box-shadow:0 8px 18px -12px rgba(0,0,0,.8)}
   .calc__rows{display:flex;flex-direction:column;gap:8px;margin-top:4px;
-    padding-top:var(--sp-12);border-top:1px solid var(--border-on-dark-2)}
+    padding-top:var(--sp-12);border-top:1px solid var(--border)}
   .calc__row{display:flex;justify-content:space-between;gap:12px;font-size:var(--t-small);
-    color:rgba(255,255,255,.8)}
-  .calc__row b{color:#fff;font-weight:700}
+    color:var(--text-secondary)}
+  .calc__row b{color:var(--text-primary);font-weight:700}
   .calc__cta{margin-top:var(--sp-12);display:inline-flex;align-items:center;justify-content:center;
     background:#FFC100;color:#141212;text-decoration:none;font-weight:800;font-size:16px;
     padding:15px 24px;border-radius:14px}
   .calc__cta:hover{background:#ffcd2e}
-  .calc__cta:focus-visible{outline:3px solid #fff;outline-offset:3px}
+  .calc__cta:focus-visible{outline:3px solid #141212;outline-offset:3px}
   .calc__own{display:flex;align-items:center;gap:10px;margin-top:var(--sp-12);font-size:var(--t-small)}
   .calc__own input{width:120px;font:inherit;padding:9px 12px;border:1px solid var(--border);
     border-radius:var(--radius-md);background:#fff}
   .calc__own input:focus-visible{outline:3px solid #141212;outline-offset:2px}
-  .calc__req{align-self:flex-start;color:#FFC100;font-size:var(--t-small);font-weight:700;
+  .calc__req{align-self:flex-start;color:#8a6a00;font-size:var(--t-small);font-weight:700;
     text-decoration:underline;text-underline-offset:3px}
-  .calc__req:hover{color:#ffd84d}
+  .calc__req:hover{color:#141212}
   .calc__lead{display:flex;flex-direction:column;gap:var(--sp-12);margin-top:var(--sp-12);
-    padding-top:var(--sp-16);border-top:1px solid var(--border-on-dark-2)}
-  .calc__f{display:flex;flex-direction:column;gap:6px;font-size:12px;color:rgba(255,255,255,.72)}
-  .calc__f input{font:inherit;font-size:15px;color:#fff;background:rgba(255,255,255,.08);
-    border:1px solid var(--border-on-dark-2);border-radius:var(--radius-md);padding:12px 14px}
-  .calc__f input::placeholder{color:rgba(255,255,255,.4)}
-  .calc__f input:focus-visible{outline:3px solid #FFC100;outline-offset:2px}
+    padding-top:var(--sp-16);border-top:1px solid var(--border)}
+  .calc__f{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-secondary)}
+  .calc__f input{font:inherit;font-size:15px;color:var(--text-primary);background:var(--surface-card);
+    border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px}
+  .calc__f input::placeholder{color:#a49c8e}
+  .calc__f input:focus-visible{outline:3px solid #141212;outline-offset:2px}
   .calc__ok{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:17px;
-    color:rgba(255,255,255,.72);cursor:pointer}
+    color:var(--text-secondary);cursor:pointer}
   .calc__ok input{margin-top:2px;accent-color:#FFC100;width:16px;height:16px;flex:none}
   .calc__cta{border:0;cursor:pointer}
-  .calc__demo{margin-top:var(--sp-12);font-size:12px;line-height:16px;color:rgba(255,255,255,.6)}
+  .calc__demo{margin-top:var(--sp-12);font-size:12px;line-height:16px;color:var(--text-secondary)}
 </style>
 </head>
 <body>
