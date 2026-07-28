@@ -264,6 +264,10 @@
     font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;letter-spacing:0}
   @media(max-width:860px){.calc__form{grid-template-columns:1fr}}
   .opts{display:flex;flex-wrap:wrap;gap:8px}
+  /* две колонки — для длинных списков с описаниями */
+  .opts--2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .opts--2col .opt span{max-width:none;width:100%;height:100%}
+  @media(max-width:860px){.opts--2col{grid-template-columns:1fr}}
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
   .opt input{position:absolute;opacity:0;width:0;height:0}
   /* картинка в плашке — необязательная: файл calc-icons/<поле>-<индекс>.webp (png в .gitignore!), нет файла — нет иконки */
@@ -277,7 +281,7 @@
   .opt input:checked + span .opt__desc{color:rgba(255,255,255,.7)}
   /* вариант с описанием — крупнее, картинка справа от текста */
   .opt span.opt--card{min-height:82px;padding:16px 20px;align-items:flex-start}
-  .opt span.opt--card:not(.has-ico){min-height:0;padding:14px 18px;max-width:340px}
+  .opt span.opt--card:not(.has-ico){min-height:0;padding:14px 18px}
   .opt span.opt--card.has-ico{padding-right:104px}
   .opt span.opt--card .opt__ico{width:88px;height:88px;right:6px;bottom:-16px}
   /* плашки — крупные скруглённые прямоугольники: срез иконки по низу совпадает с формой */
@@ -477,11 +481,11 @@
         <form class="calc__form" id="calcForm">
           <fieldset class="fs fs--wide">
             <legend>Что печатаем</legend>
-            <div class="opts" id="kind"></div>
+            <div class="opts opts--2col" id="kind"></div>
           </fieldset>
-          <fieldset class="fs">
+          <fieldset class="fs fs--wide">
             <legend>Материал</legend>
-            <div class="opts" id="mat"></div>
+            <div class="opts opts--2col" id="mat"></div>
           </fieldset>
           <fieldset class="fs">
             <legend id="sizeLeg">Размер по длинной стороне</legend>
