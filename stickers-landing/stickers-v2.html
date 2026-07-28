@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>3D Стикеры — MDMprint (v2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400..600&family=Instrument+Serif:ital@1&family=Playfair+Display:ital,wght@1,500..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/css/fonts.css?v=20260720a">
+<link rel="stylesheet" href="../assets/css/tokens.css?v=20260722b">
+<style>
+  /* ═══ Лендинг 3D-стикеров v2 — собираем по порядку, секция за секцией ═══ */
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{ --v-ink:#141212; --v-pad:24px; --v-max:1200px; }
+  body{font-family:var(--font-body);background:#fff;color:var(--v-ink);
+    -webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+
+  /* ── ШАПКА: плоская, минимальная (реф рефдес1): лого+меню слева, пилюля справа ── */
+  .hd{position:fixed;top:0;left:0;right:0;z-index:50;padding:22px clamp(24px,5vw,64px)}
+  .hd__bar{display:flex;align-items:center;gap:clamp(20px,3vw,40px)}
+  .hd__logo{display:flex;align-items:center;gap:11px;text-decoration:none}
+  .hd__logo img{height:24px;display:block}
+  .hd__logo .x{color:#cbc4b4;font-size:20px;line-height:1}
+  .hd__logo .sub{font-family:var(--font-head);font-weight:700;font-size:24px;line-height:1;
+    letter-spacing:.02em;text-transform:uppercase;color:var(--v-ink)}
+  .hd__nav{display:flex;gap:clamp(18px,2vw,30px);margin-right:auto}
+  .hd__nav a{position:relative;color:#5b554a;text-decoration:none;font-size:15px;font-weight:600;
+    transition:color .15s;padding:4px 0}
+  .hd__nav a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:2px;
+    background:#FFC100;border-radius:2px;transition:right .22s ease}
+  .hd__nav a:hover{color:var(--v-ink)}
+  .hd__nav a:hover::after{right:0}
+  /* правая пилюля (как «Schedule» в рефе) — белая, телефон */
+  .hd__phone{display:inline-flex;align-items:center;gap:8px;background:#fff;border-radius:999px;
+    padding:11px 18px;box-shadow:0 6px 16px -8px rgba(30,25,10,.35),inset 0 0 0 1px rgba(20,18,18,.1);
+    color:var(--v-ink);font-weight:800;font-size:15px;text-decoration:none;white-space:nowrap;
+    transition:transform .15s ease,box-shadow .15s ease}
+  .hd__phone svg{width:15px;height:15px;color:#c79600}
+  .hd__phone:hover{transform:translateY(-1px);box-shadow:0 10px 22px -10px rgba(30,25,10,.45),inset 0 0 0 1px rgba(20,18,18,.14)}
+  @media(max-width:900px){.hd__nav{display:none}}
+
+  /* ── 1. ГЕРОЙ: асимметрия — текст+кнопки слева, карточка-стикеры справа до края ── */
+  .hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:clamp(20px,3.5vh,40px);min-height:100vh;text-align:center;overflow:hidden;
+    background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,0) 13%),
+      url("hero-bg.jpg") center/cover no-repeat, #FBFAF5;
+    padding:120px clamp(24px,5vw,56px) 64px}
+  .hero__text{flex:none;max-width:640px;display:flex;flex-direction:column;align-items:center}
+  /* eyebrow: моно-надстрочник в мягкой пилюле с жёлтой точкой */
+  .hero__eyebrow{display:inline-flex;align-items:center;gap:9px;align-self:center;
+    font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.14em;
+    text-transform:uppercase;color:#7a6a3a;background:rgba(255,255,255,.7);
+    border:1px solid rgba(20,18,18,.07);border-radius:999px;padding:7px 15px 7px 12px;margin-bottom:22px}
+  .hero__eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:#FFC100;
+    box-shadow:0 0 0 3px rgba(255,193,0,.25)}
+  .hero h1{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(42px,5.6vw,92px);line-height:.96;letter-spacing:-.015em;color:var(--v-ink);max-width:none;margin-inline:auto}
+  /* акцентное слово — ПОКА обычный фирменный (serif-курсив вернём позже; шрифты в <head> уже загружены) */
+  .hero h1 .hl{font-style:normal}
+  .hero__sub{font-size:clamp(16px,1.5vw,20px);line-height:1.55;color:#5b554a;max-width:44ch;margin:22px auto 0}
+  .hero__cta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:30px}
+  /* кнопки — простые тихие (акцент на стикерах) */
+  .btn{display:inline-flex;align-items:center;gap:9px;font:inherit;font-weight:800;font-size:16px;
+    padding:15px 30px;border-radius:14px;text-decoration:none;cursor:pointer;border:0;
+    letter-spacing:-.01em;transition:background .15s ease}
+  .btn--primary{background:#141212;color:#fff}
+  .btn--primary:hover{background:#2c2825}
+  .btn--primary:active{background:#000}
+  .btn--ghost{background:transparent;color:#141212;box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.2)}
+  .btn--ghost:hover{background:rgba(20,18,18,.05)}
+  .btn--ghost:active{background:rgba(20,18,18,.1)}
+  .btn:focus-visible{outline:3px solid #141212;outline-offset:3px}
+  /* центрированная карточка = 3D-лист (зум ×2 — вдвое мельче) */
+  .hero__card{flex:none;aspect-ratio:297/420;height:min(46vh,440px);
+    position:relative;display:flex;align-items:center;justify-content:center}
+  /* тёплый ореол за листом — мягкое присутствие */
+  .hero__card::before{content:"";position:absolute;inset:8% 4%;z-index:0;
+    background:radial-gradient(50% 46% at 50% 50%,rgba(255,247,224,.9),rgba(255,238,198,.35) 46%,transparent 72%);
+    filter:blur(10px)}
+  /* скролл-подсказка внизу 100vh-героя */
+  .hero__scroll{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:2;
+    display:flex;flex-direction:column;align-items:center;gap:6px;
+    font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:#a89f8c}
+  .hero__scroll svg{width:15px;height:15px;animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+  @media(prefers-reduced-motion:reduce){.hero__scroll svg{animation:none}}
+  /* мелкие плоские стикеры-акценты по углам карточки */
+  .ds{position:absolute;z-index:1;display:grid;place-items:center;border:4px solid #fff;border-radius:16px;
+    box-shadow:0 12px 24px -10px rgba(0,0,0,.4)}
+  .ds::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:linear-gradient(158deg,rgba(255,255,255,.55) 4%,transparent 34%);
+    box-shadow:inset 0 -10px 18px rgba(0,0,0,.14)}
+  .ds svg{width:46%;height:46%;position:relative;z-index:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.18))}
+  .ds--c{border-radius:50%}
+  .ds--y{background:#FFC100} .ds--y svg{color:#141212}
+  .ds--k{background:#141212} .ds--k svg{color:#FFC100}
+  .ds--w{background:#fff}    .ds--w svg{color:#141212}
+  /* кластер плоских стикеров вокруг центрального 3D (превью чёрно-жёлтого пака) */
+  .c1{width:78px;height:78px;left:12%;top:15%;transform:rotate(-14deg)}
+  .c2{width:56px;height:56px;left:63%;top:11%;transform:rotate(11deg)}
+  .c3{width:52px;height:52px;left:9%;top:44%;transform:rotate(-7deg)}
+  .c4{width:64px;height:64px;left:71%;top:50%;transform:rotate(9deg)}
+  .c5{width:58px;height:58px;left:21%;top:75%;transform:rotate(-11deg)}
+  .c6{width:70px;height:70px;left:59%;top:80%;transform:rotate(13deg)}
+  /* 3D-стикер: СТАТИЧЕН по умолчанию, парит+следит за курсором при ховере карточки */
+  /* канвас шире карточки — запас, чтобы лист не обрезался при наклоне */
+  .hero__stage{position:absolute;inset:-22%;z-index:2}
+  .hero__model{width:100%;height:100%;--poster-color:transparent}
+  /* плоские чипы скрыты — их заменил реальный 3D-лист glossy-paper.glb */
+  .c1,.c2,.c3,.c4,.c5,.c6{display:none}
+  .hero__card:hover .hero__stage{animation:floaty 5s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  @media(prefers-reduced-motion:reduce){.hero__stage{animation:none!important}}
+  .hero__hint{position:absolute;left:0;right:0;bottom:16px;text-align:center;z-index:3;
+    font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:rgba(20,30,45,.55);opacity:0;transition:opacity .25s}
+  .hero__card:hover .hero__hint{opacity:1}
+  .hero__mfoot{display:none}
+  .hero__scatter{display:none}
+  .hero__mmodel{display:none}
+  @media(max-width:860px){
+    /* мобилка: фон 100vh + заголовок сверху + россыпь 3D + кнопка снизу; десктоп-контент скрыт */
+    .hd,.hero__text,.hero__card,.hero__scroll{display:none}
+    /* поток сверху вниз: шапка героя → модель на остаток экрана (пересечься не могут) */
+    .hero{min-height:100vh;justify-content:flex-start;gap:0;
+      padding:calc(env(safe-area-inset-top,0px) + 72px) 20px 0}
+    /* россыпь 3D временно СКРЫТА (нужна объёмная модель — россыпь1.glb плоский) */
+    .hero__scatter{display:none}
+    .hero__mfoot{display:contents}
+    /* шапка героя: заголовок + подзаголовок — сверху по центру */
+    .hero__mhead{flex:none;width:100%;text-align:center}
+    /* низ героя уходит в белый — ПОВЕРХ модели (в фоне градиент был бы под канвасом) */
+    .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:16%;z-index:6;
+      pointer-events:none;background:linear-gradient(0deg,#fff 0%,rgba(255,255,255,0) 100%)}
+    .hero__mtitle{margin:0;
+      font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+      font-size:clamp(37px,10.8vw,55px);line-height:.98;letter-spacing:-.015em;color:#141212}
+    .hero__mtitle .hl{font-style:normal}
+    .hero__msub{margin:16px 0 0;font-size:16px;line-height:1.4;color:#5b554a}
+    .hero__mbtn{display:inline-flex;align-items:center;justify-content:center;margin-top:16px;
+      background:#141212;color:#fff;text-decoration:none;border-radius:16px;
+      padding:15px 30px;font-weight:600;font-size:15.5px;letter-spacing:-.01em}
+    .hero__mbtn:active{background:#000}
+    /* 3D-стикерпак — занимает весь остаток героя ПОД кнопкой (min-height:0 — чтобы flex мог сжать).
+       full-bleed: канвас на всю ширину экрана, минусовые поля гасят padding героя —
+       иначе лист упирается в края контейнера и режется при доклоне. */
+    .hero__mmodel{display:block;align-self:stretch;width:auto;flex:1 1 auto;min-height:0;height:auto;
+      margin:20px -20px 0;--poster-color:transparent}
+  }
+
+  /* ── ПЛОЩАДКА СЦЕН: 3–5 моделей, раскладка + ховер-эффекты ── */
+  .scenes{padding-block:clamp(48px,7vw,96px)}
+  .scenes__head{text-align:center;margin-bottom:clamp(28px,4vw,52px)}
+  .scenes__eyebrow{font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.16em;
+    text-transform:uppercase;color:#9a6f00}
+  .scenes__h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(28px,3.6vw,46px);line-height:1;letter-spacing:-.005em;margin-top:12px}
+  /* ряд стикеров: центрирован, лёгкий «стаггер» по вертикали — как выложенная коллекция */
+  .scenes__row{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;
+    gap:clamp(6px,1.5vw,20px)}
+  .scene{width:clamp(150px,15vw,210px);cursor:pointer;
+    transition:transform .32s cubic-bezier(.34,1.56,.64,1)}
+  .scene:nth-child(even){transform:translateY(-18px)}
+  .scene:hover{transform:translateY(-26px) scale(1.07);z-index:3}
+  .scene:nth-child(even):hover{transform:translateY(-40px) scale(1.07)}
+  .scene model-viewer{width:100%;height:clamp(150px,15vw,210px);--poster-color:transparent}
+  @media(max-width:900px){.scene{width:clamp(130px,40vw,180px)}
+    .scene model-viewer{height:clamp(130px,40vw,180px)}}
+</style>
+</head>
+<body>
+
+  <!-- ШАПКА: лого · важные блоки · контакты (плавающее стекло) -->
+  <header class="hd">
+   <div class="hd__bar">
+    <a class="hd__logo" href="#" aria-label="MDMprint · 3D Стикеры">
+      <img src="../assets/mdmprint-logo.svg" alt="MDMprint" width="77" height="26">
+      <span class="x">×</span>
+      <span class="sub">3D&nbsp;Стикеры</span>
+    </a>
+    <nav class="hd__nav">
+      <a href="#vidy">Стикеры</a>
+      <a href="#portfolio">Портфолио</a>
+      <a href="#b2b">Бизнесу</a>
+      <a href="#reviews">Отзывы</a>
+    </nav>
+    <a class="hd__phone" href="tel:+74952561000">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>
+      +7 (495) 256-10-00
+    </a>
+   </div>
+  </header>
+
+  <!-- 1. ГЕРОЙ -->
+  <section class="hero">
+    <!-- ЛЕВО: заголовок + кнопки -->
+    <div class="hero__text">
+      <span class="hero__eyebrow">MDMprint · 3D-стикеры со смолой</span>
+      <h1>Третье <span class="hl">измерение</span><br>вашего бренда</h1>
+      <p class="hero__sub">Заметная реклама для мерча, упаковки и брендинга —
+        объёмная, глянцевая, которую хочется потрогать.</p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="#">Рассчитать стоимость</a>
+        <a class="btn btn--ghost" href="#">Заказать образец</a>
+      </div>
+    </div>
+    <!-- ЦЕНТР: 3D-лист под текстом (зум ×2). Статичен, оживает при наведении. -->
+    <div class="hero__card">
+      <div class="hero__stage">
+        <model-viewer class="hero__model"
+          src="glossy-paper.glb"
+          alt="Лист со стикерами со смолой"
+          interaction-prompt="none" disable-tap disable-pan disable-zoom
+          environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"
+          exposure="0.8" shadow-intensity="0" tone-mapping="neutral"
+          camera-orbit="0deg 0deg 164%" min-camera-orbit="auto 0deg auto" camera-target="auto auto auto"></model-viewer>
+      </div>
+      <span class="hero__hint">Наведите — покрутите</span>
+    </div>
+    <div class="hero__mfoot">
+      <div class="hero__mhead">
+        <h2 class="hero__mtitle">Третье <span class="hl">измерение</span><br>вашего бренда</h2>
+        <p class="hero__msub">Заметная реклама для мерча, упаковки и брендинга — объёмная, глянцевая, которую хочется потрогать.</p>
+        <a class="hero__mbtn" href="#">Рассчитать стоимость</a>
+      </div>
+    </div>
+    <!-- МОБИЛКА: 3D-стикерпак в нижней части героя -->
+    <model-viewer class="hero__mmodel" src="glossy-paper.glb" alt="Стикерпак 3D" loading="eager" reveal="auto" disable-tap disable-pan disable-zoom interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" shadow-intensity="0" field-of-view="45deg" camera-orbit="0deg 20deg 116%" max-camera-orbit="auto auto 300%"></model-viewer>
+    <!-- МОБИЛКА: россыпь 3D-стикеров (реф5), 5 копий россыпь1.glb -->
+    <div class="hero__scatter" aria-hidden="true">
+      <model-viewer class="ms ms1" src="россыпь1.glb" alt="" loading="eager" reveal="auto" camera-controls disable-pan disable-zoom auto-rotate auto-rotate-delay="0" rotation-per-second="22deg" interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" field-of-view="52deg" shadow-intensity="0" camera-orbit="-15deg 12deg 78%"></model-viewer>
+      <model-viewer class="ms ms2" src="россыпь1.glb" alt="" loading="eager" reveal="auto" camera-controls disable-pan disable-zoom auto-rotate auto-rotate-delay="0" rotation-per-second="22deg" interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" field-of-view="52deg" shadow-intensity="0" camera-orbit="20deg 20deg 78%"></model-viewer>
+      <model-viewer class="ms ms3" src="россыпь1.glb" alt="" loading="eager" reveal="auto" camera-controls disable-pan disable-zoom auto-rotate auto-rotate-delay="0" rotation-per-second="22deg" interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" field-of-view="52deg" shadow-intensity="0" camera-orbit="-8deg 5deg 78%"></model-viewer>
+      <model-viewer class="ms ms4" src="россыпь1.glb" alt="" loading="lazy" reveal="auto" camera-controls disable-pan disable-zoom auto-rotate auto-rotate-delay="0" rotation-per-second="22deg" interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" field-of-view="52deg" shadow-intensity="0" camera-orbit="12deg 28deg 78%"></model-viewer>
+      <model-viewer class="ms ms5" src="россыпь1.glb" alt="" loading="lazy" reveal="auto" camera-controls disable-pan disable-zoom auto-rotate auto-rotate-delay="0" rotation-per-second="22deg" interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" field-of-view="52deg" shadow-intensity="0" camera-orbit="-20deg 15deg 78%"></model-viewer>
+    </div>
+    <div class="hero__scroll" aria-hidden="true">Листайте
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+    </div>
+  </section>
+
+  <!-- ПЛОЩАДКА СЦЕН: 5 слотов под 3D-модели. Пока во всех один GLB — заменишь src у каждой. -->
+  <section class="scenes">
+    <div class="wrap">
+      <div class="scenes__head">
+        <span class="scenes__eyebrow">Формы и покрытия</span>
+        <h2 class="scenes__h2">Любая форма под ваш бренд</h2>
+      </div>
+      <div class="scenes__row">
+        <div class="scene"><model-viewer src="sticker-glow.glb" alt="Стикер" loading="lazy" reveal="auto" interaction-prompt="none" disable-tap disable-pan disable-zoom environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.15" shadow-intensity="0" camera-orbit="0deg 32deg 130%" min-camera-orbit="auto 0deg auto" data-follow></model-viewer></div>
+        <div class="scene"><model-viewer src="sticker-2.glb" alt="Стикер" loading="lazy" reveal="auto" interaction-prompt="none" disable-tap disable-pan disable-zoom environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.15" shadow-intensity="0" camera-orbit="0deg 32deg 130%" min-camera-orbit="auto 0deg auto" data-follow></model-viewer></div>
+        <div class="scene"><model-viewer src="sticker-3.glb" alt="Стикер" loading="lazy" reveal="auto" interaction-prompt="none" disable-tap disable-pan disable-zoom environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.15" shadow-intensity="0" camera-orbit="0deg 32deg 130%" min-camera-orbit="auto 0deg auto" data-follow></model-viewer></div>
+        <div class="scene"><model-viewer src="sticker-4.glb" alt="Стикер" loading="lazy" reveal="auto" interaction-prompt="none" disable-tap disable-pan disable-zoom environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.15" shadow-intensity="0" camera-orbit="0deg 32deg 130%" min-camera-orbit="auto 0deg auto" data-follow></model-viewer></div>
+        <div class="scene"><model-viewer src="sticker-5.glb" alt="Стикер" loading="lazy" reveal="auto" interaction-prompt="none" disable-tap disable-pan disable-zoom environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.15" shadow-intensity="0" camera-orbit="0deg 32deg 130%" min-camera-orbit="auto 0deg auto" data-follow></model-viewer></div>
+      </div>
+    </div>
+  </section>
+
+<!-- Рантайм model-viewer (модульный скрипт = defer, первый экран не блокирует).
+     В бою запинить конкретную версию. -->
+<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<script>
+  /* Слежение за курсором: лёгкий наклон 3D-стикера к мыши. Работает и на герое, и на 5 сценах.
+     Радиус 130% (зум ≈80%). На тач/reduced-motion — статичное лицо. */
+  (function(){
+    const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+    const rm   = matchMedia('(prefers-reduced-motion:reduce)').matches;
+    if(!fine || rm) return;
+    const R = '130%';
+    // каждая модель следит в пределах СВОЕГО контейнера (герой — .hero__stage, сцена — .scene)
+    function bind(mv, box, o){
+      o = o || {};
+      const rest = o.rest || '0deg 32deg '+R;            // состояние покоя
+      const rad  = o.rad  || R;                          // зум (радиус)
+      const tA   = o.tA ?? 54;                           // амплитуда theta (лево-право)
+      const pB   = o.pB ?? 32;                           // базовый phi (наклон)
+      const pA   = o.pA ?? 26;                           // амплитуда phi
+      box.addEventListener('pointermove', e=>{
+        const r = box.getBoundingClientRect();
+        const px = (e.clientX - r.left)/r.width - .5;
+        const py = (e.clientY - r.top)/r.height - .5;
+        const theta = (px * tA).toFixed(1);
+        const phi   = Math.max(0, pB + py*pA).toFixed(1);
+        mv.setAttribute('camera-orbit', theta+'deg '+phi+'deg '+rad);
+      });
+      box.addEventListener('pointerleave', ()=> mv.setAttribute('camera-orbit', rest));
+    }
+    const hero = document.querySelector('.hero__model');
+    const heroStage = document.querySelector('.hero__stage');
+    // герой: в покое РОВНО лицом к нам; наклон «живой», как у сцен (theta ±27°, phi 6..58°)
+    if(hero && heroStage) bind(hero, heroStage, {rest:'0deg 0deg 164%', rad:'164%'});
+    document.querySelectorAll('.scene model-viewer[data-follow]').forEach(mv=> bind(mv, mv.closest('.scene')));
+  })();
+
+  /* МОБИЛКА: при скролле лист доклоняется по ТОЙ ЖЕ оси (phi) — 20° в покое → 62° к концу героя.
+     Ось та же, что и у стартового наклона: верх уходит вглубь, низ придвигается. */
+  (function(){
+    const mv   = document.querySelector('.hero__mmodel');
+    const hero = document.querySelector('.hero');
+    if(!mv || !hero) return;
+    const mob = matchMedia('(max-width:860px)');
+    const rm  = matchMedia('(prefers-reduced-motion:reduce)');
+    const P0 = 20, P1 = 62;                          // наклон (phi): покой → конец прокрутки
+    const R0 = 116, R1 = 160;                        // отъезд камеры: чем сильнее наклон, тем
+    const SPAN = .4;                                 // шире проекция листа — иначе не влезает
+    const GP = 10, GT = 14;                          // SPAN — доля высоты героя на весь диапазон
+    let raf = 0;                                     // GP/GT — амплитуда гироскопа (град.)
+    const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+    const set = (th,p,r) => mv.setAttribute('camera-orbit',
+      th.toFixed(1)+'deg '+p.toFixed(1)+'deg '+r.toFixed(1)+'%');
+
+    /* гироскоп: цель с датчика (tT/tP) и текущее сглаженное значение (gT/gP) */
+    let tT = 0, tP = 0, gT = 0, gP = 0, base = null, live = false;
+
+    function apply(){
+      raf = 0;
+      const t = clamp(scrollY / (hero.offsetHeight * SPAN), 0, 1);
+      gT += (tT - gT) * .12;                         // инерция, чтобы не дёргалось от дрожи руки
+      gP += (tP - gP) * .12;
+      set(gT, clamp(P0 + (P1-P0)*t + gP, 2, 86), R0 + (R1-R0)*t);
+      if(live && (Math.abs(tT-gT) > .05 || Math.abs(tP-gP) > .05)) raf = requestAnimationFrame(apply);
+    }
+    function nudge(){ if(!raf) raf = requestAnimationFrame(apply); }
+
+    /* наклон телефона: от себя — лист ложится (та же ось, что и скролл), крен — доворот вбок.
+       Первый отсчёт = ноль, поэтому исходная поза телефона не важна. */
+    function onOrient(e){
+      if(e.beta == null && e.gamma == null) return;
+      if(!base) base = {b:e.beta || 0, g:e.gamma || 0};
+      live = true;
+      tP = clamp(-((e.beta  || 0) - base.b) * .6, -GP, GP);
+      tT = clamp( ((e.gamma || 0) - base.g) * .6, -GT, GT);
+      nudge();
+    }
+    /* iOS отдаёт датчик только после жеста + системного разрешения; Android — сразу.
+       Отказ пользователя не ломает ничего: остаётся наклон по скроллу. */
+    let armed = false;
+    function armGyro(){
+      if(armed) return; armed = true;
+      const ios = typeof DeviceOrientationEvent !== 'undefined'
+        && typeof DeviceOrientationEvent.requestPermission === 'function';
+      if(ios) addEventListener('touchend', () => DeviceOrientationEvent.requestPermission()
+        .then(s => { if(s === 'granted') addEventListener('deviceorientation', onOrient, {passive:true}); })
+        .catch(()=>{}), {once:true});
+      else addEventListener('deviceorientation', onOrient, {passive:true});
+    }
+
+    function onScroll(){ nudge(); }
+    function sync(){
+      removeEventListener('scroll', onScroll);
+      if(mob.matches && !rm.matches){
+        addEventListener('scroll', onScroll, {passive:true});
+        armGyro(); apply();
+      } else { live = false; tT = tP = gT = gP = 0; set(0, P0, R0); }
+    }
+    mob.addEventListener('change', sync);
+    rm.addEventListener('change', sync);
+    sync();
+  })();
+
+</script>
+</body>
+</html>
