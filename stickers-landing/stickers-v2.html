@@ -216,8 +216,9 @@
      радиус снизу = радиус карточки минус её граница */
   .fcard__art{position:relative;margin:auto calc(var(--sp-16) * -1) calc(var(--sp-16) * -1);
     border-radius:0 0 14px 14px;overflow:hidden;aspect-ratio:4/3;background:none}
-  /* cover + приближение: плитка намеренно уходит под края кадра карточки */
-  .fcard__art img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.13)}
+  /* разметка как в пульте: живая модель кадрируется сама под кадр карточки, постер — заглушка */
+  .fcard__art model-viewer{width:100%;height:100%;display:block;transform:scale(1.22);
+    --poster-color:transparent;cursor:grab}
   /* первая карточка тёмная — акцент блока (по ДС тёмная поверхность одна на страницу) */
   .fcard--glow{background:#141212}
   .fcard--glow h3{color:#fff}
@@ -310,35 +311,60 @@
         <h3>Светится в темноте</h3>
         <p>Неон под смолой: виден без света. Для гейминга, техники и ночного мерча.</p>
         <div class="fcard__art">
-          <img src="posters/form-glow.webp" width="1200" height="900" alt="Круглый светящийся стикер с надписью «работает не трогай»" loading="lazy" decoding="async">
+          <model-viewer src="models/m1.glb" poster="posters/form-glow.webp" alt="Круглый светящийся стикер с надписью «работает не трогай»"
+            camera-orbit="-30deg 48deg 60%" field-of-view="60deg"
+            min-camera-orbit="auto auto 30%" max-camera-orbit="auto auto 900%"
+            camera-controls disable-pan disable-zoom touch-action="pan-y"
+            interaction-prompt="none" exposure="1.0" shadow-intensity="0" loading="lazy" reveal="auto"
+            environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"></model-viewer>
         </div>
       </article>
       <article class="fcard fcard--pill">
         <h3>Название целиком</h3>
         <p>Вытянутая форма под логотип со слоганом — ложится на бутылку и корпус.</p>
         <div class="fcard__art">
-          <img src="posters/form-pill.webp" width="1200" height="900" alt="Стикер-пилюля с логотипом SALT" loading="lazy" decoding="async">
+          <model-viewer src="models/m2.glb" poster="posters/form-pill.webp" alt="Стикер-пилюля с логотипом SALT"
+            camera-orbit="-30deg 48deg 60%" field-of-view="60deg"
+            min-camera-orbit="auto auto 30%" max-camera-orbit="auto auto 900%"
+            camera-controls disable-pan disable-zoom touch-action="pan-y"
+            interaction-prompt="none" exposure="1.0" shadow-intensity="0" loading="lazy" reveal="auto"
+            environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"></model-viewer>
         </div>
       </article>
       <article class="fcard fcard--diecut">
         <h3>Высечка по рисунку</h3>
         <p>Режем точно по силуэту: форма повторяет надпись или иллюстрацию.</p>
         <div class="fcard__art">
-          <img src="posters/form-diecut.webp" width="1200" height="900" alt="Фигурный стикер с надписью mellow, вырезанный по контуру" loading="lazy" decoding="async">
+          <model-viewer src="models/m3.glb" poster="posters/form-diecut.webp" alt="Фигурный стикер с надписью mellow, вырезанный по контуру"
+            camera-orbit="-30deg 48deg 60%" field-of-view="60deg"
+            min-camera-orbit="auto auto 30%" max-camera-orbit="auto auto 900%"
+            camera-controls disable-pan disable-zoom touch-action="pan-y"
+            interaction-prompt="none" exposure="1.0" shadow-intensity="0" loading="lazy" reveal="auto"
+            environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"></model-viewer>
         </div>
       </article>
       <article class="fcard fcard--rect">
         <h3>Сцена и детали</h3>
         <p>Со скруглением — место для полной иллюстрации, подписи и мелочей.</p>
         <div class="fcard__art">
-          <img src="posters/form-rect.webp" width="1200" height="900" alt="Прямоугольный стикер с иллюстрацией Санкт-Петербурга" loading="lazy" decoding="async">
+          <model-viewer src="models/m4.glb" poster="posters/form-rect.webp" alt="Прямоугольный стикер с иллюстрацией Санкт-Петербурга"
+            camera-orbit="-30deg 48deg 60%" field-of-view="60deg"
+            min-camera-orbit="auto auto 30%" max-camera-orbit="auto auto 900%"
+            camera-controls disable-pan disable-zoom touch-action="pan-y"
+            interaction-prompt="none" exposure="1.0" shadow-intensity="0" loading="lazy" reveal="auto"
+            environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"></model-viewer>
         </div>
       </article>
       <article class="fcard fcard--round">
         <h3>Мерч для бизнеса</h3>
         <p>Логотип в круге: раздатка на мероприятиях, упаковка, подарки клиентам.</p>
         <div class="fcard__art">
-          <img src="posters/form-round.webp" width="1200" height="900" alt="Круглый стикер с логотипом NORDA" loading="lazy" decoding="async">
+          <model-viewer src="models/m5.glb" poster="posters/form-round.webp" alt="Круглый стикер с логотипом NORDA"
+            camera-orbit="-30deg 48deg 60%" field-of-view="60deg"
+            min-camera-orbit="auto auto 30%" max-camera-orbit="auto auto 900%"
+            camera-controls disable-pan disable-zoom touch-action="pan-y"
+            interaction-prompt="none" exposure="1.0" shadow-intensity="0" loading="lazy" reveal="auto"
+            environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"></model-viewer>
         </div>
       </article>
     </div>
