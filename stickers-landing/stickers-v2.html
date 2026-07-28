@@ -418,18 +418,22 @@
       <div class="calc__grid">
         <form class="calc__form" id="calcForm">
           <fieldset class="fs">
-            <legend>Тираж, шт</legend>
+            <legend>Что печатаем</legend>
+            <div class="opts" id="kind"></div>
+          </fieldset>
+          <fieldset class="fs">
+            <legend id="qtyLeg">Тираж, шт</legend>
             <div class="opts" id="qty"></div>
           </fieldset>
           <fieldset class="fs">
-            <legend>Размер по длинной стороне</legend>
+            <legend id="sizeLeg">Размер по длинной стороне</legend>
             <div class="opts" id="size"></div>
           </fieldset>
           <fieldset class="fs">
             <legend>Покрытие</legend>
             <div class="opts" id="coat"></div>
           </fieldset>
-          <fieldset class="fs">
+          <fieldset class="fs" id="shapeFs">
             <legend>Форма</legend>
             <div class="opts" id="shape"></div>
           </fieldset>
@@ -601,33 +605,49 @@
   /* Калькулятор: тираж + размер + покрытие + форма → цена. Коэффициенты ДЕМО (ждём прайс). */
   (function(){
     const F={
+      kind: [['Стикеры',1],['Стикерпаки',3.4]],                      // пак = лист с набором
       qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14]],          // тираж → база за штуку, ₽
       size: [['до 50 мм',1],['до 80 мм',1.35],['до 120 мм',1.75]],
+      sheet:[['А6',1],['А5',1.5],['А4',2.2]],                        // формат листа для паков
       coat: [['Плёнка',1],['Эпоксидная смола',1.35],['Голография',1.5],['Светится в темноте',1.6]],
       shape:[['Круг',1],['Прямоугольник',1],['Пилюля',1.05],['Фигурная высечка',1.15]],
       pack: [['Без упаковки',1],['Поштучно',1.08],['Индивидуальная упаковка',1.18]],
     };
-    const S={qty:2,size:0,coat:1,shape:0,pack:0};
+    const S={kind:0,qty:2,size:0,sheet:0,coat:1,shape:0,pack:0};
     const rub=n=>n.toLocaleString('ru-RU')+' \u20BD';
     function build(key,labels){
       const box=document.getElementById(key);
       labels.forEach((it,i)=>{
         const label=document.createElement('label'); label.className='opt';
-        const val=key==='qty'?it[0]+' шт':it[0];
+        const val=key==='qty'?String(it[0]):it[0];   // единицы — в подписи поля, не в каждой плашке
         label.innerHTML=`<input type="radio" name="${key}" value="${i}"${i===S[key]?' checked':''}><span>${val}</span>`;
         label.querySelector('input').addEventListener('change',()=>{S[key]=i;calc();});
         box.appendChild(label);
       });
     }
     function calc(){
+      const packs = S.kind===1;
+      document.getElementById('qtyLeg').textContent  = packs ? 'Тираж, паков' : 'Тираж, штук';
+      document.getElementById('sizeLeg').textContent = packs ? 'Формат листа' : 'Размер по длинной стороне';
+      document.getElementById('shapeFs').hidden = packs;         // у пака форм несколько — параметр не нужен
+      rebuild('size', packs ? F.sheet : F.size);
       const [q,base]=F.qty[S.qty];
-      const unit=base*F.size[S.size][1]*F.coat[S.coat][1]*F.shape[S.shape][1]*F.pack[S.pack][1];
+      const dim=(packs?F.sheet:F.size)[S.size][1];
+      let unit=base*F.kind[S.kind][1]*dim*F.coat[S.coat][1]*F.pack[S.pack][1];
+      if(!packs) unit*=F.shape[S.shape][1];
       document.getElementById('total').textContent=rub(Math.round(unit*q));
-      document.getElementById('unit').textContent=rub(Math.round(unit))+' за штуку';
+      document.getElementById('unit').textContent=rub(Math.round(unit))+(packs?' за пак':' за штуку');
       document.getElementById('term').textContent=q<=500?'до 3 дней':'до 7 дней';
-      document.getElementById('qtyOut').textContent=q+' шт';
+      document.getElementById('qtyOut').textContent=q+(packs?' паков':' шт');
     }
-    build('qty',F.qty); build('size',F.size); build('coat',F.coat); build('shape',F.shape); build('pack',F.pack);
+    function rebuild(key,labels){
+      const box=document.getElementById(key);
+      if(box.dataset.set===String(labels.length)+labels[0][0]) return;
+      box.dataset.set=String(labels.length)+labels[0][0];
+      box.innerHTML=''; if(S[key]>=labels.length) S[key]=0;
+      build(key,labels);
+    }
+    build('kind',F.kind); build('qty',F.qty); build('size',F.size); build('coat',F.coat); build('shape',F.shape); build('pack',F.pack);
     calc();
   })();
 </script>
