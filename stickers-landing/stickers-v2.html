@@ -61,9 +61,8 @@
     font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.14em;
     text-transform:uppercase;color:#7a6a3a;background:rgba(255,255,255,.7);
     border:1px solid rgba(20,18,18,.07);border-radius:999px;padding:7px 15px;margin-bottom:22px}
-  /* аутлайн, тёмное золото: чистый #FFC100 на белой плашке даёт ~1,9:1 и не виден */
-  .hero__eyebrow svg{width:15px;height:15px;flex:none;fill:none;stroke:#c79600;stroke-width:2.4;
-    stroke-linecap:round;clip-path:polygon(0 0,100% 0,100% 56%,56% 100%,0 100%)}
+  /* тёмное золото: чистый #FFC100 на белой плашке даёт ~1,9:1 и не виден */
+  .hero__eyebrow svg{width:15px;height:15px;flex:none;fill:#c79600}
   .hero h1{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
     font-size:clamp(42px,5.6vw,92px);line-height:.96;letter-spacing:-.015em;color:var(--v-ink);max-width:none;margin-inline:auto}
   /* акцентное слово — ПОКА обычный фирменный (serif-курсив вернём позже; шрифты в <head> уже загружены) */
@@ -136,11 +135,11 @@
   .hero__mmodel{display:none}
   /* ПЛАВАЮЩАЯ CTA (мобилка): вместо шапки — единственный путь к заявке, пока герой пролистан.
      Появляется, когда кнопка из героя ушла с экрана (см. IntersectionObserver ниже). */
-  /* Подложка ОБЯЗАТЕЛЬНА: iOS Safari красит свой нижний тулбар цветом страницы у кромки —
-     чёрная кнопка вплотную к низу делала панель чёрной. Светлая полоса даёт Safari белый.
-     На белых секциях полоса не видна, кнопка читается как плавающая. */
-  .fabbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;
-    padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 14px);
+  /* Подложка снята по просьбе Omar (решение по виду тулбара Safari — за ним).
+     ПОБОЧКА, о которой знаем: без светлой полосы у нижней кромки iOS Safari
+     подкрашивает свой тулбар цветом кнопки, т.е. в чёрный. */
+  .fabbar{display:none;position:fixed;left:16px;right:16px;z-index:60;
+    bottom:calc(env(safe-area-inset-bottom,0px) + 14px);
     opacity:0;transform:translateY(130%);transition:opacity .22s ease,transform .22s ease}
   .fabbar--on{opacity:1;transform:translateY(0)}
   .fab{display:flex;align-items:center;justify-content:center;background:#141212;color:#fff;
@@ -226,11 +225,9 @@
     <!-- ЛЕВО: заголовок + кнопки -->
     <div class="hero__text">
       <span class="hero__eyebrow">
-        <!-- знак стикера: контурный круг со срезанным уголком (срез — clip-path, чтобы
-             геометрия была предсказуемой) + линия загиба вдоль среза -->
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="9.6"/>
-          <path d="M21.6 13.8 13.8 21.6"/>
+        <!-- знак стикера (Essentials/sticker.svg, инлайном — цвет из CSS, без лишнего запроса) -->
+        <svg viewBox="0 0 18 18" aria-hidden="true">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M8.28348 1.53378C4.47746 1.89451 1.5 5.09954 1.5 9C1.5 13.1421 4.85786 16.5 9 16.5C12.9005 16.5 16.1055 13.5225 16.4662 9.71652C15.5914 10.2149 14.5787 10.5 13.5 10.5C10.1863 10.5 7.5 7.81371 7.5 4.5C7.5 3.42132 7.78507 2.40861 8.28348 1.53378ZM9.83231 1.89192C9.30787 2.62784 9 3.52753 9 4.5C9 6.98528 11.0147 9 13.5 9C14.4725 9 15.3722 8.69213 16.1081 8.16769L9.83231 1.89192ZM0 9C0 4.02944 4.02944 0 9 0C9.28953 0 9.57607 0.0136959 9.85898 0.0405115L10.1277 0.0659802L17.934 7.87231L17.9595 8.14102C17.9863 8.42393 18 8.71047 18 9C18 13.9706 13.9706 18 9 18C4.02944 18 0 13.9706 0 9Z"/>
         </svg>
         3D-Стикеры от МДМПринт</span>
       <h1>Третье <span class="hl">измерение</span><br>вашего бренда</h1>
