@@ -255,10 +255,13 @@
   .fs{border:0}
   .fs--wide{grid-column:1 / -1}
   /* номер шага — перед подписью поля, одной строкой */
-  .fs legend{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
-    color:var(--text-secondary);margin-bottom:var(--sp-12)}
-  .fs legend::before{counter-increment:step;content:counter(step) ". ";
-    font-family:ui-monospace,Menlo,monospace;color:#c79600}
+  .fs legend{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin-bottom:var(--sp-12)}
+  /* номер шага в мягком сквиркле */
+  .fs legend::before{counter-increment:step;content:counter(step);
+    display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;
+    border-radius:8px;background:rgba(20,18,18,.07);color:#4a4136;flex:none;
+    font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;letter-spacing:0}
   @media(max-width:860px){.calc__form{grid-template-columns:1fr}}
   .opts{display:flex;flex-wrap:wrap;gap:8px}
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
@@ -273,7 +276,8 @@
     color:var(--text-secondary);max-width:20ch}
   .opt input:checked + span .opt__desc{color:rgba(255,255,255,.7)}
   /* вариант с описанием — крупнее, картинка справа от текста */
-  .opt span.opt--card{min-height:82px;padding:16px 20px}
+  .opt span.opt--card{min-height:82px;padding:16px 20px;align-items:flex-start}
+  .opt span.opt--card:not(.has-ico){min-height:0;padding:14px 18px;max-width:340px}
   .opt span.opt--card.has-ico{padding-right:104px}
   .opt span.opt--card .opt__ico{width:88px;height:88px;right:6px;bottom:-16px}
   /* плашки — крупные скруглённые прямоугольники: срез иконки по низу совпадает с формой */
@@ -682,10 +686,14 @@
   (function(){
     const F={
       kind: [['Стикеры',1,'Отдельные наклейки любой формы'],['Стикерпаки',3.4,'Набор наклеек на одном листе']],
-      mat:  [['Белая плёнка',1],['Прозрачная',1.1],['Голографическая',1.45],['Металлик',1.4]],
+      mat:  [['Белая плёнка',1,'База: цвета плотные, рисунок не просвечивает'],
+             ['Прозрачная',1.1,'Фон подложки видно — эффект «наклеено прямо на поверхность»'],
+             ['Голографическая',1.45,'Радужный перелив на свету, заметна издалека'],
+             ['Металлик',1.4,'Серебро или золото с зеркальным блеском']],
       size: [['до 50 мм',1],['до 80 мм',1.35],['до 120 мм',1.75],['Свой',null]],
       sheet:[['А7',1],['А6',1.4],['А5',2.1]],   // у паков свой размер не задаётся
-      resin:[['Эпоксидная',1],['Светящаяся',1.35]],
+      resin:[['Эпоксидная',1,'Прозрачная линза: объём, глянец, защита рисунка'],
+             ['Светящаяся',1.35,'Копит свет и светится в темноте']],
       qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null]],
     };
     const S={kind:0,mat:0,size:0,resin:0,qty:2};
