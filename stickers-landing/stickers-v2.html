@@ -265,7 +265,7 @@
   @media(max-width:860px){.calc__form{grid-template-columns:1fr}}
   .opts{display:flex;flex-wrap:wrap;gap:8px}
   /* две колонки — для длинных списков с описаниями */
-  .opts--2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .opts--2col{display:grid;grid-template-columns:repeat(2,minmax(0,300px));gap:10px;justify-content:start}
   .opts--2col .opt span{max-width:none;width:100%;height:100%}
   @media(max-width:860px){.opts--2col{grid-template-columns:1fr}}
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
