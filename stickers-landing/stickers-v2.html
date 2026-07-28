@@ -264,12 +264,16 @@
     font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;letter-spacing:0}
   @media(max-width:860px){.calc__form{grid-template-columns:1fr}}
   .opts{display:flex;flex-wrap:wrap;gap:8px}
+  /* кнопки по содержимому с переносом — для коротких значений вроде 55×44 */
+  .opts--flow{display:flex;flex-wrap:wrap;gap:10px}
+  .opts--flow .opt span{width:auto}
+  .opts--flow .opt__inp{width:150px;min-height:0}
   /* две колонки — для длинных списков с описаниями */
   .opts--2col{display:grid;grid-template-columns:repeat(2,minmax(0,300px));gap:10px;justify-content:start}
   .opts--2col .opt span{max-width:none;width:100%;height:100%}
   @media(max-width:860px){.opts--2col{grid-template-columns:1fr}}
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
-  .opt input{position:absolute;opacity:0;width:0;height:0}
+  .opt>input[type=radio],.opt>input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}
   /* картинка в плашке — необязательная: файл calc-icons/<поле>-<индекс>.webp (png в .gitignore!), нет файла — нет иконки */
   .opt__ico{position:absolute;right:10px;bottom:-10px;width:62px;height:62px;flex:none;
     object-fit:contain;object-position:top center;pointer-events:none;
@@ -278,7 +282,7 @@
   .opt__txt{display:flex;flex-direction:column;gap:3px;font-weight:600}
   .opt__desc{font-style:normal;font-size:12.5px;line-height:16px;font-weight:400;
     color:var(--text-secondary);max-width:20ch}
-  .opt input:checked + span .opt__desc{color:rgba(255,255,255,.7)}
+  .opt>input:checked + span .opt__desc{color:rgba(255,255,255,.7)}
   /* вариант с описанием — крупнее, картинка справа от текста */
   /* «Свой» — плашка-поле: инпут занимает её целиком, плейсхолдер вместо подписи */
   .opt span.opt--own{padding:0}
@@ -286,8 +290,8 @@
     color:var(--text-primary);background:none;border:0;padding:14px 18px;border-radius:inherit}
   .opt__inp::placeholder{color:var(--text-secondary);font-weight:600}
   .opt__inp:focus{outline:none}
-  .opt input:checked + span .opt__inp{color:#fff}
-  .opt input:checked + span .opt__inp::placeholder{color:rgba(255,255,255,.6)}
+  .opt>input:checked + span .opt__inp{color:#fff}
+  .opt>input:checked + span .opt__inp::placeholder{color:rgba(255,255,255,.6)}
   .opt span.opt--card{min-height:82px;padding:16px 20px;align-items:flex-start}
   .opt span.opt--card:not(.has-ico){min-height:0;padding:14px 18px}
   .opt span.opt--card.has-ico{padding-right:104px}
@@ -302,11 +306,11 @@
   .opt span::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:2;
     pointer-events:none;box-shadow:inset 0 0 0 1px var(--border)}
   .opt__ico{z-index:1}
-  .opt input:checked + span{background:#141212;color:#fff}
-  .opt input:checked + span::after{box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
-  .opt input:focus-visible + span{outline:3px solid #141212;outline-offset:2px}
+  .opt>input:checked + span{background:#141212;color:#fff}
+  .opt>input:checked + span::after{box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+  .opt>input:focus-visible + span{outline:3px solid #141212;outline-offset:2px}
   .opt span:hover{background:var(--surface-gray)}
-  .opt input:checked + span:hover{background:#2c2825}
+  .opt>input:checked + span:hover{background:#2c2825}
   /* итог */
   .calc__out{background:#141212;color:#fff;border-radius:var(--radius-outside);padding:var(--sp-24);
     display:flex;flex-direction:column;gap:var(--sp-12);position:sticky;top:20px}
@@ -501,7 +505,7 @@
           </fieldset>
           <fieldset class="fs">
             <legend id="sizeLeg">Размер по длинной стороне</legend>
-            <div class="opts" id="size"></div>
+            <div class="opts opts--flow" id="size"></div>
           </fieldset>
           <fieldset class="fs">
             <legend id="qtyLeg">Количество, штук</legend>
