@@ -253,11 +253,8 @@
   /* группировка по смыслу: «что печатаем» — во всю ширину; слева «из чего», справа «сколько» */
   .calc__form{display:contents}
   .calc__right{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
-  .calc__form>.fs:nth-of-type(1){grid-column:1/-1}
-  .calc__left{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0;grid-area:2/1}
-  .calc__right{grid-area:2/2}
-  .calc__grid>.fs{align-self:start}
-  @media(max-width:860px){.calc__form>.fs,.calc__left,.calc__right{grid-area:auto!important;grid-column:1}}
+  .calc__left,.calc__right{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
+
   @media(max-width:860px){.calc__grid{grid-template-columns:1fr}.calc__in{padding-inline:20px}}
   /* контейнера у формы нет: шаги лежат прямо на фоне секции (плашки сами держат структуру) */
   /* два столбца: шаги 1–3 слева, 4–6 справа */
@@ -508,11 +505,11 @@
         без ожидания менеджера.</p>
       <div class="calc__grid">
         <form class="calc__form" id="calcForm">
+        <div class="calc__left">
           <fieldset class="fs fs--wide">
             <legend>Что печатаем</legend>
             <div class="opts opts--2col" id="kind"></div>
           </fieldset>
-        <div class="calc__left">
           <fieldset class="fs fs--wide">
             <legend>Материал</legend>
             <div class="opts opts--2col" id="mat"></div>
