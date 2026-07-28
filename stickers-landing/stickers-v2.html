@@ -3,11 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#ffffff">
-<title>3D Стикеры — MDMprint (v2)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400..600&family=Instrument+Serif:ital@1&family=Playfair+Display:ital,wght@1,500..600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#FBFAF5">
+<title>3D-стикеры со смолой на заказ в Москве — MDMprint</title>
+<meta name="description" content="Печать объёмных 3D-стикеров со смолой: мерч, упаковка, брендинг. Любые формы и покрытия, срок от 3 дней, самовывоз и доставка по Москве и России.">
+<!-- ПРОТОТИП на GitHub Pages не должен попасть в индекс и конкурировать с будущим лендингом.
+     СНЯТЬ при переносе на прод-домен и там же добавить canonical. -->
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="3D-стикеры со смолой на заказ — MDMprint">
+<meta property="og:description" content="Объёмные стикеры со смолой: любые формы и покрытия, срок от 3 дней, Москва и вся Россия.">
+<!-- TODO прод: og:image должна быть 1200×630 с САМИМ продуктом (сейчас это фон-градиент). -->
+<meta property="og:image" content="hero-bg.webp">
+<link rel="icon" href="../assets/mdmprint-logo.svg">
 <link rel="stylesheet" href="../assets/css/fonts.css?v=20260720a">
 <link rel="stylesheet" href="../assets/css/tokens.css?v=20260722b">
 <style>
@@ -46,22 +53,29 @@
   .hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
     gap:clamp(20px,3.5vh,40px);min-height:100vh;text-align:center;overflow:hidden;
     background:linear-gradient(180deg,#fff 0%,rgba(255,255,255,0) 13%),
-      url("hero-bg.jpg") center/cover no-repeat, #FBFAF5;
+      url("hero-bg.webp") center/cover no-repeat, #FBFAF5;
     padding:120px clamp(24px,5vw,56px) 64px}
   .hero__text{flex:none;max-width:640px;display:flex;flex-direction:column;align-items:center}
   /* eyebrow: моно-надстрочник в мягкой пилюле с жёлтой точкой */
   .hero__eyebrow{display:inline-flex;align-items:center;gap:9px;align-self:center;
     font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.14em;
     text-transform:uppercase;color:#7a6a3a;background:rgba(255,255,255,.7);
-    border:1px solid rgba(20,18,18,.07);border-radius:999px;padding:7px 15px 7px 12px;margin-bottom:22px}
-  .hero__eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:#FFC100;
-    box-shadow:0 0 0 3px rgba(255,193,0,.25)}
+    border:1px solid rgba(20,18,18,.07);border-radius:999px;padding:7px 15px;margin-bottom:22px}
+  /* аутлайн, тёмное золото: чистый #FFC100 на белой плашке даёт ~1,9:1 и не виден */
+  .hero__eyebrow svg{width:15px;height:15px;flex:none;fill:none;stroke:#c79600;stroke-width:2.4;
+    stroke-linecap:round;clip-path:polygon(0 0,100% 0,100% 56%,56% 100%,0 100%)}
   .hero h1{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
     font-size:clamp(42px,5.6vw,92px);line-height:.96;letter-spacing:-.015em;color:var(--v-ink);max-width:none;margin-inline:auto}
   /* акцентное слово — ПОКА обычный фирменный (serif-курсив вернём позже; шрифты в <head> уже загружены) */
   .hero h1 .hl{font-style:normal}
   .hero__sub{font-size:clamp(16px,1.5vw,20px);line-height:1.55;color:#5b554a;max-width:44ch;margin:22px auto 0}
   .hero__cta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:30px}
+  /* соцдоверие: одна тонкая строка через точки — держим герой лёгким */
+  .hero__trust{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;
+    gap:6px 14px;margin-top:22px;font-size:13px;font-weight:600;color:#7d5c00}
+  .hero__trust li{display:flex;align-items:center;gap:14px;white-space:nowrap}
+  /* тёмное золото: фирменный #c79600 на жёлтом фоне даёт всего 2,2:1 — не читается */
+  .hero__trust li+li::before{content:"";width:4px;height:4px;border-radius:50%;background:#7d5c00}
   /* кнопки — простые тихие (акцент на стикерах) */
   .btn{display:inline-flex;align-items:center;gap:9px;font:inherit;font-weight:800;font-size:16px;
     padding:15px 30px;border-radius:14px;text-decoration:none;cursor:pointer;border:0;
@@ -84,7 +98,7 @@
   .hero__scroll{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:2;
     display:flex;flex-direction:column;align-items:center;gap:6px;
     font-family:ui-monospace,Menlo,monospace;font-size:10.5px;letter-spacing:.18em;
-    text-transform:uppercase;color:#a89f8c}
+    text-transform:uppercase;color:#7a6f58}   /* было #a89f8c — 2,45:1, ниже нормы 4,5 */
   .hero__scroll svg{width:15px;height:15px;animation:bob 1.8s ease-in-out infinite}
   @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
   @media(prefers-reduced-motion:reduce){.hero__scroll svg{animation:none}}
@@ -117,39 +131,47 @@
   @media(prefers-reduced-motion:reduce){.hero__stage{animation:none!important}}
   .hero__hint{position:absolute;left:0;right:0;bottom:16px;text-align:center;z-index:3;
     font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-    color:rgba(20,30,45,.55);opacity:0;transition:opacity .25s}
+    color:rgba(20,30,45,.7);opacity:0;transition:opacity .25s}  /* .55 давало 3,72:1 */
   .hero__card:hover .hero__hint{opacity:1}
-  .hero__mfoot{display:none}
-  .hero__scatter{display:none}
   .hero__mmodel{display:none}
+  /* ПЛАВАЮЩАЯ CTA (мобилка): вместо шапки — единственный путь к заявке, пока герой пролистан.
+     Появляется, когда кнопка из героя ушла с экрана (см. IntersectionObserver ниже). */
+  .fab{display:none;position:fixed;left:16px;right:16px;z-index:60;
+    bottom:calc(env(safe-area-inset-bottom,0px) + 14px);
+    align-items:center;justify-content:center;background:#141212;color:#fff;text-decoration:none;
+    font-weight:700;font-size:16px;letter-spacing:-.01em;padding:16px 22px;border-radius:16px;
+    box-shadow:0 12px 30px -10px rgba(20,18,18,.55);
+    opacity:0;transform:translateY(130%);transition:opacity .22s ease,transform .22s ease}
+  .fab--on{opacity:1;transform:translateY(0)}
+  .fab:active{background:#000}
+  .fab:focus-visible{outline:3px solid #141212;outline-offset:3px}
+  @media(prefers-reduced-motion:reduce){.fab{transition:opacity .22s ease}}
   @media(max-width:860px){
-    /* мобилка: фон 100vh + заголовок сверху + россыпь 3D + кнопка снизу; десктоп-контент скрыт */
-    .hd,.hero__text,.hero__card,.hero__scroll{display:none}
-    /* поток сверху вниз: шапка героя → модель на остаток экрана (пересечься не могут) */
+    /* мобилка: шапки нет сознательно (её роль берёт плавающая CTA внизу).
+       Герой — поток сверху вниз: текст → модель на остаток экрана, пересечься не могут. */
+    .hd,.hero__card,.hero__scroll{display:none}
+    .fab{display:flex}
     .hero{min-height:100vh;justify-content:flex-start;gap:0;
-      padding:calc(env(safe-area-inset-top,0px) + 72px) 20px 0}
-    /* россыпь 3D временно СКРЫТА (нужна объёмная модель — россыпь1.glb плоский) */
-    .hero__scatter{display:none}
-    .hero__mfoot{display:contents}
-    /* шапка героя: заголовок + подзаголовок — сверху по центру */
-    .hero__mhead{flex:none;width:100%;text-align:center}
+      padding:calc(env(safe-area-inset-top,0px) + 40px) 20px 0}
+    /* ОДНА разметка заголовка на обе раскладки: раньше мобилка дублировала текст в h2,
+       из-за чего на мобилке не рендерился H1 вообще (индексация mobile-first). */
+    .hero__text{width:100%;max-width:none}
+    .hero__eyebrow{font-size:11px;padding:6px 13px 6px 10px;margin-bottom:14px}
+    .hero h1{font-size:clamp(34px,10.4vw,52px);line-height:.98}
+    .hero__sub{font-size:15.5px;margin-top:14px}
+    .hero__cta{margin-top:16px}
+    .hero .btn--ghost{display:none}          /* на мобилке одна CTA, вторая бы конкурировала */
+    .hero__trust{margin-top:14px;font-size:12px;gap:4px 10px}
+    .hero__trust li{gap:10px}
     /* низ героя уходит в белый — ПОВЕРХ модели (в фоне градиент был бы под канвасом) */
     .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:16%;z-index:6;
       pointer-events:none;background:linear-gradient(0deg,#fff 0%,rgba(255,255,255,0) 100%)}
-    .hero__mtitle{margin:0;
-      font-family:var(--font-head);font-weight:800;text-transform:uppercase;
-      font-size:clamp(37px,10.8vw,55px);line-height:.98;letter-spacing:-.015em;color:#141212}
-    .hero__mtitle .hl{font-style:normal}
-    .hero__msub{margin:16px 0 0;font-size:16px;line-height:1.4;color:#5b554a}
-    .hero__mbtn{display:inline-flex;align-items:center;justify-content:center;margin-top:16px;
-      background:#141212;color:#fff;text-decoration:none;border-radius:16px;
-      padding:15px 30px;font-weight:600;font-size:15.5px;letter-spacing:-.01em}
-    .hero__mbtn:active{background:#000}
     /* 3D-стикерпак — занимает весь остаток героя ПОД кнопкой (min-height:0 — чтобы flex мог сжать).
        full-bleed: канвас на всю ширину экрана, минусовые поля гасят padding героя —
        иначе лист упирается в края контейнера и режется при доклоне. */
-    .hero__mmodel{display:block;align-self:stretch;width:auto;flex:1 1 auto;min-height:0;height:auto;
-      margin:20px -20px 0;--poster-color:transparent}
+    /* min-height: на коротких экранах лучше уйти листом за нижний край, чем съёжиться в полоску */
+    .hero__mmodel{display:block;align-self:stretch;width:auto;flex:1 1 auto;height:auto;
+      min-height:min(46vh,340px);margin:20px -20px 0;--poster-color:transparent}
   }
 
   /* ── ПЛОЩАДКА СЦЕН: 3–5 моделей, раскладка + ховер-эффекты ── */
@@ -195,11 +217,19 @@
    </div>
   </header>
 
+  <main>
   <!-- 1. ГЕРОЙ -->
   <section class="hero">
     <!-- ЛЕВО: заголовок + кнопки -->
     <div class="hero__text">
-      <span class="hero__eyebrow">MDMprint · 3D-стикеры со смолой</span>
+      <span class="hero__eyebrow">
+        <!-- знак стикера: контурный круг со срезанным уголком (срез — clip-path, чтобы
+             геометрия была предсказуемой) + линия загиба вдоль среза -->
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9.6"/>
+          <path d="M21.6 13.8 13.8 21.6"/>
+        </svg>
+        3D-Стикеры от МДМПринт</span>
       <h1>Третье <span class="hl">измерение</span><br>вашего бренда</h1>
       <p class="hero__sub">Заметная реклама для мерча, упаковки и брендинга —
         объёмная, глянцевая, которую хочется потрогать.</p>
@@ -207,6 +237,12 @@
         <a class="btn btn--primary" href="#">Рассчитать стоимость</a>
         <a class="btn btn--ghost" href="#">Заказать образец</a>
       </div>
+      <!-- строка соцдоверия из ТЗ: три «всегда» одной тонкой строкой, чтобы не грузить герой -->
+      <ul class="hero__trust">
+        <li>Всегда в цвет</li>
+        <li>Всегда в срок</li>
+        <li>Доработаем макет</li>
+      </ul>
     </div>
     <!-- ЦЕНТР: 3D-лист под текстом (зум ×2). Статичен, оживает при наведении. -->
     <div class="hero__card">
@@ -221,23 +257,8 @@
       </div>
       <span class="hero__hint">Наведите — покрутите</span>
     </div>
-    <div class="hero__mfoot">
-      <div class="hero__mhead">
-        <h2 class="hero__mtitle">Третье <span class="hl">измерение</span><br>вашего бренда</h2>
-        <p class="hero__msub">Заметная реклама для мерча, упаковки и брендинга — объёмная, глянцевая, которую хочется потрогать.</p>
-        <a class="hero__mbtn" href="#">Рассчитать стоимость</a>
-      </div>
-    </div>
     <!-- МОБИЛКА: 3D-стикерпак в нижней части героя -->
     <model-viewer class="hero__mmodel" src="glossy-paper.glb" alt="Стикерпак 3D" loading="eager" reveal="auto" disable-tap disable-pan disable-zoom interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" shadow-intensity="0" field-of-view="45deg" camera-orbit="0deg 20deg 116%" max-camera-orbit="auto auto 300%"></model-viewer>
-    <!-- МОБИЛКА: россыпь 3D-стикеров (реф5), 5 копий россыпь1.glb -->
-    <div class="hero__scatter" aria-hidden="true">
-      <model-viewer class="ms ms1" src="россыпь1.glb" alt="" loading="eager" reveal="auto" camera-controls disable-pan disable-zoom auto-rotate auto-rotate-delay="0" rotation-per-second="22deg" interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" field-of-view="52deg" shadow-intensity="0" camera-orbit="-15deg 12deg 78%"></model-viewer>
-      <model-viewer class="ms ms2" src="россыпь1.glb" alt="" loading="eager" reveal="auto" camera-controls disable-pan disable-zoom auto-rotate auto-rotate-delay="0" rotation-per-second="22deg" interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" field-of-view="52deg" shadow-intensity="0" camera-orbit="20deg 20deg 78%"></model-viewer>
-      <model-viewer class="ms ms3" src="россыпь1.glb" alt="" loading="eager" reveal="auto" camera-controls disable-pan disable-zoom auto-rotate auto-rotate-delay="0" rotation-per-second="22deg" interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" field-of-view="52deg" shadow-intensity="0" camera-orbit="-8deg 5deg 78%"></model-viewer>
-      <model-viewer class="ms ms4" src="россыпь1.glb" alt="" loading="lazy" reveal="auto" camera-controls disable-pan disable-zoom auto-rotate auto-rotate-delay="0" rotation-per-second="22deg" interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" field-of-view="52deg" shadow-intensity="0" camera-orbit="12deg 28deg 78%"></model-viewer>
-      <model-viewer class="ms ms5" src="россыпь1.glb" alt="" loading="lazy" reveal="auto" camera-controls disable-pan disable-zoom auto-rotate auto-rotate-delay="0" rotation-per-second="22deg" interaction-prompt="none" environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr" exposure="1.0" field-of-view="52deg" shadow-intensity="0" camera-orbit="-20deg 15deg 78%"></model-viewer>
-    </div>
     <div class="hero__scroll" aria-hidden="true">Листайте
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
     </div>
@@ -260,9 +281,14 @@
     </div>
   </section>
 
+  </main>
+
+  <!-- плавающая CTA: заменяет мобильную шапку -->
+  <a class="fab" href="#">Рассчитать стоимость</a>
+
 <!-- Рантайм model-viewer (модульный скрипт = defer, первый экран не блокирует).
      В бою запинить конкретную версию. -->
-<script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+<script type="module" src="https://unpkg.com/@google/model-viewer@4.3.1/dist/model-viewer.min.js"></script>
 <script>
   /* Слежение за курсором: лёгкий наклон 3D-стикера к мыши. Работает и на герое, и на 5 сценах.
      Радиус 130% (зум ≈80%). На тач/reduced-motion — статичное лицо. */
@@ -294,6 +320,15 @@
     // герой: в покое РОВНО лицом к нам; наклон «живой», как у сцен (theta ±27°, phi 6..58°)
     if(hero && heroStage) bind(hero, heroStage, {rest:'0deg 0deg 164%', rad:'164%'});
     document.querySelectorAll('.scene model-viewer[data-follow]').forEach(mv=> bind(mv, mv.closest('.scene')));
+  })();
+
+  /* Плавающая CTA: показываем, когда кнопка из героя ушла с экрана. */
+  (function(){
+    const fab = document.querySelector('.fab');
+    const cta = document.querySelector('.hero__cta');
+    if(!fab || !cta || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(([e]) => fab.classList.toggle('fab--on', !e.isIntersecting),
+      {threshold:0}).observe(cta);
   })();
 
   /* МОБИЛКА: при скролле лист доклоняется по ТОЙ ЖЕ оси (phi) — 20° в покое → 62° к концу героя.
