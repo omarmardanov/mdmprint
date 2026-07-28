@@ -136,21 +136,24 @@
   .hero__mmodel{display:none}
   /* ПЛАВАЮЩАЯ CTA (мобилка): вместо шапки — единственный путь к заявке, пока герой пролистан.
      Появляется, когда кнопка из героя ушла с экрана (см. IntersectionObserver ниже). */
-  .fab{display:none;position:fixed;left:16px;right:16px;z-index:60;
-    bottom:calc(env(safe-area-inset-bottom,0px) + 14px);
-    align-items:center;justify-content:center;background:#141212;color:#fff;text-decoration:none;
-    font-weight:700;font-size:16px;letter-spacing:-.01em;padding:16px 22px;border-radius:16px;
-    box-shadow:0 12px 30px -10px rgba(20,18,18,.55);
+  /* Подложка ОБЯЗАТЕЛЬНА: iOS Safari красит свой нижний тулбар цветом страницы у кромки —
+     чёрная кнопка вплотную к низу делала панель чёрной. Светлая полоса даёт Safari белый.
+     На белых секциях полоса не видна, кнопка читается как плавающая. */
+  .fabbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;background:#fff;
+    padding:14px 16px calc(env(safe-area-inset-bottom,0px) + 14px);
     opacity:0;transform:translateY(130%);transition:opacity .22s ease,transform .22s ease}
-  .fab--on{opacity:1;transform:translateY(0)}
+  .fabbar--on{opacity:1;transform:translateY(0)}
+  .fab{display:flex;align-items:center;justify-content:center;background:#141212;color:#fff;
+    text-decoration:none;font-weight:700;font-size:16px;letter-spacing:-.01em;
+    padding:16px 22px;border-radius:16px;box-shadow:0 10px 24px -12px rgba(20,18,18,.5)}
   .fab:active{background:#000}
   .fab:focus-visible{outline:3px solid #141212;outline-offset:3px}
-  @media(prefers-reduced-motion:reduce){.fab{transition:opacity .22s ease}}
+  @media(prefers-reduced-motion:reduce){.fabbar{transition:opacity .22s ease}}
   @media(max-width:860px){
     /* мобилка: шапки нет сознательно (её роль берёт плавающая CTA внизу).
        Герой — поток сверху вниз: текст → модель на остаток экрана, пересечься не могут. */
     .hd,.hero__card,.hero__scroll{display:none}
-    .fab{display:flex}
+    .fabbar{display:block}
     .hero{min-height:100vh;justify-content:flex-start;gap:0;
       padding:calc(env(safe-area-inset-top,0px) + 40px) 20px 0}
     /* ОДНА разметка заголовка на обе раскладки: раньше мобилка дублировала текст в h2,
@@ -284,7 +287,7 @@
   </main>
 
   <!-- плавающая CTA: заменяет мобильную шапку -->
-  <a class="fab" href="#">Рассчитать стоимость</a>
+  <div class="fabbar"><a class="fab" href="#">Рассчитать стоимость</a></div>
 
 <!-- Рантайм model-viewer (модульный скрипт = defer, первый экран не блокирует).
      В бою запинить конкретную версию. -->
@@ -324,10 +327,10 @@
 
   /* Плавающая CTA: показываем, когда кнопка из героя ушла с экрана. */
   (function(){
-    const fab = document.querySelector('.fab');
+    const fab = document.querySelector('.fabbar');
     const cta = document.querySelector('.hero__cta');
     if(!fab || !cta || !('IntersectionObserver' in window)) return;
-    new IntersectionObserver(([e]) => fab.classList.toggle('fab--on', !e.isIntersecting),
+    new IntersectionObserver(([e]) => fab.classList.toggle('fabbar--on', !e.isIntersecting),
       {threshold:0}).observe(cta);
   })();
 
