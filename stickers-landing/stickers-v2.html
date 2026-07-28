@@ -215,7 +215,8 @@
      (плитка на них читалась как серый квадрат в рамке, а чёрное поле спорило с белой карточкой) */
   .fcard__art{position:relative;margin-top:auto;border-radius:var(--radius-md);overflow:hidden;
     aspect-ratio:4/3}
-  .fcard__art img{width:100%;height:100%;object-fit:contain;display:block}
+  /* cover + приближение: плитка намеренно уходит под края кадра карточки */
+  .fcard__art img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.28)}
   /* первая карточка тёмная — акцент блока (по ДС тёмная поверхность одна на страницу) */
   .fcard--glow{background:#141212;border-color:var(--border-on-dark-2)}
   .fcard--glow h3{color:#fff}
@@ -308,35 +309,35 @@
         <h3>Светится в темноте</h3>
         <p>Неон под смолой: виден без света. Для гейминга, техники и ночного мерча.</p>
         <div class="fcard__art">
-          <img src="posters/form-glow.webp" width="604" height="546" alt="Круглый светящийся стикер с надписью «работает не трогай»" loading="lazy" decoding="async">
+          <img src="posters/form-glow.webp" width="542" height="463" alt="Круглый светящийся стикер с надписью «работает не трогай»" loading="lazy" decoding="async">
         </div>
       </article>
       <article class="fcard fcard--pill">
         <h3>Название целиком</h3>
         <p>Вытянутая форма под логотип со слоганом — ложится на бутылку и корпус.</p>
         <div class="fcard__art">
-          <img src="posters/form-pill.webp" width="604" height="546" alt="Стикер-пилюля с логотипом SALT" loading="lazy" decoding="async">
+          <img src="posters/form-pill.webp" width="542" height="463" alt="Стикер-пилюля с логотипом SALT" loading="lazy" decoding="async">
         </div>
       </article>
       <article class="fcard fcard--diecut">
         <h3>Высечка по рисунку</h3>
         <p>Режем точно по силуэту: форма повторяет надпись или иллюстрацию.</p>
         <div class="fcard__art">
-          <img src="posters/form-diecut.webp" width="604" height="546" alt="Фигурный стикер с надписью mellow, вырезанный по контуру" loading="lazy" decoding="async">
+          <img src="posters/form-diecut.webp" width="542" height="463" alt="Фигурный стикер с надписью mellow, вырезанный по контуру" loading="lazy" decoding="async">
         </div>
       </article>
       <article class="fcard fcard--rect">
         <h3>Сцена и детали</h3>
         <p>Со скруглением — место для полной иллюстрации, подписи и мелочей.</p>
         <div class="fcard__art">
-          <img src="posters/form-rect.webp" width="604" height="546" alt="Прямоугольный стикер с иллюстрацией Санкт-Петербурга" loading="lazy" decoding="async">
+          <img src="posters/form-rect.webp" width="542" height="463" alt="Прямоугольный стикер с иллюстрацией Санкт-Петербурга" loading="lazy" decoding="async">
         </div>
       </article>
       <article class="fcard fcard--round">
         <h3>Мерч для бизнеса</h3>
         <p>Логотип в круге: раздатка на мероприятиях, упаковка, подарки клиентам.</p>
         <div class="fcard__art">
-          <img src="posters/form-round.webp" width="604" height="546" alt="Круглый стикер с логотипом NORDA" loading="lazy" decoding="async">
+          <img src="posters/form-round.webp" width="542" height="463" alt="Круглый стикер с логотипом NORDA" loading="lazy" decoding="async">
         </div>
       </article>
     </div>
