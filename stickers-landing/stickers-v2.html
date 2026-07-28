@@ -694,7 +694,9 @@
              ['Прозрачная',1.1,'Фон подложки видно — эффект «наклеено прямо на поверхность»'],
              ['Голографическая',1.45,'Радужный перелив на свету, заметна издалека'],
              ['Металлик',1.4,'Серебро или золото с зеркальным блеском']],
-      size: [['до 50 мм',1],['до 80 мм',1.35],['до 120 мм',1.75],['Свой',null,'Свой, мм']],
+      // размер = ширина×высота, мм. Коэффициент считается по площади (50×50 = 1.0)
+      size: [['30×30',1,null,900],['44×44',1,null,1936],['55×44',1,null,2420],
+             ['70×50',1,null,3500],['100×70',1,null,7000],['Свой',null,'Свой, 55x44']],
       sheet:[['А7',1],['А6',1.4],['А5',2.1]],   // у паков свой размер не задаётся
       resin:[['Эпоксидная',1,'Прозрачная линза: объём, глянец, защита рисунка'],
              ['Светящаяся',1.35,'Копит свет и светится в темноте']],
@@ -711,9 +713,11 @@
         const own = it[1]===null;                       // «Свой» — плашка-поле, не подпись
         const desc = (!own && it[2]) ? `<em class="opt__desc">${it[2]}</em>` : '';
         const inner = own
-          ? `<input class="opt__inp" id="${key}Own" type="number" inputmode="numeric" `+
-            `min="${key==='qty'?10:10}" max="${key==='qty'?100000:300}" `+
-            `placeholder="${it[2]||'Свой'}" aria-label="${it[2]||'Свой'}">`
+          ? `<input class="opt__inp" id="${key}Own" `+
+            (key==='qty'
+              ? `type="number" inputmode="numeric" min="10" max="100000"`
+              : `type="text" inputmode="numeric" pattern="[0-9]+ ?[xх×] ?[0-9]+"`)+
+            ` placeholder="${it[2]||'Свой'}" aria-label="${it[2]||'Свой'}">`
           : `<b class="opt__txt">${it[0]}${desc}</b>`+
             `<img class="opt__ico" src="calc-icons/${key}-${i}.webp" alt="" `+
             `onerror="this.remove();this.closest('span').classList.remove('has-ico')">`;
@@ -744,7 +748,7 @@
       const packs=S.kind===1;
       const sizes=packs?F.sheet:F.size;
       $('qtyLeg').textContent  = packs?'Количество паков':'Количество, штук';
-      $('sizeLeg').textContent = packs?'Формат листа':'Размер по длинной стороне';
+      $('sizeLeg').textContent = packs?'Формат листа':'Размер, мм';
       if($('size').dataset.mode!==(packs?'sheet':'size')){
         $('size').dataset.mode = packs?'sheet':'size'; if(S.size>=sizes.length) S.size=0; build('size',sizes);
       }
@@ -755,7 +759,13 @@
 
       const q = qtyOwn ? Math.max(10, +($('qtyOwn')||{}).value||100) : F.qty[S.qty][0];
       // свой размер: коэффициент линейно от 50 мм (1.0) с шагом как у готовых ступеней
-      const dim = sizeOwn ? Math.max(1, Math.max(10, +($('sizeOwn')||{}).value||50)/50) : sizes[S.size][1];
+      let area;
+      if(packs) area=null;
+      else if(sizeOwn){
+        const t=(($('sizeOwn')||{}).value||'').replace(',','.').split(/[x×х*]/i);
+        area=Math.max(100,(parseFloat(t[0])||55)*(parseFloat(t[1])||parseFloat(t[0])||44));
+      } else area=sizes[S.size][3];
+      const dim = packs ? sizes[S.size][1] : Math.max(.7, area/2500);
       let unit = baseFor(q) * F.kind[S.kind][1] * F.mat[S.mat][1] * dim * F.resin[S.resin][1];
       if($('single').checked) unit*=1.08;
       if($('box').checked)    unit*=1.18;
