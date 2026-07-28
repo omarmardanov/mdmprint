@@ -292,19 +292,23 @@
   .opts--2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,300px));gap:10px;justify-content:start}
   .opts--2col .opt span{max-width:none;width:100%;height:100%}
   /* все опции в ОДИН ряд, каждая — вертикальная карточка */
-  .opts--row1{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .opts--row1{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:stretch}
+  .opts--row1 .opt{display:flex}   /* карточки одной высоты, даже если картинка есть не у всех */
   .opts--row1 .opt,.opts--row1 .opt span{width:100%}
+  .opts--row1 .opt span{height:100%}
   .opts--row1 .opt span{padding:14px 14px 0}
   .opts--row1 .opt h4,.opts--row1 .opt__txt{font-size:var(--t-small)}
   .opts--row1 .opt__desc{font-size:12px;line-height:16px;text-wrap:balance}
-  .opts--row1 .opt__ico{height:72px}
+  .opts--row1 .opt__ico{height:96px;margin-bottom:-20px}
   @media(max-width:860px){.opts--row1{grid-template-columns:repeat(2,minmax(0,1fr))}}
   /* вертикальная карточка: заголовок → описание → картинка снизу (картинка необязательна) */
   .opts--cards .opt span{flex-direction:column;align-items:stretch;gap:10px;padding:16px 18px 0}
   .opts--cards .opt__txt{width:100%}
   .opts--cards .opt__desc{max-width:none}
-  .opts--cards .opt__ico{position:static;width:100%;height:96px;margin:auto 0 0;
-    object-position:center bottom;filter:none}
+  /* картинка ТОРЧИТ из карточки и срезается нижним краем: она крупнее слота и уходит за край,
+     срез даёт clip-path у span (радиус снизу совпадает с формой плашки) */
+  .opts--cards .opt__ico{position:static;width:112%;max-width:none;height:110px;
+    margin:auto -6% -22px;object-fit:contain;object-position:center top;filter:none}
   @media(max-width:860px){.opts--2col{grid-template-columns:1fr}}
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
   .opt>input[type=radio],.opt>input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}
