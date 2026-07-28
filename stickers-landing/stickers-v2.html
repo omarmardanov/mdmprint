@@ -254,6 +254,8 @@
   .calc__form{display:contents}
   .calc__right{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
   .calc__left,.calc__right{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
+  /* липкой делаем саму колонку: у sticky на дочернем блоке нет запаса, если родитель по контенту */
+  .calc__right{position:sticky;top:24px;align-self:start}
 
   @media(max-width:860px){.calc__grid{grid-template-columns:1fr}.calc__in{padding-inline:20px}}
   /* контейнера у формы нет: шаги лежат прямо на фоне секции (плашки сами держат структуру) */
@@ -326,7 +328,7 @@
   /* итоговая панель: тёплая тёмная (не плоский чёрный), светлый внутренний контур и мягкая тень —
      чтобы читалась как часть той же системы плашек, а не вставленный блок */
   /* итог без плашки: лежит прямо на фоне секции, как и остальные шаги */
-  .calc__out{position:sticky;top:20px;display:flex;flex-direction:column;gap:var(--sp-12);
+  .calc__out{display:flex;flex-direction:column;gap:var(--sp-12);
     color:var(--text-primary)}
   .calc__price{font-family:var(--font-head);font-weight:800;font-size:clamp(34px,4vw,52px);line-height:1;letter-spacing:-.01em}
   /* цена за штуку — жёлтая наклейка с лёгким поворотом, как стикер */
