@@ -394,8 +394,14 @@
     font-size:12px;color:var(--text-secondary)}
   .calc__pick select{font:inherit;font-size:15px;color:var(--text-primary);background:var(--surface-card);
     border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;max-width:340px}
-  .calc__file{align-items:flex-start}
-  .calc__file input{font:inherit;font-size:13px}
+  .calc__file{align-items:flex-start;gap:8px;cursor:pointer}
+  .calc__file input{position:absolute;opacity:0;width:0;height:0}
+  .calc__filebtn{display:inline-flex;align-items:center;gap:8px;font-size:var(--t-small);font-weight:600;
+    color:var(--text-primary);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border);
+    border-radius:var(--radius-md);padding:11px 15px}
+  .calc__file:hover .calc__filebtn{background:var(--surface-gray)}
+  .calc__file input:focus-visible + .calc__filebtn{outline:2px solid #141212;outline-offset:2px}
+  .calc__file em{font-style:normal;font-size:12px;color:#a49c8e}
   .calc__hint{margin-top:var(--sp-12);font-size:13px;line-height:18px;color:var(--text-secondary)}
   .calc__hint a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
   .calc__hint a:hover{color:var(--text-primary)}
@@ -618,9 +624,10 @@
             <fieldset class="fs">
               <legend>Макет</legend>
               <div class="opts opts--rows" id="art"></div>
-              <label class="calc__file" id="fileWrap" hidden>
+              <label class="calc__file" id="fileWrap">
                 <input type="file" id="artFile" accept=".pdf,.ai,.eps,.svg,.png,.jpg,.jpeg,.tif,.tiff,.cdr">
-                <span>Выбрать файл</span>
+                <span class="calc__filebtn" id="fileName">Приложить файл</span>
+                <em>PDF, AI, EPS, SVG, PNG, JPG, TIFF, CDR — необязательно</em>
               </label>
             </fieldset>
             <label class="calc__f"><span>Имя</span>
@@ -849,11 +856,11 @@
       resin:[['Эпоксидная',1,'Прозрачная линза: объём, глянец, защита рисунка'],
              ['Светящаяся',1.35,'Копит свет и светится в темноте']],
       qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'99999']],
-      art:  [['Загружу сейчас',0,'PDF, AI, EPS, SVG, PNG, JPG, TIFF, CDR'],
-             ['Пришлю позже',0,'Напомним и подскажем по требованиям'],
-             ['Нужен дизайн',0,'Нарисуем по вашей идее, цену скажет менеджер']],
+      // либо макет есть, либо нужен дизайн. Файл не обязателен — можно прислать менеджеру позже
+      art:  [['Макет готов',0,'Приложите файл или пришлёте менеджеру позже'],
+             ['Нужен дизайн',0,'Нарисуем по вашей идее — приложите референсы, если есть']],
     };
-    const S={kind:0,mat:0,size:0,resin:0,qty:2,art:1};
+    const S={kind:0,mat:0,size:0,resin:0,qty:2,art:0};
     const $=id=>document.getElementById(id);
     const rub=n=>n.toLocaleString('ru-RU')+' \u20BD';
 
@@ -928,7 +935,6 @@
       if($('box').checked)    unit*=1.18;
 
       const sum=Math.round(unit*q);
-      $('fileWrap').hidden = S.art!==0;
       $('total').textContent=rub(sum);
       $('unit').textContent =rub(Math.round(unit))+(packs?' за пак':' за штуку');
       $('term').textContent = q<=500?'до 3 дней':'до 7 дней';
@@ -937,6 +943,11 @@
     build('kind',F.kind); build('mat',F.mat); build('size',F.size);
     build('resin',F.resin); build('qty',F.qty); build('art',F.art);
     ['single','box'].forEach(id=> $(id).addEventListener('input',calc));
+    // имя выбранного файла — вместо надписи на кнопке
+    $('artFile').addEventListener('change',e=>{
+      const f=e.target.files[0];
+      $('fileName').textContent = f ? f.name : 'Приложить файл';
+    });
     calc();
   })();
 
