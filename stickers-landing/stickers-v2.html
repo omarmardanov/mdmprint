@@ -367,9 +367,24 @@
     border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px}
   .calc__f input::placeholder{color:#a49c8e}
   .calc__f input:focus-visible{outline:3px solid #141212;outline-offset:2px}
-  .calc__ok{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:17px;
-    color:var(--text-secondary);cursor:pointer}
-  .calc__ok input{margin-top:2px;accent-color:#FFC100;width:16px;height:16px;flex:none}
+  /* строка согласия — как в прототипе usluga.html (.cbm-check): 13/16, тач-цель 44px,
+     чекбокс из кита (.mk-check), ссылки подчёркнуты нейтральным */
+  .calc__ok{display:flex;gap:var(--sp-10);align-items:flex-start;cursor:pointer;
+    font-size:13px;line-height:16px;color:var(--text-secondary);min-height:44px;padding-block:6px}
+  .calc__ok input{margin-top:1px}
+  .calc__ok a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
+  .calc__ok a:hover{color:var(--text-primary)}
+  .calc__ok em{color:#a49c8e;font-style:normal}
+  /* чекбокс кита — кит на этой странице не подключён, поэтому рецепт продублирован */
+  .mk-check{appearance:none;-webkit-appearance:none;margin:0;flex-shrink:0;
+    width:22px;height:22px;border:1px solid var(--border-strong);border-radius:var(--radius-inside);
+    background:var(--surface-card);cursor:pointer;position:relative;transition:background .15s,border-color .15s}
+  .mk-check:hover{border-color:var(--text-primary)}
+  .mk-check:checked{background:#FFC100;border-color:#FFC100}
+  .mk-check:checked::after{content:"";position:absolute;left:50%;top:46%;width:10px;height:5px;
+    transform:translate(-50%,-50%) rotate(-45deg);
+    border-left:2px solid #141212;border-bottom:2px solid #141212}
+  .mk-check:focus-visible{outline:2px solid #c79600;outline-offset:2px}
   .calc__cta{border:0;cursor:pointer}
   .calc__demo{margin-top:var(--sp-20);font-size:var(--t-small);line-height:20px;color:var(--text-secondary);max-width:44ch}
 </style>
@@ -565,8 +580,15 @@
               <input type="text" name="name" autocomplete="name" required placeholder="Как к вам обращаться"></label>
             <label class="calc__f"><span>Телефон</span>
               <input type="tel" name="phone" autocomplete="tel" required placeholder="+7 (___) ___-__-__"></label>
-            <label class="calc__ok"><input type="checkbox" name="agree" required>
-              <span>Согласен на обработку персональных данных</span></label>
+            <label class="calc__ok">
+              <input type="checkbox" class="mk-check" name="agree" required>
+              <span>Я даю согласие на обработку <a href="#" target="_blank" rel="noopener">персональных данных</a>
+                и принимаю <a href="#" target="_blank" rel="noopener">политику конфиденциальности</a></span>
+            </label>
+            <label class="calc__ok">
+              <input type="checkbox" class="mk-check" name="promo">
+              <span>Согласен получать новости и спецпредложения <em>(необязательно)</em></span>
+            </label>
             <button class="calc__cta" type="submit">Оставить заявку</button>
           </form>
         </div>
