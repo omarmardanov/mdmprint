@@ -263,6 +263,8 @@
   .opts{display:flex;flex-wrap:wrap;gap:8px}
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
   .opt input{position:absolute;opacity:0;width:0;height:0}
+  /* картинка в плашке — необязательная: файл calc-icons/<поле>-<индекс>.webp (png в .gitignore!), нет файла — нет иконки */
+  .opt__ico{width:26px;height:26px;object-fit:contain;margin:-2px 8px -2px -4px;flex:none}
   .opt span{display:inline-flex;align-items:center;padding:10px 15px;border-radius:var(--radius-pill);
     background:var(--surface-gray);font-size:var(--t-small);font-weight:600;cursor:pointer;
     border:1.5px solid transparent;transition:background .15s ease,border-color .15s ease}
@@ -675,7 +677,9 @@
       const box=$(key); box.innerHTML='';
       labels.forEach((it,i)=>{
         const l=document.createElement('label'); l.className='opt';
-        l.innerHTML=`<input type="radio" name="${key}" value="${i}"${i===S[key]?' checked':''}><span>${it[0]}</span>`;
+        l.innerHTML=`<input type="radio" name="${key}" value="${i}"${i===S[key]?' checked':''}>`+
+          `<span><img class="opt__ico" src="calc-icons/${key}-${i}.webp" alt="" `+
+          `onerror="this.remove()">${it[0]}</span>`;
         l.querySelector('input').addEventListener('change',()=>{S[key]=i;calc();});
         box.appendChild(l);
       });
