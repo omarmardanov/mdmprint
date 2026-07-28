@@ -248,8 +248,8 @@
     font-size:var(--t-body);line-height:var(--t-body-lh)}
   /* одна сетка на всё: слева шаги 1–3, справа шаги 4–6 и под ними блок стоимости */
   /* две независимые колонки: слева шаги 1–3, справа 4–6 и под ними стоимость */
-  .calc__grid{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);
-    gap:var(--sp-32);margin-top:clamp(24px,3vw,40px);align-items:start;counter-reset:step}
+  .calc__grid{display:grid;grid-template-columns:minmax(0,610px) minmax(0,1fr);
+    gap:var(--sp-28) var(--sp-32);margin-top:clamp(24px,3vw,40px);align-items:start;counter-reset:step}
   .calc__form,.calc__right{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
   @media(max-width:860px){.calc__grid{grid-template-columns:1fr}.calc__in{padding-inline:20px}}
   /* контейнера у формы нет: шаги лежат прямо на фоне секции (плашки сами держат структуру) */
