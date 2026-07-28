@@ -353,12 +353,15 @@
   .calc__own input{width:120px;font:inherit;padding:9px 12px;border:1px solid var(--border);
     border-radius:var(--radius-md);background:#fff}
   .calc__own input:focus-visible{outline:3px solid #141212;outline-offset:2px}
-  .calc__req{align-self:flex-start;color:#8a6a00;font-size:var(--t-small);font-weight:700;
-    text-decoration:underline;text-underline-offset:3px}
-  .calc__req:hover{color:#141212}
+  /* ссылка на требования — тихая, внутри той же строки, со стрелкой «уходит наружу» */
+  /* ссылка отдельной строкой, весом как текст: жирная со стрелкой перебивала сам абзац */
+  .calc__req{display:inline-block;margin-top:6px;color:var(--text-secondary);
+    font-size:var(--t-small);line-height:20px;font-weight:400;
+    text-decoration:underline;text-decoration-color:rgba(20,18,18,.25);text-underline-offset:3px}
+  .calc__req:hover{color:var(--text-primary);text-decoration-color:var(--text-primary)}
   /* форму отделяем расстоянием и очень тонкой линией — жёсткая 1px рвала блок */
   .calc__lead{display:flex;flex-direction:column;gap:var(--sp-12);margin-top:var(--sp-20);
-    padding-top:var(--sp-20);border-top:1px solid rgba(20,18,18,.07)}
+    padding-top:0}
   .calc__f{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-secondary)}
   .calc__f input{font:inherit;font-size:15px;color:var(--text-primary);background:var(--surface-card);
     border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px}
@@ -368,7 +371,7 @@
     color:var(--text-secondary);cursor:pointer}
   .calc__ok input{margin-top:2px;accent-color:#FFC100;width:16px;height:16px;flex:none}
   .calc__cta{border:0;cursor:pointer}
-  .calc__demo{margin-top:var(--sp-12);font-size:12px;line-height:16px;color:var(--text-secondary)}
+  .calc__demo{margin-top:var(--sp-20);font-size:var(--t-small);line-height:20px;color:var(--text-secondary);max-width:44ch}
 </style>
 </head>
 <body>
@@ -555,9 +558,8 @@
             <div class="calc__row"><span>Срок</span><b id="term">—</b></div>
             <div class="calc__row"><span>Тираж</span><b id="qtyOut">—</b></div>
           </div>
-          <p class="calc__demo">Точная цена зависит от срока, сложности макета и тиража.
-            Цифры демонстрационные — подставим ваш прайс.</p>
-          <a class="calc__req" href="#trebovaniya">Требования к макетам</a>
+          <p class="calc__demo">Цена предварительная — зависит от срока и сложности макета.</p>
+          <p><a class="calc__req" href="#trebovaniya">Требования к макетам</a></p>
           <form class="calc__lead" id="calcLead" novalidate>
             <label class="calc__f"><span>Имя</span>
               <input type="text" name="name" autocomplete="name" required placeholder="Как к вам обращаться"></label>
