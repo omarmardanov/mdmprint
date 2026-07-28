@@ -268,6 +268,14 @@
     object-fit:contain;object-position:top center;pointer-events:none;
     filter:drop-shadow(0 4px 8px rgba(20,18,18,.35))}
   .opt span.has-ico{padding-right:78px}
+  .opt__txt{display:flex;flex-direction:column;gap:3px;font-weight:600}
+  .opt__desc{font-style:normal;font-size:12.5px;line-height:16px;font-weight:400;
+    color:var(--text-secondary);max-width:20ch}
+  .opt input:checked + span .opt__desc{color:rgba(255,255,255,.7)}
+  /* вариант с описанием — крупнее, картинка справа от текста */
+  .opt span.opt--card{min-height:82px;padding:16px 20px}
+  .opt span.opt--card.has-ico{padding-right:104px}
+  .opt span.opt--card .opt__ico{width:88px;height:88px;right:6px;bottom:-16px}
   /* плашки — крупные скруглённые прямоугольники: срез иконки по низу совпадает с формой */
   .opt span{position:relative;clip-path:inset(-80px 0 0 0 round 0 0 14px 14px);
     display:inline-flex;align-items:center;min-height:54px;padding:14px 18px;
@@ -668,7 +676,7 @@
      или своё) → допы. Для стикерпаков размер меняется на формат листа. Коэффициенты ДЕМО. */
   (function(){
     const F={
-      kind: [['Стикеры',1],['Стикерпаки',3.4]],
+      kind: [['Стикеры',1,'Отдельные наклейки любой формы'],['Стикерпаки',3.4,'Набор наклеек на одном листе']],
       mat:  [['Белая плёнка',1],['Прозрачная',1.1],['Голографическая',1.45],['Металлик',1.4]],
       size: [['до 50 мм',1],['до 80 мм',1.35],['до 120 мм',1.75],['Свой',null]],
       sheet:[['А7',1],['А6',1.4],['А5',2.1]],   // у паков свой размер не задаётся
@@ -683,8 +691,11 @@
       const box=$(key); box.innerHTML='';
       labels.forEach((it,i)=>{
         const l=document.createElement('label'); l.className='opt';
+        const desc = it[2] ? `<em class="opt__desc">${it[2]}</em>` : '';
         l.innerHTML=`<input type="radio" name="${key}" value="${i}"${i===S[key]?' checked':''}>`+
-          `<span class="has-ico">${it[0]}<img class="opt__ico" src="calc-icons/${key}-${i}.webp" alt="" `+
+          `<span class="has-ico${desc?' opt--card':''}">`+
+          `<b class="opt__txt">${it[0]}${desc}</b>`+
+          `<img class="opt__ico" src="calc-icons/${key}-${i}.webp" alt="" `+
           `onerror="this.remove();this.closest('span').classList.remove('has-ico')"></span>`;
         l.querySelector('input').addEventListener('change',()=>{S[key]=i;calc();});
         box.appendChild(l);
