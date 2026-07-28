@@ -207,9 +207,6 @@
     display:flex;flex-direction:column;gap:var(--sp-12);
     background:var(--surface-card);border:1px solid var(--border);
     border-radius:var(--radius-outside);padding:var(--sp-16)}
-  .fcard__badge{align-self:flex-start;font-size:11.5px;font-weight:700;letter-spacing:.02em;
-    text-transform:uppercase;color:var(--text-primary);background:var(--surface-gray);
-    border-radius:var(--radius-pill);padding:6px 11px}
   .fcard h3{font-family:var(--font-head);font-weight:800;text-transform:uppercase;margin:0;
     font-size:var(--t-h4);line-height:var(--t-h4-lh);letter-spacing:var(--t-h4-ls)}
   .fcard p{margin:0;font-size:var(--t-small);line-height:var(--t-small-lh);
@@ -217,13 +214,12 @@
   /* кадр = сам рендер: плитка со стикером и есть лицо карточки, цветных полей нет
      (плитка на них читалась как серый квадрат в рамке, а чёрное поле спорило с белой карточкой) */
   .fcard__art{position:relative;margin-top:auto;border-radius:var(--radius-md);overflow:hidden;
-    aspect-ratio:1/1;display:grid}
+    aspect-ratio:4/3}
   .fcard__art img{width:100%;height:100%;object-fit:contain;display:block}
   /* первая карточка тёмная — акцент блока (по ДС тёмная поверхность одна на страницу) */
   .fcard--glow{background:#141212;border-color:var(--border-on-dark-2)}
   .fcard--glow h3{color:#fff}
   .fcard--glow p{color:rgba(255,255,255,.72)}
-  .fcard--glow .fcard__badge{background:rgba(255,255,255,.12);color:#fff}
 
   @media(max-width:860px){
     .forms__head{padding-inline:20px}
@@ -309,7 +305,6 @@
     </div>
     <div class="lane" tabindex="0" role="group" aria-label="Виды стикеров — прокрутите по горизонтали">
       <article class="fcard fcard--glow">
-        <span class="fcard__badge">Круг</span>
         <h3>Светится в темноте</h3>
         <p>Неон под смолой: виден без света. Для гейминга, техники и ночного мерча.</p>
         <div class="fcard__art">
@@ -317,7 +312,6 @@
         </div>
       </article>
       <article class="fcard fcard--pill">
-        <span class="fcard__badge">Пилюля</span>
         <h3>Название целиком</h3>
         <p>Вытянутая форма под логотип со слоганом — ложится на бутылку и корпус.</p>
         <div class="fcard__art">
@@ -325,7 +319,6 @@
         </div>
       </article>
       <article class="fcard fcard--diecut">
-        <span class="fcard__badge">Фигурный контур</span>
         <h3>Высечка по рисунку</h3>
         <p>Режем точно по силуэту: форма повторяет надпись или иллюстрацию.</p>
         <div class="fcard__art">
@@ -333,7 +326,6 @@
         </div>
       </article>
       <article class="fcard fcard--rect">
-        <span class="fcard__badge">Прямоугольник</span>
         <h3>Сцена и детали</h3>
         <p>Со скруглением — место для полной иллюстрации, подписи и мелочей.</p>
         <div class="fcard__art">
@@ -341,7 +333,6 @@
         </div>
       </article>
       <article class="fcard fcard--round">
-        <span class="fcard__badge">Круг</span>
         <h3>Мерч для бизнеса</h3>
         <p>Логотип в круге: раздатка на мероприятиях, упаковка, подарки клиентам.</p>
         <div class="fcard__art">
