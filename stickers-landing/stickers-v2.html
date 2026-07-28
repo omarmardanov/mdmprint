@@ -280,6 +280,14 @@
     color:var(--text-secondary);max-width:20ch}
   .opt input:checked + span .opt__desc{color:rgba(255,255,255,.7)}
   /* вариант с описанием — крупнее, картинка справа от текста */
+  /* «Свой» — плашка-поле: инпут занимает её целиком, плейсхолдер вместо подписи */
+  .opt span.opt--own{padding:0}
+  .opt__inp{width:100%;min-height:54px;font:inherit;font-size:var(--t-body);font-weight:600;
+    color:var(--text-primary);background:none;border:0;padding:14px 18px;border-radius:inherit}
+  .opt__inp::placeholder{color:var(--text-secondary);font-weight:600}
+  .opt__inp:focus{outline:none}
+  .opt input:checked + span .opt__inp{color:#fff}
+  .opt input:checked + span .opt__inp::placeholder{color:rgba(255,255,255,.6)}
   .opt span.opt--card{min-height:82px;padding:16px 20px;align-items:flex-start}
   .opt span.opt--card:not(.has-ico){min-height:0;padding:14px 18px}
   .opt span.opt--card.has-ico{padding-right:104px}
@@ -490,10 +498,6 @@
           <fieldset class="fs">
             <legend id="sizeLeg">Размер по длинной стороне</legend>
             <div class="opts" id="size"></div>
-            <label class="calc__own" id="sizeOwnWrap" hidden>
-              <span>Свой размер, мм</span>
-              <input type="number" id="sizeOwn" min="10" max="300" step="1" value="60" inputmode="numeric">
-            </label>
           </fieldset>
           <fieldset class="fs">
             <legend>Смола</legend>
@@ -502,10 +506,6 @@
           <fieldset class="fs">
             <legend id="qtyLeg">Количество, штук</legend>
             <div class="opts" id="qty"></div>
-            <label class="calc__own" id="qtyOwnWrap" hidden>
-              <span>Своё количество</span>
-              <input type="number" id="qtyOwn" min="10" max="100000" step="10" value="250" inputmode="numeric">
-            </label>
           </fieldset>
           <fieldset class="fs fs--wide">
             <legend>Дополнительно</legend>
@@ -694,11 +694,11 @@
              ['Прозрачная',1.1,'Фон подложки видно — эффект «наклеено прямо на поверхность»'],
              ['Голографическая',1.45,'Радужный перелив на свету, заметна издалека'],
              ['Металлик',1.4,'Серебро или золото с зеркальным блеском']],
-      size: [['до 50 мм',1],['до 80 мм',1.35],['до 120 мм',1.75],['Свой',null]],
+      size: [['до 50 мм',1],['до 80 мм',1.35],['до 120 мм',1.75],['Свой',null,'Свой, мм']],
       sheet:[['А7',1],['А6',1.4],['А5',2.1]],   // у паков свой размер не задаётся
       resin:[['Эпоксидная',1,'Прозрачная линза: объём, глянец, защита рисунка'],
              ['Светящаяся',1.35,'Копит свет и светится в темноте']],
-      qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null]],
+      qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'Своё, шт']],
     };
     const S={kind:0,mat:0,size:0,resin:0,qty:2};
     const $=id=>document.getElementById(id);
@@ -708,12 +708,22 @@
       const box=$(key); box.innerHTML='';
       labels.forEach((it,i)=>{
         const l=document.createElement('label'); l.className='opt';
-        const desc = it[2] ? `<em class="opt__desc">${it[2]}</em>` : '';
+        const own = it[1]===null;                       // «Свой» — плашка-поле, не подпись
+        const desc = (!own && it[2]) ? `<em class="opt__desc">${it[2]}</em>` : '';
+        const inner = own
+          ? `<input class="opt__inp" id="${key}Own" type="number" inputmode="numeric" `+
+            `min="${key==='qty'?10:10}" max="${key==='qty'?100000:300}" `+
+            `placeholder="${it[2]||'Свой'}" aria-label="${it[2]||'Свой'}">`
+          : `<b class="opt__txt">${it[0]}${desc}</b>`+
+            `<img class="opt__ico" src="calc-icons/${key}-${i}.webp" alt="" `+
+            `onerror="this.remove();this.closest('span').classList.remove('has-ico')">`;
         l.innerHTML=`<input type="radio" name="${key}" value="${i}"${i===S[key]?' checked':''}>`+
-          `<span class="has-ico${desc?' opt--card':''}">`+
-          `<b class="opt__txt">${it[0]}${desc}</b>`+
-          `<img class="opt__ico" src="calc-icons/${key}-${i}.webp" alt="" `+
-          `onerror="this.remove();this.closest('span').classList.remove('has-ico')"></span>`;
+          `<span class="${own?'opt--own':'has-ico'}${desc?' opt--card':''}">${inner}</span>`;
+        if(own){
+          const f=l.querySelector('.opt__inp');
+          f.addEventListener('focus',()=>{ l.querySelector('input[type=radio]').checked=true; S[key]=i; calc(); });
+          f.addEventListener('input',calc);
+        }
         l.querySelector('input').addEventListener('change',()=>{S[key]=i;calc();});
         box.appendChild(l);
       });
@@ -740,13 +750,12 @@
       }
       const sizeOwn = !packs && sizes[S.size][1]===null;
       const qtyOwn  = F.qty[S.qty][1]===null;
-      $('sizeOwnWrap').hidden=!sizeOwn; $('qtyOwnWrap').hidden=!qtyOwn;
       $('singleWrap').hidden=packs;                       // поштучно — только для стикеров
       if(packs) $('single').checked=false;
 
-      const q = qtyOwn ? Math.max(10, +$('qtyOwn').value||10) : F.qty[S.qty][0];
+      const q = qtyOwn ? Math.max(10, +($('qtyOwn')||{}).value||100) : F.qty[S.qty][0];
       // свой размер: коэффициент линейно от 50 мм (1.0) с шагом как у готовых ступеней
-      const dim = sizeOwn ? Math.max(1, (Math.max(10,+$('sizeOwn').value||50))/50) : sizes[S.size][1];
+      const dim = sizeOwn ? Math.max(1, Math.max(10, +($('sizeOwn')||{}).value||50)/50) : sizes[S.size][1];
       let unit = baseFor(q) * F.kind[S.kind][1] * F.mat[S.mat][1] * dim * F.resin[S.resin][1];
       if($('single').checked) unit*=1.08;
       if($('box').checked)    unit*=1.18;
@@ -758,7 +767,7 @@
     }
     build('kind',F.kind); build('mat',F.mat); build('size',F.size);
     build('resin',F.resin); build('qty',F.qty);
-    ['sizeOwn','qtyOwn','single','box'].forEach(id=> $(id).addEventListener('input',calc));
+    ['single','box'].forEach(id=> $(id).addEventListener('input',calc));
     calc();
   })();
 
