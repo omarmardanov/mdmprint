@@ -249,17 +249,17 @@
   .calc__grid{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--gap-card);
     margin-top:clamp(24px,3vw,40px);align-items:start}
   @media(max-width:860px){.calc__grid{grid-template-columns:1fr}.calc__in{padding-inline:20px}}
-  .calc__form{background:var(--surface-card);border:1px solid var(--border);
-    border-radius:var(--radius-outside);padding:var(--sp-24);
-    display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-24) var(--sp-20);counter-reset:step}
-  .fs{border:0;position:relative;padding-left:38px}
+  /* контейнера у формы нет: шаги лежат прямо на фоне секции (плашки сами держат структуру) */
+  .calc__form{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-28) var(--sp-24);
+    counter-reset:step}
+  .fs{border:0}
   .fs--wide{grid-column:1 / -1}
-  /* крупный номер шага — ритм вместо однообразного столбика */
-  .fs::before{counter-increment:step;content:"0" counter(step);position:absolute;left:0;top:-2px;
-    font-family:ui-monospace,Menlo,monospace;font-size:15px;font-weight:700;color:#d8cdb2}
+  /* номер шага — перед подписью поля, одной строкой */
   .fs legend{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
     color:var(--text-secondary);margin-bottom:var(--sp-12)}
-  @media(max-width:860px){.calc__form{grid-template-columns:1fr;padding:var(--sp-20)}}
+  .fs legend::before{counter-increment:step;content:counter(step) ". ";
+    font-family:ui-monospace,Menlo,monospace;color:#c79600}
+  @media(max-width:860px){.calc__form{grid-template-columns:1fr}}
   .opts{display:flex;flex-wrap:wrap;gap:8px}
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
   .opt input{position:absolute;opacity:0;width:0;height:0}
@@ -279,12 +279,12 @@
   /* плашки — крупные скруглённые прямоугольники: срез иконки по низу совпадает с формой */
   .opt span{position:relative;clip-path:inset(-80px 0 0 0 round 0 0 14px 14px);
     display:inline-flex;align-items:center;min-height:54px;padding:14px 18px;
-    border-radius:var(--radius-outside);background:var(--surface-gray);
-    font-size:var(--t-body);font-weight:600;cursor:pointer;
-    border:1.5px solid transparent;transition:background .15s ease,border-color .15s ease}
-  .opt input:checked + span{background:#141212;color:#fff;border-color:#FFC100}
+    border-radius:var(--radius-outside);background:var(--surface-card);
+    box-shadow:inset 0 0 0 1px var(--border);font-size:var(--t-body);font-weight:600;cursor:pointer;
+    transition:background .15s ease,box-shadow .15s ease}
+  .opt input:checked + span{background:#141212;color:#fff;box-shadow:none}
   .opt input:focus-visible + span{outline:3px solid #141212;outline-offset:2px}
-  .opt span:hover{background:var(--surface-gray-2)}
+  .opt span:hover{background:var(--surface-gray)}
   .opt input:checked + span:hover{background:#2c2825}
   /* итог */
   .calc__out{background:#141212;color:#fff;border-radius:var(--radius-outside);padding:var(--sp-24);
