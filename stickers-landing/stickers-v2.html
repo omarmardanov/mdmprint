@@ -432,6 +432,32 @@
   .sheet__close:focus-visible{outline:2px solid #141212;outline-offset:2px}
   .sheet__close svg{width:18px;height:18px}
   @media(max-width:860px){.sheet__box{padding:var(--sp-20)}}
+  /* ── МОДАЛКА ЗАКАЗА ── */
+  .ord__sum{display:flex;flex-wrap:wrap;gap:6px 8px;margin:var(--sp-20) 0 0}
+  .ord__sum div{display:flex;align-items:baseline;gap:6px;background:var(--surface-gray);
+    border-radius:var(--radius-pill);padding:7px 13px;font-size:var(--t-small)}
+  .ord__sum dt{color:var(--text-secondary)}
+  .ord__sum dd{margin:0;font-weight:700;color:var(--text-primary)}
+  .ord__form{display:flex;flex-direction:column;gap:var(--sp-16);margin-top:var(--sp-20)}
+  .ord__art{display:flex;flex-direction:column;gap:8px;padding-bottom:var(--sp-16);
+    border-bottom:1px solid rgba(20,18,18,.07)}
+  .ord__fields{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-12)}
+  .ord__fields .calc__f:nth-child(3){grid-column:1/-1}
+  @media(max-width:640px){.ord__fields{grid-template-columns:1fr}}
+
+  /* ── МОБИЛЬНАЯ ПОЛОСА С ЦЕНОЙ ── */
+  .calcbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:55;
+    align-items:center;justify-content:space-between;gap:var(--sp-16);
+    padding:12px 16px calc(env(safe-area-inset-bottom,0px) + 12px);
+    background:var(--surface-card);box-shadow:0 -12px 30px -24px rgba(20,18,18,.6),
+    inset 0 1px 0 rgba(20,18,18,.08)}
+  .calcbar b{display:block;font-family:var(--font-head);font-weight:800;font-size:22px;line-height:1.1}
+  .calcbar span{display:block;font-size:12px;color:var(--text-secondary)}
+  .calcbar__btn{font:inherit;font-weight:800;font-size:15px;color:#141212;background:#FFC100;
+    border:0;border-radius:14px;padding:14px 20px;cursor:pointer;white-space:nowrap}
+  .calcbar--on{display:flex}
+  body.has-calcbar .fabbar{display:none}
+  @media(min-width:861px){.calcbar{display:none!important}}
 </style>
 </head>
 <body>
@@ -620,40 +646,9 @@
           </div>
           <p class="calc__demo">Цена предварительная — зависит от срока и сложности макета.</p>
           <p><a class="calc__req" href="#trebovaniya">Требования к макетам</a></p>
-          <form class="calc__lead" id="calcLead" novalidate>
-            <fieldset class="fs">
-              <legend>Макет</legend>
-              <label class="calc__file" id="fileWrap">
-                <input type="file" id="artFile" accept=".pdf,.ai,.eps,.svg,.png,.jpg,.jpeg,.tif,.tiff,.cdr">
-                <span class="calc__filebtn" id="fileName">Приложить файл</span>
-                <em>PDF, AI, EPS, SVG, PNG, JPG, TIFF, CDR — можно прислать менеджеру позже</em>
-              </label>
-              <label class="calc__ok">
-                <input type="checkbox" class="mk-check" id="needDesign">
-                <span>Нужен дизайн — нарисуем по вашей идее, цену скажет менеджер</span>
-              </label>
-            </fieldset>
-            <label class="calc__f"><span>Имя</span>
-              <input type="text" name="name" autocomplete="name" required placeholder="Как к вам обращаться"></label>
-            <label class="calc__f"><span>Телефон</span>
-              <input type="tel" name="phone" autocomplete="tel" required placeholder="+7 (___) ___-__-__"></label>
-            <label class="calc__ok">
-              <input type="checkbox" class="mk-check" name="agree" required>
-              <span>Я даю согласие на <a href="https://mdmprint.ru/terms" target="_blank" rel="noopener">обработку
-                персональных данных</a> и принимаю <a href="https://mdmprint.ru/publichnaya-oferta"
-                target="_blank" rel="noopener">условия оферты</a></span>
-            </label>
-            <label class="calc__ok">
-              <input type="checkbox" class="mk-check" name="promo">
-              <span>Согласен получать новости и спецпредложения <em>(необязательно)</em></span>
-            </label>
-            <p class="calc__hint"><button class="calc__link" type="button" id="shipOpen">Доставка и самовывоз</button>
-              — способ получения уточним при согласовании.</p>
-            <p class="calc__hint">Оплата любым способом после согласования с менеджером — пришлём
-              ссылку на онлайн-оплату. <a href="https://mdmprint.ru/publichnaya-oferta" target="_blank"
-              rel="noopener">Публичная оферта</a></p>
-            <button class="calc__cta" type="submit">Оформить заказ</button>
-          </form>
+          <button class="calc__cta" type="button" id="orderOpen">Оформить заказ</button>
+          <p class="calc__hint"><button class="calc__link" type="button" id="shipOpen">Доставка и самовывоз</button>
+            · <a href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">Оферта</a></p>
         </div>
         </div>
       </div>
@@ -664,6 +659,50 @@
     <p class="forms__note">Заглушка: здесь встанет следующая секция. Нужна, чтобы прокрутка
       доходила до конца блока «Виды» и был виден доклон при скролле.</p></div></section>
   </main>
+
+  <!-- Заказ: сводка + макет + контакты. Вынесено из калькулятора, чтобы итог оставался коротким -->
+  <div class="sheet" id="orderSheet" role="dialog" aria-modal="true" aria-labelledby="orderTitle">
+    <div class="sheet__box">
+      <button class="sheet__close" type="button" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <h3 class="sheet__title" id="orderTitle">Оформить заказ</h3>
+      <dl class="ord__sum" id="ordSum"></dl>
+      <form class="ord__form" id="calcLead" novalidate>
+        <div class="ord__art">
+          <label class="calc__file">
+            <input type="file" id="artFile" accept=".pdf,.ai,.eps,.svg,.png,.jpg,.jpeg,.tif,.tiff,.cdr">
+            <span class="calc__filebtn" id="fileName">Приложить файл</span>
+            <em>PDF, AI, EPS, SVG, PNG, JPG, TIFF, CDR — можно прислать менеджеру позже</em>
+          </label>
+          <label class="calc__ok">
+            <input type="checkbox" class="mk-check" id="needDesign">
+            <span>Нужен дизайн — нарисуем по вашей идее, цену скажет менеджер</span>
+          </label>
+        </div>
+        <div class="ord__fields">
+          <label class="calc__f"><span>Имя</span>
+            <input type="text" name="name" autocomplete="name" required placeholder="Как к вам обращаться"></label>
+          <label class="calc__f"><span>Телефон</span>
+            <input type="tel" name="phone" autocomplete="tel" required placeholder="+7 (___) ___-__-__"></label>
+          <label class="calc__f"><span>E-mail</span>
+            <input type="email" name="email" autocomplete="email" placeholder="для счёта и макета"></label>
+        </div>
+        <label class="calc__ok">
+          <input type="checkbox" class="mk-check" name="agree" required>
+          <span>Я даю согласие на <a href="https://mdmprint.ru/terms" target="_blank" rel="noopener">обработку
+            персональных данных</a> и принимаю <a href="https://mdmprint.ru/publichnaya-oferta"
+            target="_blank" rel="noopener">условия оферты</a></span>
+        </label>
+        <label class="calc__ok">
+          <input type="checkbox" class="mk-check" name="promo">
+          <span>Согласен получать новости и спецпредложения <em>(необязательно)</em></span>
+        </label>
+        <button class="calc__cta" type="submit">Отправить заявку</button>
+        <p class="calc__hint">Оплата любым способом после согласования макета — пришлём ссылку.</p>
+      </form>
+    </div>
+  </div>
 
   <!-- Доставка и самовывоз — краткой модалкой (по ТЗ: «максимально кратко, можно в попап») -->
   <div class="sheet" id="shipSheet" role="dialog" aria-modal="true" aria-labelledby="shipTitle">
@@ -690,6 +729,12 @@
     </div>
   </div>
 
+
+  <!-- мобильная полоса калькулятора: цена и кнопка всегда под рукой -->
+  <div class="calcbar" id="calcBar" aria-hidden="true">
+    <div><b id="barPrice">—</b><span id="barMeta"></span></div>
+    <button class="calcbar__btn" type="button" id="barOrder">Оформить</button>
+  </div>
 
   <!-- плавающая CTA: заменяет мобильную шапку -->
   <div class="fabbar"><a class="fab" href="#">Рассчитать стоимость</a></div>
@@ -727,6 +772,41 @@
     const heroStage = document.querySelector('.hero__stage');
     // герой: в покое РОВНО лицом к нам; наклон «живой», как у сцен (theta ±27°, phi 6..58°)
     if(hero && heroStage) bind(hero, heroStage, {rest:'0deg 0deg 164%', rad:'164%'});
+  })();
+
+  /* Модалка заказа: сводка выбранного + макет + контакты. Открывается кнопкой из итога
+     и из мобильной полосы. Доступность: Escape, клик по фону, возврат фокуса. */
+  (function(){
+    const sh=document.getElementById('orderSheet');
+    if(!sh) return;
+    const sum=document.getElementById('ordSum');
+    const row=(k,v)=>`<div><dt>${k}</dt><dd>${v}</dd></div>`;
+    let back=null;
+    function fill(){
+      const L=window.__calcLast||{};
+      sum.innerHTML = row('Итого', (L.sumText||'—')) + row(L.packs?'Паков':'Штук', L.q||'—')
+        + row('Тип', L.kind||'—') + row('Материал', L.mat||'—') + row('Смола', L.resin||'—')
+        + row(L.packs?'Формат':'Размер', L.size||'—') + row('Срок', L.term||'—')
+        + (L.extras&&L.extras.length ? row('Допы', L.extras.join(', ')) : '');
+    }
+    function show(){ fill(); back=document.activeElement; sh.setAttribute('open','');
+      document.body.style.overflow='hidden'; sh.querySelector('.sheet__close').focus(); }
+    function hide(){ sh.removeAttribute('open'); document.body.style.overflow=''; if(back) back.focus(); }
+    ['orderOpen','barOrder'].forEach(id=>{ const b=document.getElementById(id); if(b) b.addEventListener('click',show); });
+    sh.querySelector('.sheet__close').addEventListener('click',hide);
+    sh.addEventListener('click',e=>{ if(e.target===sh) hide(); });
+    addEventListener('keydown',e=>{ if(e.key==='Escape'&&sh.hasAttribute('open')) hide(); });
+  })();
+
+  /* Мобильная полоса с ценой: показываем, пока секция калькулятора на экране. */
+  (function(){
+    const bar=document.getElementById('calcBar'), calc=document.querySelector('.calc');
+    if(!bar||!calc||!('IntersectionObserver' in window)) return;
+    new IntersectionObserver(([e])=>{
+      bar.classList.toggle('calcbar--on', e.isIntersecting);
+      // пока полоса калькулятора на экране, плавающая CTA героя не нужна — они спорят за низ
+      document.body.classList.toggle('has-calcbar', e.isIntersecting);
+    },{threshold:0}).observe(calc);
   })();
 
   /* Модалка «Доставка и самовывоз»: краткая справка, чтобы не грузить форму лишними шагами. */
@@ -936,6 +1016,14 @@
 
       const sum=Math.round(unit*q);
       $('total').textContent=rub(sum);
+      // сводка для модалки и мобильной полосы
+      const L = {sum, unit:Math.round(unit), q, packs,
+        kind:F.kind[S.kind][0], mat:F.mat[S.mat][0], resin:F.resin[S.resin][0],
+        size:(packs?F.sheet:F.size)[S.size][0], term:q<=500?'до 3 дней':'до 7 дней',
+        extras:[$('single').checked?'поштучно':null,$('box').checked?'инд. упаковка':null].filter(Boolean)};
+      L.sumText=rub(sum); window.__calcLast=L;
+      const bp=$('barPrice'), bm=$('barMeta');
+      if(bp){ bp.textContent=rub(sum); bm.textContent=L.q+(packs?' паков':' шт')+' · '+L.term; }
       $('unit').textContent =rub(Math.round(unit))+(packs?' за пак':' за штуку');
       $('term').textContent = q<=500?'до 3 дней':'до 7 дней';
       $('qtyOut').textContent = q+(packs?' паков':' шт');
