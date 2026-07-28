@@ -276,6 +276,10 @@
   
   .opts{display:flex;flex-wrap:wrap;gap:8px}
   /* кнопки по содержимому с переносом — для коротких значений вроде 55×44 */
+  /* столбиком одинаковой ширины — у этих опций разной длины описания, по контенту плашки рвались */
+  .opts--rows{display:grid;grid-template-columns:1fr;gap:10px}
+  .opts--rows .opt,.opts--rows .opt span{width:100%}
+  .opts--rows .opt__desc{max-width:none}
   .opts--flow{display:flex;flex-wrap:wrap;gap:10px}
   .opts--flow .opt{flex:0 0 auto;width:fit-content}
   .opts--flow .opt span{width:fit-content;min-width:0;padding:11px 15px;min-height:44px}
@@ -613,12 +617,11 @@
           <form class="calc__lead" id="calcLead" novalidate>
             <fieldset class="fs">
               <legend>Макет</legend>
-              <div class="opts opts--flow" id="art"></div>
+              <div class="opts opts--rows" id="art"></div>
               <label class="calc__file" id="fileWrap" hidden>
                 <input type="file" id="artFile" accept=".pdf,.ai,.eps,.svg,.png,.jpg,.jpeg,.tif,.tiff,.cdr">
                 <span>Выбрать файл</span>
               </label>
-              <p class="calc__hint" id="artHint"></p>
             </fieldset>
             <label class="calc__f"><span>Имя</span>
               <input type="text" name="name" autocomplete="name" required placeholder="Как к вам обращаться"></label>
@@ -847,8 +850,8 @@
              ['Светящаяся',1.35,'Копит свет и светится в темноте']],
       qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'99999']],
       art:  [['Загружу сейчас',0,'PDF, AI, EPS, SVG, PNG, JPG, TIFF, CDR'],
-             ['Пришлю позже',0,'Менеджер напомнит и подскажет по требованиям'],
-             ['Нужен дизайн',0,'Нарисуем по вашей идее — стоимость скажет менеджер']],
+             ['Пришлю позже',0,'Напомним и подскажем по требованиям'],
+             ['Нужен дизайн',0,'Нарисуем по вашей идее, цену скажет менеджер']],
     };
     const S={kind:0,mat:0,size:0,resin:0,qty:2,art:1};
     const $=id=>document.getElementById(id);
@@ -926,7 +929,6 @@
 
       const sum=Math.round(unit*q);
       $('fileWrap').hidden = S.art!==0;
-      $('artHint').textContent  = F.art[S.art][2]||'';
       $('total').textContent=rub(sum);
       $('unit').textContent =rub(Math.round(unit))+(packs?' за пак':' за штуку');
       $('term').textContent = q<=500?'до 3 дней':'до 7 дней';
