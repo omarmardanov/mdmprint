@@ -386,6 +386,17 @@
     border-left:2px solid #141212;border-bottom:2px solid #141212}
   .mk-check:focus-visible{outline:2px solid #c79600;outline-offset:2px}
   .calc__cta{border:0;cursor:pointer}
+  .calc__pick,.calc__file{display:flex;flex-direction:column;gap:6px;margin-top:var(--sp-12);
+    font-size:12px;color:var(--text-secondary)}
+  .calc__pick select{font:inherit;font-size:15px;color:var(--text-primary);background:var(--surface-card);
+    border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;max-width:340px}
+  .calc__file{align-items:flex-start}
+  .calc__file input{font:inherit;font-size:13px}
+  .calc__hint{margin-top:var(--sp-12);font-size:13px;line-height:18px;color:var(--text-secondary)}
+  .calc__hint a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
+  .calc__hint a:hover{color:var(--text-primary)}
+  .calc__hint:empty{display:none}
+  .calc__pick[hidden],.calc__file[hidden]{display:none}
   .calc__demo{margin-top:var(--sp-20);font-size:var(--t-small);line-height:20px;color:var(--text-secondary);max-width:44ch}
 </style>
 </head>
@@ -572,10 +583,29 @@
           <div class="calc__rows">
             <div class="calc__row"><span>Срок</span><b id="term">—</b></div>
             <div class="calc__row"><span>Тираж</span><b id="qtyOut">—</b></div>
+            <div class="calc__row"><span>Доставка</span><b id="shipOut">—</b></div>
           </div>
           <p class="calc__demo">Цена предварительная — зависит от срока и сложности макета.</p>
           <p><a class="calc__req" href="#trebovaniya">Требования к макетам</a></p>
           <form class="calc__lead" id="calcLead" novalidate>
+            <fieldset class="fs">
+              <legend>Как получить</legend>
+              <div class="opts opts--flow" id="ship"></div>
+              <label class="calc__pick" id="pickWrap" hidden>
+                <span>Пункт самовывоза</span>
+                <select id="pick"></select>
+              </label>
+              <p class="calc__hint" id="shipHint"></p>
+            </fieldset>
+            <fieldset class="fs">
+              <legend>Макет</legend>
+              <div class="opts opts--flow" id="art"></div>
+              <label class="calc__file" id="fileWrap" hidden>
+                <input type="file" id="artFile" accept=".pdf,.ai,.eps,.svg,.png,.jpg,.jpeg,.tif,.tiff,.cdr">
+                <span>Выбрать файл</span>
+              </label>
+              <p class="calc__hint" id="artHint"></p>
+            </fieldset>
             <label class="calc__f"><span>Имя</span>
               <input type="text" name="name" autocomplete="name" required placeholder="Как к вам обращаться"></label>
             <label class="calc__f"><span>Телефон</span>
@@ -589,7 +619,10 @@
               <input type="checkbox" class="mk-check" name="promo">
               <span>Согласен получать новости и спецпредложения <em>(необязательно)</em></span>
             </label>
-            <button class="calc__cta" type="submit">Оставить заявку</button>
+            <p class="calc__hint">Оплата любым способом после согласования с менеджером — пришлём
+              ссылку на онлайн-оплату. <a href="https://mdmprint.ru/publichnaya-oferta" target="_blank"
+              rel="noopener">Публичная оферта</a></p>
+            <button class="calc__cta" type="submit">Оформить заказ</button>
           </form>
         </div>
         </div>
@@ -757,8 +790,17 @@
       resin:[['Эпоксидная',1,'Прозрачная линза: объём, глянец, защита рисунка'],
              ['Светящаяся',1.35,'Копит свет и светится в темноте']],
       qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'99999']],
+      // получение: цена доставки по тарифам mdmprint.ru/dostavka (малый заказ), СДЭК считает сам
+      ship: [['Самовывоз',0,'25 пунктов в Москве, бесплатно'],
+             ['Курьер по Москве',790,'790 ₽, бесплатно от 40 000 ₽. 2–3 дня после готовности'],
+             ['МО до ЦКАД',1100,'1 100 ₽, 2–3 дня после готовности'],
+             ['МО за ЦКАД',1500,'1 500 ₽, 2–3 дня после готовности'],
+             ['СДЭК в регионы',-1,'По тарифу СДЭК — посчитаем и сообщим при согласовании']],
+      art:  [['Загружу сейчас',0,'PDF, AI, EPS, SVG, PNG, JPG, TIFF, CDR'],
+             ['Пришлю позже',0,'Менеджер напомнит и подскажет по требованиям'],
+             ['Нужен дизайн',0,'Нарисуем по вашей идее — стоимость скажет менеджер']],
     };
-    const S={kind:0,mat:0,size:0,resin:0,qty:2};
+    const S={kind:0,mat:0,size:0,resin:0,qty:2,ship:0,art:1};
     const $=id=>document.getElementById(id);
     const rub=n=>n.toLocaleString('ru-RU')+' \u20BD';
 
@@ -832,13 +874,40 @@
       if($('single').checked) unit*=1.08;
       if($('box').checked)    unit*=1.18;
 
-      $('total').textContent=rub(Math.round(unit*q));
+      // доставка: бесплатно при самовывозе и по Москве от 40 000 ₽; СДЭК — по своему тарифу
+      const sum=Math.round(unit*q);
+      const shipRaw=F.ship[S.ship][1];   // -1 = считает СДЭК
+      const free = S.ship===1 && sum>=40000;
+      const shipCost = shipRaw<0 ? null : (free ? 0 : shipRaw);
+      $('shipOut').textContent = shipRaw<0 ? 'по тарифу СДЭК'
+        : (shipCost===0 ? (S.ship===0?'бесплатно':'бесплатно от 40 000 ₽') : rub(shipCost));
+      $('pickWrap').hidden = S.ship!==0;
+      $('fileWrap').hidden = S.art!==0;
+      $('shipHint').textContent = F.ship[S.ship][2]||'';
+      $('artHint').textContent  = F.art[S.art][2]||'';
+      $('total').textContent=rub(sum + (shipCost||0));
       $('unit').textContent =rub(Math.round(unit))+(packs?' за пак':' за штуку');
       $('term').textContent = q<=500?'до 3 дней':'до 7 дней';
       $('qtyOut').textContent = q+(packs?' паков':' шт');
     }
     build('kind',F.kind); build('mat',F.mat); build('size',F.size);
-    build('resin',F.resin); build('qty',F.qty);
+    build('resin',F.resin); build('qty',F.qty); build('ship',F.ship); build('art',F.art);
+    // пункты самовывоза — с mdmprint.ru/dostavka/punkty-samovyvoza
+    const PICK=[['Автозаводская','ул. Автозаводская, 25с15'],['Академическая','ул. Дмитрия Ульянова, 20к1'],
+      ['Аэропорт','ул. Черняховского, 5к1'],['Бауманская','ул. Фридриха Энгельса, 3-5с1'],
+      ['Беляево','ул. Миклухо-Маклая, 47А'],['Дмитровская','ул. Бутырская, 84'],
+      ['Добрынинская','ул. Люсиновская, 4'],['Кожуховская','ул. Южнопортовая, 18'],
+      ['Курская','ул. Земляной Вал, 14/16'],['Ленинский проспект','ул. Вавилова, 6'],
+      ['Митино','ул. Дубравная, 34/29, ТЦ Ладья'],['Москва-сити','Пресненская набережная, 2'],
+      ['Новослободская','ул. Новослободская, 3'],['Павелецкая','ул. Кожевническая, 3с1'],
+      ['Семёновская','ул. Щербаковская, 35'],['Смоленская','ул. Арбат, 54/2'],
+      ['Сокол','Ленинградский проспект, 74А'],['Сокольники','Сокольническая площадь, 4А'],
+      ['Улица 1905 года','Пресненский вал, 8к3'],['Университет','пл. Джавахарлала Неру, 1'],
+      ['Университет · Фрунзенская','Комсомольский проспект, 28'],['Чистые пруды','ул. Мясницкая, 24/7'],
+      ['Шаболовская','ул. Шухова, 18'],['Электрозаводская','ул. Большая Семёновская, 20'],
+      ['Юго-Западная','ул. Покрышкина, 4, ТЦ «Звёздочка»']];
+    const sel=$('pick');
+    PICK.forEach(([m,a])=> sel.add(new Option(m+' — '+a)));
     ['single','box'].forEach(id=> $(id).addEventListener('input',calc));
     calc();
   })();
