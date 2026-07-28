@@ -217,7 +217,7 @@
   .fcard__art{position:relative;margin:auto calc(var(--sp-16) * -1) calc(var(--sp-16) * -1);
     border-radius:0 0 14px 14px;overflow:hidden;aspect-ratio:4/3;background:none}
   /* разметка как в пульте: живая модель кадрируется сама под кадр карточки, постер — заглушка */
-  .fcard__art model-viewer{width:100%;height:100%;display:block;transform:scale(1.05);
+  .fcard__art model-viewer{width:100%;height:100%;display:block;transform:scale(1);
     --poster-color:transparent;pointer-events:none}
   /* первая карточка тёмная — акцент блока (по ДС тёмная поверхность одна на страницу) */
   .fcard--glow{background:#141212}
@@ -233,6 +233,47 @@
   .stub{min-height:90vh;padding-block:clamp(48px,7vw,96px);background:#fff}
   .stub h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
     font-size:clamp(28px,3.6vw,46px);line-height:1;color:#c9c4ba}
+  /* ── КАЛЬКУЛЯТОР: отдельная секция под «Видами». Геометрия и цвета — по ДС ── */
+  .calc{padding-block:clamp(48px,7vw,96px);background:#fff}
+  .calc__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+  .calc h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(28px,3.6vw,46px);line-height:1;letter-spacing:-.005em;max-width:27ch}
+  .calc__note{margin-top:14px;max-width:56ch;color:var(--text-secondary);
+    font-size:var(--t-body);line-height:var(--t-body-lh)}
+  .calc__grid{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--gap-card);
+    margin-top:clamp(24px,3vw,40px);align-items:start}
+  @media(max-width:860px){.calc__grid{grid-template-columns:1fr}.calc__in{padding-inline:20px}}
+  .calc__form{background:var(--surface-card);border:1px solid var(--border);
+    border-radius:var(--radius-outside);padding:var(--sp-24);display:flex;flex-direction:column;gap:var(--sp-20)}
+  .fs{border:0}
+  .fs legend{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+    color:var(--text-secondary);margin-bottom:var(--sp-12)}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
+  .opt input{position:absolute;opacity:0;width:0;height:0}
+  .opt span{display:inline-flex;align-items:center;padding:10px 15px;border-radius:var(--radius-pill);
+    background:var(--surface-gray);font-size:var(--t-small);font-weight:600;cursor:pointer;
+    border:1.5px solid transparent;transition:background .15s ease,border-color .15s ease}
+  .opt input:checked + span{background:#141212;color:#fff}
+  .opt input:focus-visible + span{outline:3px solid #141212;outline-offset:2px}
+  .opt span:hover{background:var(--surface-gray-2)}
+  .opt input:checked + span:hover{background:#2c2825}
+  /* итог */
+  .calc__out{background:#141212;color:#fff;border-radius:var(--radius-outside);padding:var(--sp-24);
+    display:flex;flex-direction:column;gap:var(--sp-12);position:sticky;top:20px}
+  .calc__price{font-family:var(--font-head);font-weight:800;font-size:clamp(34px,4vw,52px);line-height:1}
+  .calc__unit{font-size:var(--t-small);color:rgba(255,255,255,.72)}
+  .calc__rows{display:flex;flex-direction:column;gap:8px;margin-top:4px;
+    padding-top:var(--sp-12);border-top:1px solid var(--border-on-dark-2)}
+  .calc__row{display:flex;justify-content:space-between;gap:12px;font-size:var(--t-small);
+    color:rgba(255,255,255,.8)}
+  .calc__row b{color:#fff;font-weight:700}
+  .calc__cta{margin-top:var(--sp-12);display:inline-flex;align-items:center;justify-content:center;
+    background:#FFC100;color:#141212;text-decoration:none;font-weight:800;font-size:16px;
+    padding:15px 24px;border-radius:14px}
+  .calc__cta:hover{background:#ffcd2e}
+  .calc__cta:focus-visible{outline:3px solid #fff;outline-offset:3px}
+  .calc__demo{margin-top:var(--sp-12);font-size:12px;line-height:16px;color:rgba(255,255,255,.6)}
 </style>
 </head>
 <body>
@@ -316,7 +357,7 @@
         <p>Неон под смолой: видно даже в темноте. Гейминг, техника, ночной мерч.</p>
         <div class="fcard__art">
           <model-viewer src="models/m1-glow.glb" poster="posters/form-glow.webp" alt="Круглый светящийся стикер с надписью «работает не трогай»"
-            camera-orbit="-30deg 42deg 105%" field-of-view="60deg"
+            camera-orbit="0deg 41deg 120%" field-of-view="60deg"
             disable-tap disable-pan disable-zoom
             interaction-prompt="none" exposure="1.0" shadow-intensity="0" loading="lazy" reveal="auto"
             environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"></model-viewer>
@@ -327,7 +368,7 @@
         <p>Вытянутая форма — помещается название бренда со слоганом.</p>
         <div class="fcard__art">
           <model-viewer src="models/m2.glb" poster="posters/form-pill.webp" alt="Стикер-пилюля с логотипом SALT"
-            camera-orbit="-30deg 42deg 105%" field-of-view="60deg"
+            camera-orbit="0deg 41deg 120%" field-of-view="60deg"
             disable-tap disable-pan disable-zoom
             interaction-prompt="none" exposure="1.0" shadow-intensity="0" loading="lazy" reveal="auto"
             environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"></model-viewer>
@@ -338,7 +379,7 @@
         <p>Режем точно по рисунку: форма повторяет силуэт или надпись.</p>
         <div class="fcard__art">
           <model-viewer src="models/m3.glb" poster="posters/form-diecut.webp" alt="Фигурный стикер с надписью mellow, вырезанный по контуру"
-            camera-orbit="-30deg 42deg 105%" field-of-view="60deg"
+            camera-orbit="0deg 41deg 120%" field-of-view="60deg"
             disable-tap disable-pan disable-zoom
             interaction-prompt="none" exposure="1.0" shadow-intensity="0" loading="lazy" reveal="auto"
             environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"></model-viewer>
@@ -349,7 +390,7 @@
         <p>Со скруглением — влезает иллюстрация целиком, подписи и детали.</p>
         <div class="fcard__art">
           <model-viewer src="models/m4.glb" poster="posters/form-rect.webp" alt="Прямоугольный стикер с иллюстрацией Санкт-Петербурга"
-            camera-orbit="-30deg 42deg 105%" field-of-view="60deg"
+            camera-orbit="0deg 41deg 120%" field-of-view="60deg"
             disable-tap disable-pan disable-zoom
             interaction-prompt="none" exposure="1.0" shadow-intensity="0" loading="lazy" reveal="auto"
             environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"></model-viewer>
@@ -360,12 +401,56 @@
         <p>Для мерча: раздатка на мероприятиях, упаковка, подарки клиентам.</p>
         <div class="fcard__art">
           <model-viewer src="models/m5.glb" poster="posters/form-round.webp" alt="Круглый стикер с логотипом NORDA"
-            camera-orbit="-30deg 42deg 105%" field-of-view="60deg"
+            camera-orbit="0deg 41deg 120%" field-of-view="60deg"
             disable-tap disable-pan disable-zoom
             interaction-prompt="none" exposure="1.0" shadow-intensity="0" loading="lazy" reveal="auto"
             environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"></model-viewer>
         </div>
       </article>
+    </div>
+  </section>
+  <!-- КАЛЬКУЛЯТОР: тираж + опции → цена (поля по ТЗ). Цифры ДЕМО, ждём прайс. -->
+  <section class="calc" id="calc">
+    <div class="calc__in">
+      <h2>Посчитайте свой тираж</h2>
+      <p class="calc__note">Выберите тираж, размер и покрытие — покажем цену и срок сразу,
+        без ожидания менеджера.</p>
+      <div class="calc__grid">
+        <form class="calc__form" id="calcForm">
+          <fieldset class="fs">
+            <legend>Тираж, шт</legend>
+            <div class="opts" id="qty"></div>
+          </fieldset>
+          <fieldset class="fs">
+            <legend>Размер по длинной стороне</legend>
+            <div class="opts" id="size"></div>
+          </fieldset>
+          <fieldset class="fs">
+            <legend>Покрытие</legend>
+            <div class="opts" id="coat"></div>
+          </fieldset>
+          <fieldset class="fs">
+            <legend>Форма</legend>
+            <div class="opts" id="shape"></div>
+          </fieldset>
+          <fieldset class="fs">
+            <legend>Упаковка</legend>
+            <div class="opts" id="pack"></div>
+          </fieldset>
+        </form>
+        <div class="calc__out" aria-live="polite">
+          <div>
+            <div class="calc__price" id="total">—</div>
+            <div class="calc__unit" id="unit"></div>
+          </div>
+          <div class="calc__rows">
+            <div class="calc__row"><span>Срок изготовления</span><b id="term">—</b></div>
+            <div class="calc__row"><span>Тираж</span><b id="qtyOut">—</b></div>
+          </div>
+          <a class="calc__cta" href="#">Оставить заявку</a>
+          <p class="calc__demo">Цифры демонстрационные — подставим ваш прайс.</p>
+        </div>
+      </div>
     </div>
   </section>
   <!-- 3. ЗАГЛУШКА: место следующего блока (нужна, чтобы видеть скролл-эффект «Видов») -->
@@ -498,7 +583,7 @@
     if(matchMedia('(prefers-reduced-motion:reduce)').matches) return;
     const mvs=[...document.querySelectorAll('.fcard__art model-viewer')];
     if(!mvs.length) return;
-    const TH=-30, P0=42, P1=56, R0=105, R1=72;   // наклон + зум связаны, как в герое
+    const TH=0, P0=41, P1=52, R0=120, R1=98;   // вариант 2 Omar + доклон/зум при скролле
     let raf=0;
     function apply(){
       raf=0;
@@ -512,6 +597,38 @@
     }
     addEventListener('scroll',()=>{ if(!raf) raf=requestAnimationFrame(apply); },{passive:true});
     apply();
+  })();
+  /* Калькулятор: тираж + размер + покрытие + форма → цена. Коэффициенты ДЕМО (ждём прайс). */
+  (function(){
+    const F={
+      qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14]],          // тираж → база за штуку, ₽
+      size: [['до 50 мм',1],['до 80 мм',1.35],['до 120 мм',1.75]],
+      coat: [['Плёнка',1],['Эпоксидная смола',1.35],['Голография',1.5],['Светится в темноте',1.6]],
+      shape:[['Круг',1],['Прямоугольник',1],['Пилюля',1.05],['Фигурная высечка',1.15]],
+      pack: [['Без упаковки',1],['Поштучно',1.08],['Индивидуальная упаковка',1.18]],
+    };
+    const S={qty:2,size:0,coat:1,shape:0,pack:0};
+    const rub=n=>n.toLocaleString('ru-RU')+' \u20BD';
+    function build(key,labels){
+      const box=document.getElementById(key);
+      labels.forEach((it,i)=>{
+        const label=document.createElement('label'); label.className='opt';
+        const val=key==='qty'?it[0]+' шт':it[0];
+        label.innerHTML=`<input type="radio" name="${key}" value="${i}"${i===S[key]?' checked':''}><span>${val}</span>`;
+        label.querySelector('input').addEventListener('change',()=>{S[key]=i;calc();});
+        box.appendChild(label);
+      });
+    }
+    function calc(){
+      const [q,base]=F.qty[S.qty];
+      const unit=base*F.size[S.size][1]*F.coat[S.coat][1]*F.shape[S.shape][1]*F.pack[S.pack][1];
+      document.getElementById('total').textContent=rub(Math.round(unit*q));
+      document.getElementById('unit').textContent=rub(Math.round(unit))+' за штуку';
+      document.getElementById('term').textContent=q<=500?'до 3 дней':'до 7 дней';
+      document.getElementById('qtyOut').textContent=q+' шт';
+    }
+    build('qty',F.qty); build('size',F.size); build('coat',F.coat); build('shape',F.shape); build('pack',F.pack);
+    calc();
   })();
 </script>
 </body>
