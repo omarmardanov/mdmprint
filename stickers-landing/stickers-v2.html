@@ -280,9 +280,14 @@
   .opt span{position:relative;clip-path:inset(-80px 0 0 0 round 0 0 14px 14px);
     display:inline-flex;align-items:center;min-height:54px;padding:14px 18px;
     border-radius:var(--radius-outside);background:var(--surface-card);
-    box-shadow:inset 0 0 0 1px var(--border);font-size:var(--t-body);font-weight:600;cursor:pointer;
+    font-size:var(--t-body);font-weight:600;cursor:pointer;
     transition:background .15s ease,box-shadow .15s ease}
-  .opt input:checked + span{background:#141212;color:#fff;box-shadow:none}
+  /* обводка отдельным слоем ПОВЕРХ картинки — тогда стикер выглядит торчащим из кнопки */
+  .opt span::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:2;
+    pointer-events:none;box-shadow:inset 0 0 0 1px var(--border)}
+  .opt__ico{z-index:1}
+  .opt input:checked + span{background:#141212;color:#fff}
+  .opt input:checked + span::after{box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
   .opt input:focus-visible + span{outline:3px solid #141212;outline-offset:2px}
   .opt span:hover{background:var(--surface-gray)}
   .opt input:checked + span:hover{background:#2c2825}
