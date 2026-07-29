@@ -308,7 +308,9 @@
      Резерв справа не нужен, поэтому описание не жмётся по слову в строку. */
   .opts--vert .opt span{flex-direction:column;align-items:stretch;gap:8px}
   .opts--vert .opt__txt,.opts--vert .opt__desc{padding-right:0;width:100%;max-width:none}
-  .opts--vert .opt__ico{position:static;width:100%;height:58px;margin:auto 0 -10px;
+  /* картинка выше плашки и срезается её нижней границей: карточка ниже, стикер «торчит» изнутри */
+  .opts--vert .opt span{padding-bottom:0;overflow:hidden}
+  .opts--vert .opt__ico{position:static;width:100%;height:72px;margin:6px 0 -26px;
     object-fit:contain;object-position:center top}
   .opts--vert .opt:hover .opt__ico{transform:translateY(-6px) rotate(-4deg) scale(1.03)}
   /* резерв под картинку даём ТОЛЬКО описанию: картинка внизу справа, а заголовок наверху
