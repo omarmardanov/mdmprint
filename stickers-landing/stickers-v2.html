@@ -1926,9 +1926,12 @@
       if(vertical){
         const v=document.createElement('video');
         Object.assign(v,{muted:true,loop:true,playsInline:true,autoplay:true,preload:'metadata'});
-        v.src=base+'.mp4';
+        // webm сделан из исходника прямо в браузере (ffmpeg в системе нет); mp4 — для Safari,
+        // когда появится чем перекодировать. Нет ни одного файла — остаётся плашка-заглушка.
+        [['webm','video/webm'],['mp4','video/mp4']].forEach(([ext,type])=>{
+          const s=document.createElement('source'); s.src=base+'.'+ext; s.type=type; v.appendChild(s);
+        });
         v.addEventListener('loadeddata',()=>{ fig.querySelector('.adv__ph,.abt__ph')?.remove(); v.play().catch(()=>{}); });
-        v.addEventListener('error',()=> v.remove());
         fig.appendChild(v);
       } else {
         const i=document.createElement('img');
