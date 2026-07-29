@@ -277,7 +277,7 @@
     border-radius:8px;background:rgba(20,18,18,.07);color:#4a4136;flex:none;
     font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:700;letter-spacing:0}
   
-  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
   /* кнопки по содержимому с переносом — для коротких значений вроде 55×44 */
   /* столбиком одинаковой ширины — у этих опций разной длины описания, по контенту плашки рвались */
   .opts--rows{display:grid;grid-template-columns:1fr;gap:10px}
@@ -628,8 +628,12 @@
           <fieldset class="fs fs--wide">
             <legend>Дополнительно</legend>
             <div class="opts">
-              <label class="opt" id="singleWrap"><input type="checkbox" id="single"><span>Сделать поштучно</span></label>
-              <label class="opt"><input type="checkbox" id="box"><span>Индивидуальная упаковка</span></label>
+              <label class="opt"><input type="checkbox" id="single">
+                <span><b class="opt__txt">Сделать поштучно<em class="opt__desc">Каждый вырезан
+                  и упакован по одному</em></b></span></label>
+              <label class="opt"><input type="checkbox" id="box">
+                <span><b class="opt__txt">Индивидуальная упаковка<em class="opt__desc">Своя упаковка
+                  с вашим оформлением</em></b></span></label>
             </div>
           </fieldset>
         </div>
