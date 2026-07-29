@@ -301,12 +301,12 @@
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
   .opt>input[type=radio],.opt>input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}
   /* картинка в плашке — необязательная: файл calc-icons/<поле>-<индекс>.webp (png в .gitignore!), нет файла — нет иконки */
-  .opt__ico{position:absolute;right:6px;bottom:-6px;width:44px;height:44px;flex:none;
+  .opt__ico{position:absolute;right:8px;bottom:-8px;width:54px;height:54px;flex:none;
     object-fit:contain;object-position:top center;pointer-events:none;
     filter:drop-shadow(0 4px 8px rgba(20,18,18,.35))}
   /* резерв под картинку даём ТОЛЬКО описанию: картинка внизу справа, а заголовок наверху
      и может занимать всю ширину. Раньше padding-right на всей плашке зря рвал заголовок. */
-  .opt span.has-ico .opt__desc{padding-right:46px}
+  .opt span.has-ico .opt__desc{padding-right:58px}
   .opt__txt{display:flex;flex-direction:column;gap:3px;font-weight:600;text-wrap:balance}
   .opt__desc{font-style:normal;font-size:12.5px;line-height:16px;font-weight:400;
     color:var(--text-secondary);max-width:20ch}
@@ -322,8 +322,8 @@
   .opt>input:checked + span .opt__inp::placeholder{color:rgba(255,255,255,.6)}
   .opt span.opt--card{min-height:74px;padding:13px 16px;align-items:flex-start}
   .opt span.opt--card:not(.has-ico){min-height:0;padding:14px 18px}
-  .opt span.opt--card.has-ico .opt__desc{padding-right:52px}
-  .opt span.opt--card .opt__ico{width:50px;height:50px;right:6px;bottom:-8px}
+  .opt span.opt--card.has-ico .opt__desc{padding-right:76px}
+  .opt span.opt--card .opt__ico{width:74px;height:74px;right:6px;bottom:-13px}
   /* плашки — крупные скруглённые прямоугольники: срез иконки по низу совпадает с формой */
   .opt span{position:relative;clip-path:inset(-80px 0 0 0 round 0 0 14px 14px);
     display:inline-flex;align-items:center;min-height:48px;padding:11px 15px;
