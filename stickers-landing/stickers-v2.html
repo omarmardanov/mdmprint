@@ -28,29 +28,80 @@
     -webkit-font-smoothing:antialiased;line-height:1.5}
   .wrap{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
 
-  /* ── ШАПКА: плоская, минимальная (реф рефдес1): лого+меню слева, пилюля справа ── */
-  .hd{position:fixed;top:0;left:0;right:0;z-index:50;padding:22px clamp(24px,5vw,64px)}
-  .hd__bar{display:flex;align-items:center;gap:clamp(20px,3vw,40px)}
-  .hd__logo{display:flex;align-items:center;gap:11px;text-decoration:none}
-  .hd__logo img{height:24px;display:block}
-  .hd__logo .x{color:#cbc4b4;font-size:20px;line-height:1}
-  .hd__logo .sub{font-family:var(--font-head);font-weight:700;font-size:24px;line-height:1;
+  /* ── ШАПКА: плоская, минимальная (реф рефдес1): лого+меню слева, пилюля справа ──
+     Три состояния: (1) в герое — прозрачная; (2) на скролле — тёплое стекло + сжатие;
+     (3) над тёмной секцией — инверсия. Высота шапки в --hd-h: по ней считаются и
+     scroll-margin якорей, и порог инверсии — иначе три числа разъезжаются. */
+  :root{ --hd-h:88px; --hd-h-sm:62px; }
+  .hd{position:fixed;top:0;left:0;right:0;z-index:50;padding:22px 0;
+    transition:padding .22s ease,background-color .22s ease,box-shadow .22s ease}
+  /* плашка живёт на .hd__bar, а не на .hd: так стекло идёт во всю ширину экрана,
+     а содержимое остаётся на сетке страницы (контейнер 1200 — как у секций) */
+  .hd::before{content:"";position:absolute;inset:0;opacity:0;pointer-events:none;
+    background:rgba(251,250,245,.82);-webkit-backdrop-filter:saturate(1.6) blur(14px);
+    backdrop-filter:saturate(1.6) blur(14px);
+    box-shadow:inset 0 -1px 0 rgba(20,18,18,.08);transition:opacity .22s ease}
+  .hd--stuck{padding:9px 0}
+  .hd--stuck::before{opacity:1}
+  /* grid, а не flex: боковые колонки 1fr держат навигацию РОВНО по центру шапки
+     независимо от того, что логотип и контакты разной ширины */
+  .hd__bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;
+    position:relative;max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+  .hd__logo{display:flex;align-items:center;gap:9px;text-decoration:none;justify-self:start}
+  .hd__logo img{height:19px;display:block}
+  /* специфичность: базовое правило выше — .hd__logo img (0,1,1), одним классом его не перебить */
+  .hd__logo .hd__mark--dark{display:none}
+  .hd--dark .hd__logo .hd__mark--light{display:none}
+  .hd--dark .hd__logo .hd__mark--dark{display:block}
+  .hd__logo .x{color:#cbc4b4;font-size:15px;line-height:1}
+  .hd__logo .sub{font-family:var(--font-head);font-weight:700;font-size:18px;line-height:1;
     letter-spacing:.02em;text-transform:uppercase;color:var(--v-ink)}
-  .hd__nav{display:flex;gap:clamp(18px,2vw,30px);margin-right:auto}
-  .hd__nav a{position:relative;color:#5b554a;text-decoration:none;font-size:15px;font-weight:600;
-    transition:color .15s;padding:4px 0}
-  .hd__nav a::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:2px;
-    background:#FFC100;border-radius:2px;transition:right .22s ease}
-  .hd__nav a:hover{color:var(--v-ink)}
-  .hd__nav a:hover::after{right:0}
-  /* правая пилюля (как «Schedule» в рефе) — белая, телефон */
-  .hd__phone{display:inline-flex;align-items:center;gap:8px;background:#fff;border-radius:999px;
-    padding:11px 18px;box-shadow:0 6px 16px -8px rgba(30,25,10,.35),inset 0 0 0 1px rgba(20,18,18,.1);
-    color:var(--v-ink);font-weight:800;font-size:15px;text-decoration:none;white-space:nowrap;
-    transition:transform .15s ease,box-shadow .15s ease}
-  .hd__phone svg{width:15px;height:15px;color:#c79600}
-  .hd__phone:hover{transform:translateY(-1px);box-shadow:0 10px 22px -10px rgba(30,25,10,.45),inset 0 0 0 1px rgba(20,18,18,.14)}
+  /* пункты — полупрозрачные плашки; активный плотный. Подчёркивание убрано: с пилюлями
+     это два разных языка выделения сразу. */
+  .hd__nav{display:flex;gap:6px;justify-self:center}
+  /* в покое — просто текст, плашка появляется только на ховере и у активного */
+  .hd__nav a{color:#5b554a;text-decoration:none;font-size:15px;font-weight:600;
+    padding:8px 15px;border-radius:999px;background:transparent;box-shadow:none;
+    transition:color .15s ease,background-color .15s ease,box-shadow .15s ease}
+  .hd__nav a:hover{color:var(--v-ink);background:rgba(255,255,255,.8);
+    box-shadow:inset 0 0 0 1px rgba(20,18,18,.1)}
+  .hd__nav a[aria-current]{color:var(--v-ink);background:#fff;
+    box-shadow:inset 0 0 0 1px rgba(20,18,18,.12)}
+  /* контакты живут по тем же правилам, что и пункты меню: в покое — только текст/иконка,
+     плашка появляется на ховере. Раньше это были белые пилюли с тенью — два разных языка в шапке. */
+  .hd__phone,.hd__msg{color:#5b554a;text-decoration:none;border-radius:999px;
+    background:transparent;box-shadow:none;
+    transition:color .15s ease,background-color .15s ease,box-shadow .15s ease}
+  .hd__phone{position:relative;display:inline-flex;align-items:center;padding:8px 15px;
+    font-weight:600;font-size:15px;white-space:nowrap}
+  /* подтверждение копирования — поверх шапки, чтобы не двигать соседей */
+  .hd__copied{position:absolute;top:calc(100% + 6px);right:12px;opacity:0;pointer-events:none;
+    background:#141212;color:#fff;font-size:12px;font-weight:600;letter-spacing:.01em;
+    padding:5px 10px;border-radius:8px;transition:opacity .15s ease}
+  .hd__phone[data-done] .hd__copied{opacity:1}
+  .hd__msg{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px}
+  .hd__msg img{width:20px;height:20px;display:block}
+  .hd__phone:hover,.hd__msg:hover{color:var(--v-ink);background:rgba(255,255,255,.8);
+    box-shadow:inset 0 0 0 1px rgba(20,18,18,.1)}
+  .hd__contacts{display:flex;align-items:center;gap:4px;justify-self:end}
+  .hd a:focus-visible{outline:3px solid #141212;outline-offset:3px;border-radius:6px}
+  /* ИНВЕРСИЯ над тёмными секциями. Порог считается по НИЖНЕЙ кромке шапки (см. JS) —
+     в прошлый раз ловили по центру секции и класс включался, пока шапка ещё над светлым. */
+  .hd--dark::before{background:rgba(20,18,18,.72);box-shadow:inset 0 -1px 0 rgba(255,255,255,.1)}
+  .hd--dark .hd__logo .sub{color:#fff}
+  .hd--dark .hd__logo .x{color:#5b554a}
+  .hd--dark .hd__nav a,.hd--dark .hd__phone,.hd--dark .hd__msg{color:#a8a29a;background:transparent;box-shadow:none}
+  .hd--dark .hd__nav a:hover,.hd--dark .hd__phone:hover,.hd--dark .hd__msg:hover{color:#fff;
+    background:rgba(255,255,255,.14);box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+  .hd--dark .hd__nav a[aria-current]{color:#141212;background:#fff;box-shadow:none}
+  .hd--dark a:focus-visible{outline-color:#FFC100}
+  @media(max-width:1080px){.hd__phone span{display:none}.hd__phone{padding:11px 13px}}
   @media(max-width:900px){.hd__nav{display:none}}
+  @media(prefers-reduced-motion:reduce){.hd,.hd::before{transition:none}}
+  /* якоря не должны уезжать под фикс-шапку */
+  html{scroll-behavior:smooth}
+  section[id]{scroll-margin-top:calc(var(--hd-h-sm) + 12px)}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
   /* ── 1. ГЕРОЙ: асимметрия — текст+кнопки слева, карточка-стикеры справа до края ── */
   .hero{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -724,20 +775,35 @@
   <header class="hd">
    <div class="hd__bar">
     <a class="hd__logo" href="#" aria-label="MDMprint · 3D Стикеры">
-      <img src="../assets/mdmprint-logo.svg" alt="MDMprint" width="77" height="26">
+      <!-- две версии знака: на тёмной секции словомарк «MDM PRINT» чёрный по чёрному.
+           Фильтром не лечится — самолётик должен остаться жёлтым, а инверсия красит его в синий. -->
+      <img class="hd__mark hd__mark--light" src="../assets/mdmprint-logo.svg" alt="MDMprint" width="77" height="26">
+      <img class="hd__mark hd__mark--dark" src="mdmprint-logo-onblack.svg" alt="" aria-hidden="true" width="77" height="26">
       <span class="x">×</span>
       <span class="sub">3D&nbsp;Стикеры</span>
     </a>
     <nav class="hd__nav">
       <a href="#vidy">Стикеры</a>
+      <a href="#calc">Расчёт</a>
       <a href="#portfolio">Портфолио</a>
       <a href="#b2b">Бизнесу</a>
       <a href="#reviews">Отзывы</a>
     </nav>
-    <a class="hd__phone" href="tel:+74952561000">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.4-1.2a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>
-      +7 (495) 256-10-00
-    </a>
+    <div class="hd__contacts">
+      <!-- ссылки мессенджеров — заглушки, ждём аккаунты для этого лендинга.
+           Иконки — фирменные из assets (те же, что в каталоге). -->
+      <a class="hd__msg" href="#konsultatsiya" aria-label="Написать в Telegram">
+        <img src="../assets/telegram.svg" alt="" width="20" height="20">
+      </a>
+      <a class="hd__msg" href="#konsultatsiya" aria-label="Написать в MAX">
+        <img src="../assets/maxnew.svg" alt="" width="20" height="20">
+      </a>
+      <!-- на десктопе клик копирует номер (tel: там бесполезен), на тач-устройствах звонит -->
+      <a class="hd__phone" href="tel:+74952561000" data-copy="+7 (495) 256-10-00">
+        <span>+7 (495) 256-10-00</span>
+        <span class="hd__copied" aria-hidden="true">Скопировано</span>
+      </a>
+    </div>
    </div>
   </header>
 
@@ -1429,6 +1495,56 @@
     sh.querySelector('.sheet__close').addEventListener('click',hide);
     sh.addEventListener('click',e=>{ if(e.target===sh) hide(); });
     addEventListener('keydown',e=>{ if(e.key==='Escape'&&sh.hasAttribute('open')) hide(); });
+  })();
+
+  /* ШАПКА (десктоп): три вещи в ОДНОМ rAF-цикле, чтобы состояния не расходились между собой —
+     (1) стекло+сжатие после 80px, (2) инверсия над тёмной секцией, (3) активный пункт меню.
+     Ключевое: и инверсия, и подсветка меню считаются по ОДНОЙ пробной линии — нижней кромке
+     шапки. Прошлая инверсия ловила центр секции и включалась, пока шапка была ещё над светлым. */
+  (function(){
+    const hd = document.querySelector('.hd');
+    if(!hd) return;
+    const links = [...hd.querySelectorAll('.hd__nav a')];
+    const targets = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+    const dark = [...document.querySelectorAll('.b2b, .ft')];   // тёмные поверхности страницы
+    let queued = false;
+
+    const paint = () => {
+      queued = false;
+      const stuck = scrollY > 80;
+      hd.classList.toggle('hd--stuck', stuck);
+      const probe = hd.getBoundingClientRect().bottom;          // нижняя кромка шапки
+      hd.classList.toggle('hd--dark',
+        dark.some(s => { const r = s.getBoundingClientRect(); return r.top <= probe && r.bottom > probe; }));
+      // активный пункт — секция, которая пересекает пробную линию
+      let cur = null;
+      targets.forEach(s => { const r = s.getBoundingClientRect();
+        if(r.top <= probe + 4 && r.bottom > probe + 4) cur = s; });
+      links.forEach(a => {
+        const on = cur && a.getAttribute('href') === '#' + cur.id;
+        if(on) a.setAttribute('aria-current','true'); else a.removeAttribute('aria-current');
+      });
+    };
+    const onScroll = () => { if(!queued){ queued = true; requestAnimationFrame(paint); } };
+    addEventListener('scroll', onScroll, {passive:true});
+    addEventListener('resize', onScroll, {passive:true});
+    paint();
+  })();
+
+  /* Телефон в шапке: на десктопе клик копирует номер вместо бесполезного tel:.
+     Если копирование недоступно (нет clipboard / отказ) — не мешаем, tel: отработает как был. */
+  (function(){
+    const a = document.querySelector('.hd__phone[data-copy]');
+    if(!a || !matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+    let t = null;
+    a.addEventListener('click', e => {
+      if(!navigator.clipboard) return;
+      e.preventDefault();
+      navigator.clipboard.writeText(a.dataset.copy).then(() => {
+        a.setAttribute('data-done','');
+        clearTimeout(t); t = setTimeout(() => a.removeAttribute('data-done'), 1600);
+      });
+    });
   })();
 
   /* Плавающая CTA: показываем, когда кнопка из героя ушла с экрана. */
