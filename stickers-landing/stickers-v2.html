@@ -463,11 +463,32 @@
   .rev__slot img{width:100%;height:auto;display:block}
   .rev__ph{display:grid;place-items:center;align-content:center;gap:5px;padding:var(--sp-20);
     color:#8c8477;font-size:12px;text-align:center}
+  .rev__ph:has(.rev__skel){padding:var(--sp-20) var(--sp-20) var(--sp-16);text-align:left}
   .rev__ph b{display:block;font-family:var(--font-head);font-weight:800;font-size:13px;color:#6e6e6a;
     text-transform:uppercase}
-  .rev__slot--story .rev__ph{aspect-ratio:9/16}
-  .rev__slot--sq .rev__ph{aspect-ratio:1/1}
-  .rev__slot--long .rev__ph{aspect-ratio:4/5}
+  /* пропорция нужна только пустым медиа-слотам. У заглушки-скелетона высота идёт по содержимому:
+     с aspect-ratio 4/5 и 9/16 плашка растягивалась на сотни пикселей пустоты вокруг полос. */
+  .rev__slot--story .rev__ph--media{aspect-ratio:1/1}   /* 9:16 и 3:4 давали полэкрана пустоты */
+  .rev__slot--sq .rev__ph--media{aspect-ratio:1/1}
+  /* СКЕЛЕТОН отзыва вместо пустой плашки. Полосы вместо текста — намеренно: сочинять отзывы
+     нельзя, а структура показывает, что тут будет, и блок перестаёт выглядеть дырой. */
+  .rev__skel{display:flex;flex-direction:column;gap:12px;width:100%;padding:4px 2px}
+  .rev__skel-top{display:flex;align-items:center;gap:10px}
+  .rev__ava{width:34px;height:34px;border-radius:50%;background:rgba(20,18,18,.09);flex:none}
+  .rev__name{height:11px;width:46%;border-radius:6px;background:rgba(20,18,18,.09)}
+  .rev__stars{display:flex;gap:3px;color:#FFC100}
+  .rev__stars svg{width:15px;height:15px}
+  .rev__lines{display:flex;flex-direction:column;gap:8px}
+  .rev__lines i{height:10px;border-radius:6px;background:rgba(20,18,18,.07)}
+  .rev__lines i:nth-child(2){width:92%}
+  .rev__lines i:nth-child(3){width:64%}
+  .rev__from{margin-top:2px;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;
+    letter-spacing:.12em;text-transform:uppercase;color:#8c8477}
+  /* сторис-заглушка: кружок play вместо надписи «9:16» */
+  .rev__ph--media{gap:10px}
+  .rev__play{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;
+    background:#fff;box-shadow:inset 0 0 0 1px var(--border);color:#4a4136}
+  .rev__play svg{width:17px;height:17px;margin-left:2px}
   /* плашка со ссылками на источники — цифры рейтинга появятся, когда даст бизнес */
   .rev__src{display:flex;flex-wrap:wrap;gap:var(--sp-12);margin-top:var(--sp-12)}
   .rev__src a{display:inline-flex;align-items:center;gap:8px;background:var(--surface-card);
@@ -1288,22 +1309,22 @@
       </div>
       <div class="rev__grid">
         <figure class="rev__slot rev__slot--story" data-shot="reviews/s1">
-          <span class="rev__ph"><b>Сторис</b>9:16 · скрин из соцсети</span>
+          <span class="rev__ph rev__ph--media"><span class="rev__play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.2v13.6L19 12 8 5.2Z"/></svg></span><b>Сторис из соцсети</b>9:16 · ждём скрин</span>
         </figure>
         <figure class="rev__slot rev__slot--sq" data-shot="reviews/r1">
-          <span class="rev__ph"><b>Скрин</b>Яндекс.Карты</span>
+          <span class="rev__ph"><span class="rev__skel" aria-hidden="true"><span class="rev__skel-top"><i class="rev__ava"></i><i class="rev__name"></i></span><span class="rev__stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg></span><span class="rev__lines"><i></i><i></i><i></i></span><span class="rev__from">Яндекс.Карты</span></span></span>
         </figure>
         <figure class="rev__slot rev__slot--long" data-shot="reviews/r2">
-          <span class="rev__ph"><b>Скрин</b>2ГИС</span>
+          <span class="rev__ph"><span class="rev__skel" aria-hidden="true"><span class="rev__skel-top"><i class="rev__ava"></i><i class="rev__name"></i></span><span class="rev__stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg></span><span class="rev__lines"><i></i><i></i><i></i></span><span class="rev__from">2ГИС</span></span></span>
         </figure>
         <figure class="rev__slot rev__slot--sq" data-shot="reviews/p1">
           <span class="rev__ph"><b>Фото</b>работа клиента</span>
         </figure>
-        <figure class="rev__slot rev__slot--story" data-shot="reviews/s2">
-          <span class="rev__ph"><b>Сторис</b>9:16 · видео-отзыв</span>
+        <figure class="rev__slot rev__slot--sq" data-shot="reviews/p2">
+          <span class="rev__ph"><b>Фото</b>работа клиента</span>
         </figure>
         <figure class="rev__slot rev__slot--long" data-shot="reviews/r3">
-          <span class="rev__ph"><b>Скрин</b>переписка в мессенджере</span>
+          <span class="rev__ph"><span class="rev__skel" aria-hidden="true"><span class="rev__skel-top"><i class="rev__ava"></i><i class="rev__name"></i></span><span class="rev__stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg></span><span class="rev__lines"><i></i><i></i><i></i></span><span class="rev__from">Переписка в мессенджере</span></span></span>
         </figure>
       </div>
     </div>
