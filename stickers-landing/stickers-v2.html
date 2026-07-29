@@ -839,7 +839,7 @@
     margin-top:var(--sp-20)}
   .sheet__item b{display:block;font-size:var(--t-body);margin-bottom:5px}
   .sheet__item p{margin:0;font-size:var(--t-small);line-height:20px;color:var(--text-secondary)}
-  .sheet__item a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
+  .sheet__item a{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
   .sheet__item a:hover{color:var(--text-primary)}
   .sheet__close{position:absolute;right:12px;top:12px;width:40px;height:40px;display:grid;place-items:center;
     border:0;border-radius:var(--radius-pill);background:var(--surface-gray);cursor:pointer;color:var(--text-primary)}
@@ -1431,7 +1431,7 @@
       </div>
       <div>
         <h3>Документы</h3>
-        <a href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">Публичная оферта</a>
+        <a href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">Публичная оферта<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
         <a href="https://mdmprint.ru/terms" target="_blank" rel="noopener">Пользовательское соглашение</a>
         <a href="https://mdmprint.ru/dostavka" target="_blank" rel="noopener">Доставка и оплата</a>
         <a href="https://mdmprint.ru/trebovaniya-k-maketam/trebovaniya-k-maketam-poligrafii#stikerpack"
@@ -1502,18 +1502,22 @@
       <h3 class="sheet__title" id="shipTitle">Доставка и самовывоз</h3>
       <div class="sheet__grid">
         <div class="sheet__item"><b>Самовывоз — бесплатно</b>
-          <p>25 пунктов в Москве: Курская, Смоленская, Сокол, Павелецкая, Чистые пруды и другие;
-            часть работает круглосуточно.
-            <a href="https://mdmprint.ru/dostavka/punkty-samovyvoza" target="_blank" rel="noopener">Все пункты</a></p></div>
+          <!-- адреса дал директор 29.07: офис на Орджоникидзе, типография на Автозаводской -->
+          <p>Из типографии на Автозаводской или из офиса на Орджоникидзе. Плюс 25 пунктов выдачи
+            в Москве, часть круглосуточно. Скидки за самовывоз нет.
+            <a href="https://mdmprint.ru/dostavka/punkty-samovyvoza" target="_blank" rel="noopener">Все пункты<svg
+              width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></p></div>
         <div class="sheet__item"><b>Курьер по Москве и МО</b>
           <!-- подтверждено директором 29.07: для стикеров тариф тот же 790 ₽; бесплатно от 40 000 ₽
                только по Москве в пределах МКАД и только не крупногабарит -->
+          <!-- 2–3 дня директор назвал именно для БЕСПЛАТНОЙ доставки, не как общий срок курьера -->
           <p>Москва в пределах МКАД — 790 ₽, МО до ЦКАД — 1 100 ₽, за ЦКАД — 1 500 ₽.
-            Бесплатно при заказе от 40 000 ₽ — по Москве в пределах МКАД, кроме крупногабаритных.
-            Срок 2–3 дня после готовности заказа.</p></div>
+            От 40 000 ₽ по Москве в пределах МКАД — бесплатно, кроме крупногабаритных:
+            через 2–3 дня после готовности заказа.</p></div>
         <div class="sheet__item"><b>Регионы — СДЭК</b>
           <p>Отправляем СДЭКом, тариф и срок считает служба доставки — сообщим при согласовании заказа.
-            <a href="https://mdmprint.ru/dostavka" target="_blank" rel="noopener">Условия доставки</a></p></div>
+            <a href="https://mdmprint.ru/dostavka" target="_blank" rel="noopener">Условия доставки<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></p></div>
         <div class="sheet__item"><b>Оплата</b>
           <p>Любым способом после согласования макета — пришлём ссылку на онлайн-оплату.
             <a href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">Публичная оферта</a></p></div>
