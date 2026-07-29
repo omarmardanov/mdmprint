@@ -632,15 +632,19 @@
   .opts--flow .opt span{width:fit-content;min-width:0;padding:11px 15px;min-height:44px}
   .opts--flow .opt__txt{width:auto}
   .opts--flow .opt__inp{width:100%;min-height:0;padding:11px 15px;text-align:center}
-  /* «Свой» всегда последний в списке: занимает остаток строки и читается как ПОЛЕ,
-     а не как ещё один пресет (раньше ширина была 9.5ch под маску 99x99) */
-  .opts--flow .opt:last-child{flex:1 1 140px;width:auto}
-  .opts--flow .opt:last-child span{width:100%}
+  /* только плашка-поле «Свой» занимает остаток строки и читается как ПОЛЕ, а не как пресет
+     (раньше ширина была 9.5ch под маску 99x99) */
+  .opts--flow .opt--wide{flex:1 1 140px;width:auto}
+  .opts--flow .opt--wide span{width:100%}
   /* две колонки — для длинных списков с описаниями */
   /* потолок 340px: при 255 справа зияло ~276px, при 1fr плашка становилась слишком широкой
      и картинку отжимало к её правому краю — ближе к соседней колонке, чем к своему тексту */
   .opts--two{grid-template-columns:repeat(2,minmax(0,340px))!important}
   .opts--2col{display:grid;grid-template-columns:repeat(2,minmax(0,340px));gap:8px}
+  /* плашка по содержимому: при фиксированной ширине справа от картинки оставалась пустая
+     полоса внутри плашки. Потолок 340 держит перенос описания. */
+  .opts--near.opts--2col{grid-template-columns:repeat(2,max-content)}
+  .opts--near.opts--2col .opt,.opts--near.opts--2col .opt span{width:max-content;max-width:340px}
   .opts--2col .opt span{max-width:none;width:100%;height:100%}
   @media(max-width:860px){.opts--2col{grid-template-columns:1fr}}
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
@@ -656,25 +660,30 @@
   /* текст НЕ растягиваем: иначе картинку отжимает к правому краю плашки и она отрывается
      от своей подписи. Так она стоит сразу за текстом при любой ширине плашки. */
   .opts--near .opt__txt{flex:0 1 auto;min-width:0}
+  /* плашки ниже: высоту задавала картинка 78px с полями, а не текст */
+  .opts--near .opt span,.opts--near .opt span.opt--card{min-height:0;padding:10px 14px}
   .opts--near .opt__ico{position:static;align-self:flex-end;flex:none;
-    width:78px;height:78px;margin:10px 0 -24px 14px;object-position:center top}
+    width:64px;height:64px;margin:8px 0 -20px 12px;object-position:center top}
   .opts--near .opt span.has-ico .opt__desc,.opts--near .opt span.opt--card.has-ico .opt__desc{padding-right:0}
   /* резерв под картинку даём ТОЛЬКО описанию: картинка внизу справа, а заголовок наверху
      и может занимать всю ширину. Раньше padding-right на всей плашке зря рвал заголовок. */
   .opt span.has-ico .opt__desc{padding-right:58px}
   /* шаг «Материал» — ВЕРТИКАЛЬНАЯ плашка: заголовок и описание во всю ширину, картинка
      приколота в правый нижний угол и срезается низом плашки (clip-path у span) */
+  /* высота как у плашек шагов 1 и 3 (98px). Специфичность выше .opt span.opt--card (0,2,1),
+     иначе его min-height:74 перебивал наше правило и ряды шагов были разной высоты. */
+  .opts--vert .opt span.opt--card,
   .opts--vert .opt span{flex-direction:column;align-items:flex-start;justify-content:flex-start;
-    min-height:118px;padding:13px 14px 44px;height:100%}   /* низ зарезервирован под картинку */
+    min-height:0;padding:10px 14px 12px;height:100%}
   .opts--vert .opt__txt{width:100%}
   .opts--vert .opt__desc{max-width:none;padding-right:0}
   /* текст не должен доезжать до картинки: резерв справа у всего текстового блока,
      иначе длинный заголовок уходит под стикер (проверено рендером) */
-  .opts--vert .opt__txt{padding-right:72px}
+  .opts--vert .opt__txt{padding-right:62px}
   /* размер картинки задаём с той же специфичностью, что и правило .opt--card, иначе оно
      перебивает наши 76px своими 86 и заголовок опять уходит под стикер */
   .opts--vert .opt span.opt--card .opt__ico,
-  .opts--vert .opt__ico{position:absolute;right:4px;bottom:-14px;width:74px;height:74px;margin:0;
+  .opts--vert .opt__ico{position:absolute;right:4px;bottom:-12px;width:62px;height:62px;margin:0;
     object-position:center top}
   /* четыре в ряд: ряд ровный, карточки одной высоты (height:100% у span) */
   .opts--four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-12)}
@@ -1791,6 +1800,9 @@
       const box=$(key); box.innerHTML='';
       labels.forEach((it,i)=>{
         const l=document.createElement('label'); l.className='opt';
+        // метка на САМОЙ плашке-поле: раньше растяжку вешал :last-child, и у стикерпаков
+        // (А7/А6/А5, «своего» размера нет) растягивался последний пресет — А5
+        if(it[1]===null) l.classList.add('opt--wide');
         const own = it[1]===null;                       // «Свой» — плашка-поле, не подпись
         const desc = (!own && it[2]) ? `<em class="opt__desc">${it[2]}</em>` : '';
         const inner = own
