@@ -237,7 +237,7 @@
   .stub h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
     font-size:clamp(28px,3.6vw,46px);line-height:1;color:#c9c4ba}
   /* ── КАЛЬКУЛЯТОР: отдельная секция под «Видами». Геометрия и цвета — по ДС ── */
-  .calc{padding-block:clamp(48px,7vw,96px);
+  .calc{padding-block:clamp(28px,3.4vw,40px);
     background:
       linear-gradient(180deg,#fff 0%,rgba(255,255,255,0) 12%),
       linear-gradient(0deg,#fff 0%,rgba(255,255,255,0) 12%),
@@ -246,17 +246,23 @@
       #fbfaf7}
   .calc__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
   .calc h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
-    font-size:clamp(28px,3.6vw,46px);line-height:1;letter-spacing:-.005em;max-width:27ch}
-  .calc__note{margin-top:14px;max-width:56ch;color:var(--text-secondary);
+    font-size:clamp(26px,3vw,38px);line-height:1;letter-spacing:-.005em;max-width:27ch}
+  .calc__note{margin-top:10px;max-width:56ch;color:var(--text-secondary);
     font-size:var(--t-body);line-height:var(--t-body-lh)}
   /* одна сетка на всё: слева шаги 1–3, справа шаги 4–6 и под ними блок стоимости */
   /* две независимые колонки: слева шаги 1–3, справа 4–6 и под ними стоимость */
-  .calc__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,290px);
-    gap:var(--sp-28) var(--sp-32);margin-top:clamp(24px,3vw,40px);align-items:start;counter-reset:step}
+  .calc__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,330px);
+    gap:var(--sp-20) var(--sp-28);margin-top:var(--sp-20);align-items:start;counter-reset:step}
   /* группировка по смыслу: «что печатаем» — во всю ширину; слева «из чего», справа «сколько» */
   .calc__form{display:contents}
   .calc__right{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
-  .calc__left,.calc__right{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
+  .calc__right{display:flex;flex-direction:column;gap:var(--sp-16);min-width:0}
+  /* размер и количество — рядом: оба компактные, так правая колонка короче */
+  .calc__pair{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-16)}
+  @media(max-width:640px){.calc__pair{grid-template-columns:1fr}}
+  /* слева широкие шаги 1–3, справа компактные 4–6 и цена: высота = самая длинная колонка,
+     поэтому секция укладывается в один экран */
+  .calc__left{display:flex;flex-direction:column;gap:var(--sp-16);min-width:0}
   /* липкой делаем саму колонку: у sticky на дочернем блоке нет запаса, если родитель по контенту */
   .calc__right{position:sticky;top:24px;align-self:start}
 
@@ -269,8 +275,8 @@
   .fs{border:0}
   .fs--wide{grid-column:1 / -1}
   /* номер шага — перед подписью поля, одной строкой */
-  .fs legend{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;
-    text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin-bottom:var(--sp-12)}
+  .fs legend{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin-bottom:9px}
   /* номер шага в мягком сквиркле */
   .fs legend::before{counter-increment:step;content:counter(step);
     display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;
@@ -283,19 +289,19 @@
   .opts--rows{display:grid;grid-template-columns:1fr;gap:10px}
   .opts--rows .opt,.opts--rows .opt span{width:100%}
   .opts--rows .opt__desc{max-width:none}
-  .opts--flow{display:flex;flex-wrap:wrap;gap:10px}
+  .opts--flow{display:flex;flex-wrap:wrap;gap:8px}
   .opts--flow .opt{flex:0 0 auto;width:fit-content}
   .opts--flow .opt span{width:fit-content;min-width:0;padding:11px 15px;min-height:44px}
   .opts--flow .opt__txt{width:auto}
   .opts--flow .opt__inp{width:9.5ch;min-width:9.5ch;min-height:0;padding:11px 15px;text-align:center}
   /* две колонки — для длинных списков с описаниями */
-  .opts--2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,340px));gap:10px;justify-content:start}
+  .opts--2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
   .opts--2col .opt span{max-width:none;width:100%;height:100%}
   @media(max-width:860px){.opts--2col{grid-template-columns:1fr}}
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
   .opt>input[type=radio],.opt>input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}
   /* картинка в плашке — необязательная: файл calc-icons/<поле>-<индекс>.webp (png в .gitignore!), нет файла — нет иконки */
-  .opt__ico{position:absolute;right:10px;bottom:-10px;width:62px;height:62px;flex:none;
+  .opt__ico{position:absolute;right:8px;bottom:-8px;width:54px;height:54px;flex:none;
     object-fit:contain;object-position:top center;pointer-events:none;
     filter:drop-shadow(0 4px 8px rgba(20,18,18,.35))}
   .opt span.has-ico{padding-right:78px}
@@ -312,13 +318,13 @@
   .opt__inp:focus{outline:none}
   .opt>input:checked + span .opt__inp{color:#fff}
   .opt>input:checked + span .opt__inp::placeholder{color:rgba(255,255,255,.6)}
-  .opt span.opt--card{min-height:82px;padding:16px 20px;align-items:flex-start}
+  .opt span.opt--card{min-height:74px;padding:13px 16px;align-items:flex-start}
   .opt span.opt--card:not(.has-ico){min-height:0;padding:14px 18px}
   .opt span.opt--card.has-ico{padding-right:104px}
-  .opt span.opt--card .opt__ico{width:88px;height:88px;right:6px;bottom:-16px}
+  .opt span.opt--card .opt__ico{width:74px;height:74px;right:6px;bottom:-13px}
   /* плашки — крупные скруглённые прямоугольники: срез иконки по низу совпадает с формой */
   .opt span{position:relative;clip-path:inset(-80px 0 0 0 round 0 0 14px 14px);
-    display:inline-flex;align-items:center;min-height:54px;padding:14px 18px;
+    display:inline-flex;align-items:center;min-height:48px;padding:11px 15px;
     border-radius:var(--radius-outside);background:var(--surface-card);
     font-size:var(--t-body);font-weight:600;cursor:pointer;
     transition:background .15s ease,box-shadow .15s ease}
@@ -352,14 +358,14 @@
   .calc__unit::before{content:"·";margin-right:9px;color:#c9c0ae}
   /* срок и тираж — два факта в ряд (подпись сверху, значение снизу): линейка не нужна,
      группы держит расстояние. Прежняя схема «подпись слева / значение справа» читалась как таблица */
-  .calc__rows{display:flex;flex-wrap:wrap;gap:var(--sp-20);margin-top:var(--sp-16)}
+  .calc__rows{display:flex;flex-wrap:wrap;gap:var(--sp-20);margin-top:var(--sp-12)}
   .calc__row{display:flex;flex-direction:column;gap:3px}
   .calc__row span{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
     color:var(--text-secondary)}
   .calc__row b{font-size:var(--t-body);color:var(--text-primary);font-weight:700}
-  .calc__cta{margin-top:var(--sp-12);display:inline-flex;align-items:center;justify-content:center;
+  .calc__cta{margin-top:10px;display:inline-flex;align-items:center;justify-content:center;
     background:#FFC100;color:#141212;text-decoration:none;font-weight:800;font-size:16px;
-    padding:15px 24px;border-radius:14px}
+    padding:14px 22px;border-radius:14px}
   .calc__cta:hover{background:#ffcd2e}
   .calc__cta:focus-visible{outline:3px solid #141212;outline-offset:3px}
   .calc__own{display:flex;align-items:center;gap:10px;margin-top:var(--sp-12);font-size:var(--t-small)}
@@ -411,7 +417,7 @@
   .calc__file:hover .calc__filebtn{background:var(--surface-gray)}
   .calc__file input:focus-visible + .calc__filebtn{outline:2px solid #141212;outline-offset:2px}
   .calc__file em{font-style:normal;font-size:12px;color:#a49c8e}
-  .calc__hint{margin-top:var(--sp-12);font-size:13px;line-height:18px;color:var(--text-secondary)}
+  .calc__hint{margin-top:10px;font-size:12.5px;line-height:17px;color:var(--text-secondary)}
   .calc__hint a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
   .calc__hint a:hover{color:var(--text-primary)}
   .calc__hint:empty{display:none}
@@ -623,6 +629,10 @@
             <legend>Смола</legend>
             <div class="opts opts--2col" id="resin"></div>
           </fieldset>
+        </div>
+        </form>
+        <div class="calc__right">
+          <div class="calc__pair">
           <fieldset class="fs fs--wide">
             <legend id="sizeLeg">Размер по длинной стороне</legend>
             <div class="opts opts--flow" id="size"></div>
@@ -631,20 +641,17 @@
             <legend id="qtyLeg">Количество, штук</legend>
             <div class="opts opts--flow" id="qty"></div>
           </fieldset>
+          </div>
           <fieldset class="fs fs--wide">
             <legend>Дополнительно</legend>
             <div class="opts">
               <label class="opt" id="singleWrap"><input type="checkbox" id="single">
-                <span><b class="opt__txt">Сделать поштучно<em class="opt__desc">Каждый вырезан
-                  и упакован по одному</em></b></span></label>
+                <span><b class="opt__txt">Сделать поштучно</b></span></label>
               <label class="opt"><input type="checkbox" id="box">
-                <span><b class="opt__txt">Индивидуальная упаковка<em class="opt__desc">Своя упаковка
-                  с вашим оформлением</em></b></span></label>
+                <span><b class="opt__txt">Индивидуальная упаковка</b></span></label>
             </div>
           </fieldset>
-        </div>
-        </form>
-        <div class="calc__right">
+
         <div class="calc__out" aria-live="polite">
           <div>
             <span class="calc__cap">Предварительная стоимость</span>
@@ -657,8 +664,6 @@
             <div class="calc__row"><span>Срок</span><b id="term">—</b></div>
             <div class="calc__row"><span>Тираж</span><b id="qtyOut">—</b></div>
           </div>
-          <p class="calc__demo">Цена предварительная — зависит от срока и сложности макета.</p>
-          <p><a class="calc__req" href="#trebovaniya">Требования к макетам</a></p>
           <button class="calc__cta" type="button" id="orderOpen">Оформить заказ</button>
           <p class="calc__hint"><button class="calc__link" type="button" id="shipOpen">Доставка и самовывоз</button>
             · <a href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">Оферта</a></p>
@@ -712,6 +717,8 @@
           <span>Согласен получать новости и спецпредложения <em>(необязательно)</em></span>
         </label>
         <button class="calc__cta" type="submit">Отправить заявку</button>
+        <p class="calc__hint">Цена предварительная — зависит от срока и сложности макета.
+          <a class="calc__req" href="#trebovaniya">Требования к макетам</a></p>
         <p class="calc__hint">Оплата любым способом после согласования макета — пришлём ссылку.</p>
       </form>
     </div>
@@ -949,8 +956,7 @@
       size: [['30×30',1,null,900],['44×44',1,null,1936],['55×44',1,null,2420],
              ['70×50',1,null,3500],['Свой',null,'99x99']],
       sheet:[['А7',1],['А6',1.4],['А5',2.1]],   // у паков свой размер не задаётся
-      resin:[['Эпоксидная',1,'Прозрачная линза: объём, глянец, защита рисунка'],
-             ['Светящаяся',1.35,'Копит свет и светится в темноте']],
+      resin:[['Эпоксидная',1],['Светящаяся',1.35]],
       qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'99999']],
     };
     const S={kind:0,mat:0,size:0,resin:0,qty:2};
