@@ -593,7 +593,7 @@
      Раньше внешний зазор был 12 при внутреннем 8 — группы не читались как отдельные. */
   .calc__left{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
   /* липкой делаем саму колонку: у sticky на дочернем блоке нет запаса, если родитель по контенту */
-  .calc__right{position:sticky;top:24px;align-self:start}
+  .calc__right{align-self:start}   /* липкость снята: секция и так в один экран (решение Omar) */
 
   /* НИЗКИЕ ЭКРАНЫ (ноутбуки 800–850px): секция обязана влезать вместе с фикс-шапкой.
      Ужимаем шапку секции, а не контролы — плашки трогать нельзя, по ним уже принято решение. */
@@ -738,7 +738,9 @@
     color:var(--text-primary);background:var(--surface-card);border-radius:var(--radius-outside);
     padding:var(--sp-20);box-shadow:inset 0 0 0 1px var(--border),0 18px 34px -26px rgba(20,18,18,.45)}
   .calc__price{font-family:var(--font-head);font-weight:800;font-size:clamp(30px,3vw,40px);line-height:1;letter-spacing:-.01em}
-  .calc__cap{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  /* 11.5px — тот же кегль метки, что у легенд шагов слева. Было 12 против 11.5: разницу не видно,
+     а система от этого перестаёт быть системой */
+  .calc__cap{display:block;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
     color:var(--text-secondary);margin-bottom:8px}
   /* сумма и цена за штуку — в одну строку по базовой линии: за штуку тише, через точку */
   .calc__sum{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 12px}
@@ -746,12 +748,15 @@
   .calc__unit::before{content:"·";margin-right:9px;color:#c9c0ae}
   /* срок и тираж — два факта в ряд (подпись сверху, значение снизу): линейка не нужна,
      группы держит расстояние. Прежняя схема «подпись слева / значение справа» читалась как таблица */
-  .calc__rows{display:flex;flex-wrap:wrap;gap:var(--sp-20);margin-top:var(--sp-12)}
+  .calc__rows{display:flex;flex-wrap:wrap;gap:var(--sp-20);margin-top:var(--sp-12);
+    padding-bottom:var(--sp-16);border-bottom:1px solid var(--border)}
   .calc__row{display:flex;flex-direction:column;gap:3px}
   .calc__row span{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
     color:var(--text-secondary)}
   .calc__row b{font-size:var(--t-body);color:var(--text-primary);font-weight:700}
-  .calc__cta{margin-top:10px;display:inline-flex;align-items:center;justify-content:center;
+  /* членение карточки: данные сверху, действие снизу. Раньше четыре смысловых блока
+     (цена → факты → кнопка → мелочи) шли одним зазором 12px */
+  .calc__cta{margin-top:var(--sp-16);padding-top:0;display:inline-flex;align-items:center;justify-content:center;
     background:#FFC100;color:#141212;text-decoration:none;font-weight:800;font-size:16px;
     padding:14px 22px;border-radius:14px}
   .calc__cta:hover{background:#ffcd2e}
@@ -806,8 +811,15 @@
   .calc__file input:focus-visible + .calc__filebtn{outline:2px solid #141212;outline-offset:2px}
   .calc__file em{font-style:normal;font-size:12px;color:#a49c8e}
   .calc__hint{margin-top:10px;font-size:12.5px;line-height:17px;color:var(--text-secondary)}
-  .calc__hint a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
-  .calc__hint a:hover{color:var(--text-primary)}
+  /* кнопка-модалка и внешняя ссылка выглядят ОДИНАКОВО (цвет, кегль, подчёркивание);
+     единственное отличие — стрелка ↗ у той, что уводит с сайта */
+  .calc__hint a{color:var(--text-primary);text-decoration:underline;
+    text-decoration-color:rgba(20,18,18,.25);text-underline-offset:3px}
+  .calc__hint a:hover{text-decoration-color:var(--text-primary)}
+  /* разное поведение — разный вид: кнопка открывает модалку тут же, ссылка уводит на mdmprint.ru */
+  .calc__hint{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-12)}
+  .calc__ext{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+  .calc__ext span{font-size:11px;line-height:1;text-decoration:none}
   .calc__hint:empty{display:none}
   .calc__pick[hidden],.calc__file[hidden]{display:none}
   .calc__demo{margin-top:var(--sp-16);font-size:13px;line-height:18px;color:var(--text-secondary)}
@@ -1069,12 +1081,12 @@
             </div>
           </div>
           <div class="calc__rows">
+            <div class="calc__row"><span>За штуку</span><b id="qtyOut">—</b></div>
             <div class="calc__row"><span>Срок</span><b id="term">—</b></div>
-            <div class="calc__row"><span>Тираж</span><b id="qtyOut">—</b></div>
           </div>
           <button class="calc__cta" type="button" id="orderOpen">Оформить заказ</button>
           <p class="calc__hint"><button class="calc__link" type="button" id="shipOpen">Доставка и самовывоз</button>
-            · <a href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">Оферта</a></p>
+            <a class="calc__ext" href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">Оферта<span aria-hidden="true">↗</span></a></p>
         </div>
         </div>
       </div>
@@ -1448,7 +1460,8 @@
           </label>
           <label class="calc__ok">
             <input type="checkbox" class="mk-check" id="needDesign">
-            <span>Нужен дизайн — нарисуем по вашей идее, цену скажет менеджер</span>
+            <!-- цена от директора 29.07: подготовка контура для стикера/стикерпака — 900 ₽ -->
+            <span>Нужен дизайн — нарисуем по вашей идее. Подготовка контура от 900 ₽</span>
           </label>
         </div>
         <div class="ord__fields">
@@ -1490,8 +1503,11 @@
             часть работает круглосуточно.
             <a href="https://mdmprint.ru/dostavka/punkty-samovyvoza" target="_blank" rel="noopener">Все пункты</a></p></div>
         <div class="sheet__item"><b>Курьер по Москве и МО</b>
+          <!-- подтверждено директором 29.07: для стикеров тариф тот же 790 ₽; бесплатно от 40 000 ₽
+               только по Москве в пределах МКАД и только не крупногабарит -->
           <p>Москва в пределах МКАД — 790 ₽, МО до ЦКАД — 1 100 ₽, за ЦКАД — 1 500 ₽.
-            Бесплатно при заказе от 40 000 ₽. Срок 2–3 дня после готовности, есть срочная в день готовности.</p></div>
+            Бесплатно при заказе от 40 000 ₽ — по Москве в пределах МКАД, кроме крупногабаритных.
+            Срок 2–3 дня после готовности заказа.</p></div>
         <div class="sheet__item"><b>Регионы — СДЭК</b>
           <p>Отправляем СДЭКом, тариф и срок считает служба доставки — сообщим при согласовании заказа.
             <a href="https://mdmprint.ru/dostavka" target="_blank" rel="noopener">Условия доставки</a></p></div>
@@ -1879,9 +1895,10 @@
       L.sumText=rub(sum); window.__calcLast=L;
       const bp=$('barPrice'), bm=$('barMeta');
       if(bp){ bp.textContent=rub(sum); bm.textContent=L.q+(packs?' паков':' шт')+' · '+L.term; }
-      $('unit').textContent =rub(Math.round(unit))+(packs?' за пак':' за штуку');
+      // цена за штуку переехала из строки цены в факты: рядом с суммой она читалась как её хвост
+      $('unit').textContent = '';
       $('term').textContent = q<=500?'до 3 дней':'до 7 дней';
-      $('qtyOut').textContent = q+(packs?' паков':' шт');
+      $('qtyOut').textContent = rub(Math.round(unit))+(packs?' / пак':' / шт');
     }
     build('kind',F.kind); build('mat',F.mat); build('size',F.size);
     build('resin',F.resin); build('qty',F.qty);
