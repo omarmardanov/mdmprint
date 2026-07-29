@@ -962,7 +962,7 @@
             `<img class="opt__ico" src="calc-icons/${key}-${i}.webp" alt="" `+
             `onerror="this.remove();this.closest('span').classList.remove('has-ico')">`;
         l.innerHTML=`<input type="radio" name="${key}" value="${i}"${i===S[key]?' checked':''}>`+
-          `<span class="${own?'opt--own':(key==='kind'||key==='mat'?'has-ico':'')}${desc?' opt--card':''}">${inner}</span>`;
+          `<span class="${own?'opt--own':(['kind','mat','resin'].includes(key)?'has-ico':'')}${desc?' opt--card':''}">${inner}</span>`;
         if(own){
           const f=l.querySelector('.opt__inp');
           f.addEventListener('focus',()=>{ l.querySelector('input[type=radio]').checked=true; S[key]=i; calc(); });
