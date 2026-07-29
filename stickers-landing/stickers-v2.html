@@ -568,6 +568,8 @@
       radial-gradient(55% 40% at 88% 12%, rgba(255,193,0,.2), transparent 70%),
       radial-gradient(45% 35% at 6% 70%, rgba(120,200,255,.16), transparent 72%),
       #fbfaf7}
+  /* ширина как у остальных секций. Пустоты справа больше нет не из-за сужения контейнера,
+     а потому что плашки перестали упираться в потолок 255px и тянутся на всю колонку. */
   .calc__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
   .calc h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
     font-size:clamp(26px,3vw,38px);line-height:1;letter-spacing:-.005em;max-width:27ch}
@@ -582,16 +584,26 @@
   /* группировка по смыслу: «что печатаем» — во всю ширину; слева «из чего», справа «сколько» */
   .calc__form{display:contents}
   .calc__right{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
-  .calc__right{display:flex;flex-direction:column;gap:var(--sp-16);min-width:0}
   /* размер и количество — рядом: оба компактные, так правая колонка короче */
   .calc__pair{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-16)}
   @media(max-width:640px){.calc__pair{grid-template-columns:1fr}}
   /* слева широкие шаги 1–3, справа компактные 4–6 и цена: высота = самая длинная колонка,
      поэтому секция укладывается в один экран */
-  .calc__left{display:flex;flex-direction:column;gap:var(--sp-12);min-width:0}
+  /* правило близости: внутри шага плашки в 8px, между шагами — 28px.
+     Раньше внешний зазор был 12 при внутреннем 8 — группы не читались как отдельные. */
+  .calc__left{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
   /* липкой делаем саму колонку: у sticky на дочернем блоке нет запаса, если родитель по контенту */
   .calc__right{position:sticky;top:24px;align-self:start}
 
+  /* НИЗКИЕ ЭКРАНЫ (ноутбуки 800–850px): секция обязана влезать вместе с фикс-шапкой.
+     Ужимаем шапку секции, а не контролы — плашки трогать нельзя, по ним уже принято решение. */
+  @media(min-width:861px) and (max-height:870px){
+    .calc{padding-block:16px}
+    .calc h2{font-size:clamp(24px,2.4vw,30px)}
+    .calc__note{margin-top:6px;font-size:var(--t-small);line-height:var(--t-small-lh)}
+    .calc__grid{margin-top:var(--sp-12)}
+    .calc__out{padding:var(--sp-16)}
+  }
   @media(max-width:860px){.calc__grid{grid-template-columns:1fr}.calc__in{padding-inline:20px}}
   /* контейнера у формы нет: шаги лежат прямо на фоне секции (плашки сами держат структуру) */
   /* два столбца: шаги 1–3 слева, 4–6 справа */
@@ -619,10 +631,16 @@
   .opts--flow .opt{flex:0 0 auto;width:fit-content}
   .opts--flow .opt span{width:fit-content;min-width:0;padding:11px 15px;min-height:44px}
   .opts--flow .opt__txt{width:auto}
-  .opts--flow .opt__inp{width:9.5ch;min-width:9.5ch;min-height:0;padding:11px 15px;text-align:center}
+  .opts--flow .opt__inp{width:100%;min-height:0;padding:11px 15px;text-align:center}
+  /* «Свой» всегда последний в списке: занимает остаток строки и читается как ПОЛЕ,
+     а не как ещё один пресет (раньше ширина была 9.5ch под маску 99x99) */
+  .opts--flow .opt:last-child{flex:1 1 140px;width:auto}
+  .opts--flow .opt:last-child span{width:100%}
   /* две колонки — для длинных списков с описаниями */
-  .opts--two{grid-template-columns:repeat(2,minmax(0,255px))!important}
-  .opts--2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,255px));gap:8px;justify-content:start}
+  /* потолок 340px: при 255 справа зияло ~276px, при 1fr плашка становилась слишком широкой
+     и картинку отжимало к её правому краю — ближе к соседней колонке, чем к своему тексту */
+  .opts--two{grid-template-columns:repeat(2,minmax(0,340px))!important}
+  .opts--2col{display:grid;grid-template-columns:repeat(2,minmax(0,340px));gap:8px}
   .opts--2col .opt span{max-width:none;width:100%;height:100%}
   @media(max-width:860px){.opts--2col{grid-template-columns:1fr}}
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
@@ -635,13 +653,35 @@
      картинка оказывалась ближе к соседней опции, чем к своему тексту (проблема близости) */
   /* ЕДИНОЕ правило для шагов 1–3: картинка сразу за текстом, одинаковый размер, положение и срез */
   .opts--near .opt span{align-items:center}
-  .opts--near .opt__txt{flex:1 1 auto;min-width:0}
+  /* текст НЕ растягиваем: иначе картинку отжимает к правому краю плашки и она отрывается
+     от своей подписи. Так она стоит сразу за текстом при любой ширине плашки. */
+  .opts--near .opt__txt{flex:0 1 auto;min-width:0}
   .opts--near .opt__ico{position:static;align-self:flex-end;flex:none;
     width:78px;height:78px;margin:10px 0 -24px 14px;object-position:center top}
   .opts--near .opt span.has-ico .opt__desc,.opts--near .opt span.opt--card.has-ico .opt__desc{padding-right:0}
   /* резерв под картинку даём ТОЛЬКО описанию: картинка внизу справа, а заголовок наверху
      и может занимать всю ширину. Раньше padding-right на всей плашке зря рвал заголовок. */
   .opt span.has-ico .opt__desc{padding-right:58px}
+  /* шаг «Материал» — ВЕРТИКАЛЬНАЯ плашка: заголовок и описание во всю ширину, картинка
+     приколота в правый нижний угол и срезается низом плашки (clip-path у span) */
+  .opts--vert .opt span{flex-direction:column;align-items:flex-start;justify-content:flex-start;
+    min-height:118px;padding:13px 14px 44px;height:100%}   /* низ зарезервирован под картинку */
+  .opts--vert .opt__txt{width:100%}
+  .opts--vert .opt__desc{max-width:none;padding-right:0}
+  /* текст не должен доезжать до картинки: резерв справа у всего текстового блока,
+     иначе длинный заголовок уходит под стикер (проверено рендером) */
+  .opts--vert .opt__txt{padding-right:72px}
+  /* размер картинки задаём с той же специфичностью, что и правило .opt--card, иначе оно
+     перебивает наши 76px своими 86 и заголовок опять уходит под стикер */
+  .opts--vert .opt span.opt--card .opt__ico,
+  .opts--vert .opt__ico{position:absolute;right:4px;bottom:-14px;width:74px;height:74px;margin:0;
+    object-position:center top}
+  /* четыре в ряд: ряд ровный, карточки одной высоты (height:100% у span) */
+  .opts--four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-12)}
+  /* span по умолчанию inline-flex и жмётся по содержимому — без этого карточка уже ячейки,
+     а приколотая к её правому краю картинка вылезает на соседнюю */
+  .opts--four .opt,.opts--four .opt span{width:100%;max-width:none}
+  @media(max-width:860px){.opts--four{grid-template-columns:repeat(2,minmax(0,1fr))}}
   .opt__txt{display:flex;flex-direction:column;gap:3px;font-weight:600;text-wrap:balance}
   .opt__desc{font-style:normal;font-size:12.5px;line-height:16px;font-weight:400;
     color:var(--text-secondary);max-width:20ch}
@@ -683,9 +723,11 @@
   /* итог */
   /* итоговая панель: тёплая тёмная (не плоский чёрный), светлый внутренний контур и мягкая тень —
      чтобы читалась как часть той же системы плашек, а не вставленный блок */
-  /* итог без плашки: лежит прямо на фоне секции, как и остальные шаги */
+  /* итог — ПЛАШКА. Раньше лежал прямо на фоне и читался как седьмой шаг, а не как ответ.
+     Единственный контейнер в секции: всё слева — выбор, справа — результат. */
   .calc__out{display:flex;flex-direction:column;gap:var(--sp-12);
-    color:var(--text-primary)}
+    color:var(--text-primary);background:var(--surface-card);border-radius:var(--radius-outside);
+    padding:var(--sp-20);box-shadow:inset 0 0 0 1px var(--border),0 18px 34px -26px rgba(20,18,18,.45)}
   .calc__price{font-family:var(--font-head);font-weight:800;font-size:clamp(30px,3vw,40px);line-height:1;letter-spacing:-.01em}
   .calc__cap{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
     color:var(--text-secondary);margin-bottom:8px}
@@ -980,7 +1022,7 @@
           </fieldset>
           <fieldset class="fs fs--wide">
             <legend>Материал</legend>
-            <div class="opts opts--2col opts--near opts--two" id="mat"></div>
+            <div class="opts opts--vert opts--four" id="mat"></div>
           </fieldset>
           <fieldset class="fs fs--wide">
             <legend>Смола</legend>
@@ -1727,17 +1769,19 @@
     const F={
       kind: [['Стикеры',1,'Отдельные наклейки любой формы'],['Стикерпаки',3.4,'Набор наклеек на одном листе']],
       // заголовки в ОДНО слово: на карточке ~190px два слова переносятся и ряд становится неровным
-      mat:  [['Белая плёнка',1,'Плотные цвета, рисунок не просвечивает'],
-             ['Прозрачная',1.1,'Видно поверхность под стикером'],
-             ['Голографическая',1.45,'Радужный перелив на свету'],
-             ['Металлик',1.4,'Серебро или золото с зеркальным блеском']],
+      // ряд из четырёх → карточка ~185px: заголовок в ОДНО слово, описание в два.
+      // Двухсловный заголовок переносится и уезжает под картинку в правом нижнем углу.
+      mat:  [['Белая',1,'Плотные цвета'],
+             ['Прозрачная',1.1,'Видно поверхность'],
+             ['Голография',1.45,'Радужный перелив'],
+             ['Металлик',1.4,'Зеркальный блеск']],
       // размер = ширина×высота, мм. Коэффициент считается по площади (50×50 = 1.0)
       size: [['30×30',1,null,900],['44×44',1,null,1936],['55×44',1,null,2420],
-             ['70×50',1,null,3500],['Свой',null,'99x99']],
+             ['70×50',1,null,3500],['Свой',null,'Свой размер']],
       sheet:[['А7',1],['А6',1.4],['А5',2.1]],   // у паков свой размер не задаётся
       resin:[['Эпоксидная',1,'Прозрачная линза: объём и глянец'],
              ['Светящаяся',1.35,'Копит свет и светится в темноте']],
-      qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'99999']],
+      qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'Свой тираж']],
     };
     const S={kind:0,mat:0,size:0,resin:0,qty:2};
     const $=id=>document.getElementById(id);
