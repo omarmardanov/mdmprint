@@ -392,13 +392,19 @@
     font-size:var(--t-h4);line-height:var(--t-h4-lh);letter-spacing:var(--t-h4-ls)}
   .b2b__item p{margin:8px 0 0;font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-secondary)}
   /* спецусловия — жёлтая плашка: единственный акцент действия в секции */
-  .b2b__offer{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-16) var(--sp-24);
-    margin-top:var(--sp-20);background:#FFC100;color:#141212;border-radius:var(--radius-outside);
+  /* плоская жёлтая плашка. Единственное, что чинилось: было ТРИ элемента в одну строку
+     (заголовок · текст · кнопка) — читалось как рекламная полоса. Теперь текст колонкой
+     слева, действие справа. Блик и белое кольцо пробовали — плашка стала похожа на кнопку. */
+  .b2b__offer{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;
+    gap:var(--sp-16) clamp(24px,3vw,48px);margin-top:var(--sp-20);color:#141212;
+    background:#FFC100;border-radius:var(--radius-outside);
     padding:var(--sp-20) var(--sp-24)}
-  .b2b__offer b{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
-    font-size:clamp(17px,1.5vw,22px);line-height:1.1}
-  .b2b__offer span{font-size:var(--t-small);line-height:var(--t-small-lh);max-width:46ch}
-  .b2b__cta{margin-left:auto;display:inline-flex;align-items:center;background:#141212;color:#fff;
+  @media(max-width:760px){.b2b__offer{grid-template-columns:1fr}}
+  .b2b__offer b{display:block;font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(17px,1.5vw,22px);line-height:1.1;max-width:26ch}
+  .b2b__offer span{display:block;margin-top:7px;font-size:var(--t-small);line-height:var(--t-small-lh);
+    max-width:52ch}
+  .b2b__cta{display:inline-flex;align-items:center;background:#141212;color:#fff;white-space:nowrap;
     text-decoration:none;font-weight:800;font-size:15.5px;padding:14px 22px;border-radius:14px}
   .b2b__cta:hover{background:#2c2825}
   .b2b__cta:focus-visible{outline:3px solid #141212;outline-offset:3px}
@@ -1213,8 +1219,10 @@
         </li>
       </ul>
       <div class="b2b__offer">
-        <b>Спецусловия для селлеров и агентств</b>
-        <span>Постоянным партнёрам — цена за тираж, приоритет в сроках и хранение макетов.</span>
+        <div>
+          <b>Спецусловия для селлеров и агентств</b>
+          <span>Постоянным партнёрам — цена за тираж, приоритет в сроках и хранение макетов.</span>
+        </div>
         <a class="b2b__cta" href="#calc">Обсудить условия</a>
       </div>
       <p class="b2b__cap">С кем мы работали</p>
