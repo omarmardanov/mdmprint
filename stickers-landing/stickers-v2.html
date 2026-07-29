@@ -819,7 +819,7 @@
   /* разное поведение — разный вид: кнопка открывает модалку тут же, ссылка уводит на mdmprint.ru */
   .calc__hint{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-12)}
   .calc__ext{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
-  .calc__ext span{font-size:11px;line-height:1;text-decoration:none}
+  .calc__ext svg{width:12px;height:12px;flex:none}
   .calc__hint:empty{display:none}
   .calc__pick[hidden],.calc__file[hidden]{display:none}
   .calc__demo{margin-top:var(--sp-16);font-size:13px;line-height:18px;color:var(--text-secondary)}
@@ -1086,7 +1086,10 @@
           </div>
           <button class="calc__cta" type="button" id="orderOpen">Оформить заказ</button>
           <p class="calc__hint"><button class="calc__link" type="button" id="shipOpen">Доставка и самовывоз</button>
-            <a class="calc__ext" href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">Оферта<span aria-hidden="true">↗</span></a></p>
+            <!-- width/height обязательны: без них SVG без размеров растягивается до 300×150 -->
+            <a class="calc__ext" href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">Оферта<svg
+              width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></p>
         </div>
         </div>
       </div>
