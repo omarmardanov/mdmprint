@@ -295,7 +295,9 @@
   .opts--flow .opt__txt{width:auto}
   .opts--flow .opt__inp{width:9.5ch;min-width:9.5ch;min-height:0;padding:11px 15px;text-align:center}
   /* две колонки — для длинных списков с описаниями */
-  .opts--2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+  .opts--four{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+  @media(max-width:1100px){.opts--four{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+  .opts--2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,255px));gap:8px;justify-content:start}
   .opts--2col .opt span{max-width:none;width:100%;height:100%}
   @media(max-width:860px){.opts--2col{grid-template-columns:1fr}}
   /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
@@ -304,6 +306,13 @@
   .opt__ico{position:absolute;right:8px;bottom:-8px;width:54px;height:54px;flex:none;
     object-fit:contain;object-position:top center;pointer-events:none;
     filter:drop-shadow(0 4px 8px rgba(20,18,18,.35))}
+  /* картинка СРАЗУ ЗА ТЕКСТОМ, а не у правого края: на широкой плашке приколотая справа
+     картинка оказывалась ближе к соседней опции, чем к своему тексту (проблема близости) */
+  .opts--near .opt span{align-items:flex-end}
+  .opts--near .opt__txt{align-self:center}
+  .opts--near .opt__ico{position:static;width:84px;height:84px;margin:12px 0 -28px 16px;
+    object-position:center top}
+  .opts--near .opt span.has-ico .opt__desc,.opts--near .opt span.opt--card.has-ico .opt__desc{padding-right:0}
   /* резерв под картинку даём ТОЛЬКО описанию: картинка внизу справа, а заголовок наверху
      и может занимать всю ширину. Раньше padding-right на всей плашке зря рвал заголовок. */
   .opt span.has-ico .opt__desc{padding-right:58px}
@@ -621,11 +630,11 @@
         <div class="calc__left">
           <fieldset class="fs fs--wide">
             <legend>Что печатаем</legend>
-            <div class="opts opts--2col" id="kind"></div>
+            <div class="opts opts--2col opts--near" id="kind"></div>
           </fieldset>
           <fieldset class="fs fs--wide">
             <legend>Материал</legend>
-            <div class="opts opts--2col" id="mat"></div>
+            <div class="opts opts--2col opts--four" id="mat"></div>
           </fieldset>
           <fieldset class="fs fs--wide">
             <legend>Смола</legend>
