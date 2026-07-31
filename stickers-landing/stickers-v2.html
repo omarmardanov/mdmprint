@@ -183,8 +183,8 @@
   .hd__phone[data-done] .hd__copied{opacity:1}
   /* CTA в шапке — ЕДИНСТВЕННЫЙ плотный акцент, поэтому живёт не по правилу «плашка на ховере».
      Появляется вместе со стеклом: в герое кнопки есть в самом герое, а к концу сцены они уезжают
-     вверх — дальше по странице путь к заявке даёт только шапка. Низ экрана занят: там уже спорят
-     .fabbar и .calcbar. */
+     вверх — дальше по странице путь к заявке даёт только шапка. Низ экрана занят мобильной
+     полосой (.calcbar / .rbar). */
   /* 14px, а не пилюля: на странице все действия — скруглённые прямоугольники 14px
      (.btn, «Оформить заказ», мобильная полоса, FAB). Пилюли в шапке остались от раннего
      варианта и были единственными на странице. Пилюля теперь только у бейджа героя. */
@@ -317,26 +317,15 @@
   .hero--rolled .hero__scroll{opacity:0}
   .hero__scroll{transition:opacity .25s}
   .hero__mmodel{display:none}
-  /* ПЛАВАЮЩАЯ CTA (мобилка): вместо шапки — единственный путь к заявке, пока герой пролистан.
-     Появляется, когда кнопка из героя ушла с экрана (см. IntersectionObserver ниже). */
-  /* Подложка снята по просьбе Omar (решение по виду тулбара Safari — за ним).
-     ПОБОЧКА, о которой знаем: без светлой полосы у нижней кромки iOS Safari
-     подкрашивает свой тулбар цветом кнопки, т.е. в чёрный. */
-  .fabbar{display:none;position:fixed;left:16px;right:16px;z-index:60;
-    bottom:calc(env(safe-area-inset-bottom,0px) + 14px);
-    opacity:0;transform:translateY(130%);transition:opacity .22s ease,transform .22s ease}
-  .fabbar--on{opacity:1;transform:translateY(0)}
-  .fab{display:flex;align-items:center;justify-content:center;background:var(--v-ink);color:var(--surface-card);
-    text-decoration:none;font-weight:700;font-size:16px;letter-spacing:-.01em;
-    padding:16px 22px;border-radius:16px;box-shadow:0 10px 24px -12px rgba(20,18,18,.5)}
-  .fab:active{background:var(--v-ink-press)}
-  .fab:focus-visible{outline:3px solid var(--v-ink);outline-offset:3px}
-  @media(prefers-reduced-motion:reduce){.fabbar{transition:opacity .22s ease}}
+  /* Плавающая пилюля .fabbar убрана 31.07: без светлой полосы у нижней кромки iOS Safari
+     красил свой тулбар в цвет кнопки, то есть в чёрный. Её роль забрала мобильная полоса
+     внизу (см. «МОБИЛЬНАЯ ПОЛОСА»): у неё сплошная светлая поверхность, и тулбар остаётся
+     светлым. Полоса же и ведёт к заявке, когда герой пролистан. */
   @media(max-width:860px){
-    /* мобилка: шапки нет сознательно (её роль берёт плавающая CTA внизу).
+    /* мобилка: шапки нет сознательно (её роль берёт нижняя полоса).
        Герой — поток сверху вниз: текст → модель на остаток экрана, пересечься не могут. */
     /* Шапка на мобилке — ТОЛЬКО логотип по центру, и она НЕ фиксированная: просто первый
-       блок страницы, который уезжает со скроллом. Роль плавающей CTA остаётся за .fabbar,
+       блок страницы, который уезжает со скроллом. Путь к заявке держит нижняя полоса,
        поэтому меню и контакты здесь не нужны, а стекло и его слои не включаются. */
     .hero__card,.hero__scroll,.hero__veil{display:none}
     .hd{position:static;padding:calc(env(safe-area-inset-top,0px) + 18px) 0 0;background:none}
@@ -344,7 +333,6 @@
     .hd__bar{grid-template-columns:1fr;justify-items:center;gap:0}
     .hd__logo{justify-self:center}
     .hd__logo img{height:26px}
-    .fabbar{display:block}
     /* мобилка живёт прежним сценарием: дорожки и липкости нет, обёртка растворяется
        (display:contents), её дети снова становятся прямыми флекс-элементами .hero.
        Раскладку и фон возвращаем на .hero: у растворённой обёртки бокса нет, а значит
@@ -1111,7 +1099,7 @@
      обе модалки без JS. */
   body:has(.sheet[open]) .hd,
   body:has(.sheet[open]) .calcbar,
-  body:has(.sheet[open]) .fabbar{opacity:0;pointer-events:none}
+  body:has(.sheet[open]) .rbar{opacity:0;pointer-events:none}
   .sheet__box{position:relative;width:min(720px,100%);max-height:88vh;overflow:auto;
     background:var(--surface-card);border-radius:var(--radius-outside);padding:var(--sp-32)}
   .sheet__title{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
@@ -1294,27 +1282,60 @@
   .ord__fields .calc__f:nth-child(3){grid-column:1/-1}
   @media(max-width:640px){.ord__fields{grid-template-columns:1fr}}
 
-  /* ── МОБИЛЬНАЯ ПОЛОСА С ЦЕНОЙ ── */
-  /* Полоса не переключается display'ом, а уезжает вниз: display нельзя анимировать, а нам нужна
-     передача эстафеты карточке итога. Пока карточка не видна — полоса внизу; как только она
-     появилась, полоса уходит к ней (сжимается и опускается), чтобы цена не дублировалась. */
-  .calcbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:55;
+  /* ── МОБИЛЬНАЯ ПОЛОСА: одна поверхность у нижней кромки, два состояния ── */
+  /* Состояния взаимоисключающие: в калькуляторе — цена и «Оформить» (.calcbar), на остальной
+     странице — каналы связи и «Заказать» (.rbar). Общая светлая подложка нужна не только для
+     вида: именно по цвету у нижней кромки iOS Safari красит свой тулбар. */
+  .calcbar,.rbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:55;
     align-items:center;justify-content:space-between;gap:var(--sp-16);
     padding:12px 16px calc(env(safe-area-inset-bottom,0px) + 12px);
     background:var(--surface-card);box-shadow:0 -12px 30px -24px rgba(20,18,18,.6),
-    inset 0 1px 0 rgba(20,18,18,.08);
-    transform:translateY(115%);transform-origin:50% 100%;opacity:0;will-change:transform,opacity}
+    inset 0 1px 0 rgba(20,18,18,.08)}
+  /* Полоса цены не переключается display'ом, а уезжает вниз: display нельзя анимировать, а нам
+     нужна передача эстафеты карточке итога. Пока карточка не видна — полоса внизу; как только
+     она появилась, полоса уходит к ней (сжимается и опускается), чтобы цена не дублировалась. */
+  .calcbar{transform:translateY(115%);transform-origin:50% 100%;opacity:0;
+    will-change:transform,opacity}
   .calcbar b{display:block;font-family:var(--font-head);font-weight:800;font-size:22px;line-height:1.1}
   .calcbar span{display:block;font-size:12px;color:var(--text-secondary)}
   /* то же действие, что «Оформить заказ» → чёрная по правилу воронки (полоса на светлой карточке) */
   .calcbar__btn{font:inherit;font-weight:800;font-size:15px;color:var(--surface-card);background:var(--v-ink);
     border:0;border-radius:14px;padding:14px 20px;cursor:pointer;white-space:nowrap}
   .calcbar--live{display:flex}
-  body.has-calcbar .fabbar{display:none}
   /* полоса с ценой висит поверх содержимого — даём калькулятору её высоту снизу,
      иначе последний шаг остаётся под ней и до него не долистать */
   body.has-calcbar .calc{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
-  @media(min-width:861px){.calcbar{display:none!important}}
+  /* ── КОНТАКТНОЕ СОСТОЯНИЕ: каналы слева, действие справа ── */
+  /* Геометрия та же, что у полосы цены (содержимое слева, чёрная кнопка справа), поэтому при
+     входе в калькулятор и выходе из него полоса не перестраивается, а меняет содержимое. */
+  /* В отличие от полосы цены, эта живёт постоянно и прячется сдвигом вниз: display нельзя
+     анимировать, а переключать его в кадре появления — значит потерять переход. */
+  .rbar{transform:translateY(115%);opacity:0;pointer-events:none;
+    transition:opacity .22s ease,transform .22s ease}
+  @media(max-width:860px){.rbar{display:flex}}
+  .rbar--on{transform:translateY(0);opacity:1;pointer-events:auto}
+  .rbar__chans{display:flex;gap:8px}
+  /* 44×44 — минимальная тап-цель; иконки те же, что в меню «Связаться» на десктопе */
+  .rbar__chan{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;
+    background:var(--surface-gray);color:var(--text-primary);text-decoration:none}
+  .rbar__chan:active{background:var(--surface-gray-2)}
+  .rbar__chan img,.rbar__chan svg{width:20px;height:20px;display:block}
+  /* кнопка забирает весь остаток строки: каналы по содержимому, действие — во всю ширину */
+  .rbar__btn{flex:1;text-align:center;font:inherit;font-weight:800;font-size:15px;
+    color:var(--surface-card);background:var(--v-ink);border-radius:14px;padding:14px 20px;
+    text-decoration:none;white-space:nowrap}
+  .rbar__btn:active{background:var(--v-ink-press)}
+  .rbar__chan:focus-visible,.rbar__btn:focus-visible{outline:3px solid var(--v-ink);outline-offset:2px}
+  /* iPhone SE и прочие 320–360: четыре канала по 44 плюс кнопка не влезали — кнопка уезжала
+     за правый край на 18px (кнопка nowrap и не сжимается). Ужимаем зазоры и сами каналы. */
+  @media(max-width:360px){
+    .rbar{gap:10px;padding-inline:12px}
+    .rbar__chans{gap:6px}
+    .rbar__chan{width:40px;height:40px;border-radius:12px}
+    .rbar__btn{padding:13px 12px;font-size:14.5px}
+  }
+  @media(prefers-reduced-motion:reduce){.rbar{transition:opacity .22s ease}}
+  @media(min-width:861px){.calcbar,.rbar{display:none!important}}
 </style>
 </head>
 <body>
@@ -2080,8 +2101,24 @@
     <button class="calcbar__btn" type="button" id="barOrder">Оформить</button>
   </div>
 
-  <!-- плавающая CTA: заменяет мобильную шапку -->
-  <div class="fabbar"><a class="fab" href="#calc">Рассчитать стоимость</a></div>
+  <!-- контактное состояние той же полосы: показывается вне калькулятора, пока герой пролистан.
+       Ссылки мессенджеров ведут на форму заявки, пока аккаунты не даст маркетолог, — тот же
+       фолбэк, что в меню «Связаться» (JS подменит href по MSG). -->
+  <div class="rbar" id="reachBar">
+    <div class="rbar__chans">
+      <a class="rbar__chan" href="#zayavka" data-msg="tg" aria-label="Написать в Telegram">
+        <img src="../assets/telegram.svg" alt="" width="20" height="20"></a>
+      <a class="rbar__chan" href="#zayavka" data-msg="max" aria-label="Написать в MAX">
+        <img src="../assets/maxnew.svg" alt="" width="20" height="20"></a>
+      <a class="rbar__chan" href="tel:+74952561000" aria-label="Позвонить: +7 495 256-10-00">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.2 9.6a16 16 0 0 0 6 6l1.2-1.1a2 2 0 0 1 2.1-.5c.8.3 1.7.6 2.6.7a2 2 0 0 1 1.7 2Z"/></svg></a>
+      <a class="rbar__chan" href="mailto:zakaz@mdmprint.ru" aria-label="Написать на почту: zakaz@mdmprint.ru">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
+          stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 7 9 6 9-6"/></svg></a>
+    </div>
+    <a class="rbar__btn" href="#zayavka">Заказать</a>
+  </div>
 
 <!-- Рантайм model-viewer (модульный скрипт = defer, первый экран не блокирует).
      В бою запинить конкретную версию. -->
@@ -2314,13 +2351,27 @@
     const bar=document.getElementById('calcBar'), calc=document.querySelector('.calc');
     if(!bar||!calc) return;
     const out=calc.querySelector('.calc__out');
+    /* Контактное состояние ведёт тот же обработчик: состояния взаимоисключающие, и держать
+       их в одном месте дешевле, чем сводить два независимых наблюдателя. */
+    const rbar=document.getElementById('reachBar');
+    const heroCta=document.querySelector('.hero__cta'), ft=document.querySelector('.ft');
+    const calcH2=calc.querySelector('h2');
     const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
     let raf=0;
     function paint(){
       raf=0;
       const cr=calc.getBoundingClientRect();
-      const inCalc = cr.top < innerHeight && cr.bottom > 0;
+      /* Переключаемся не по входу секции в кадр (тогда цена всплывала, когда калькулятора
+         на экране ещё почти нет), а когда заголовок «Посчитайте…» дошёл до верха экрана. */
+      const inCalc = (calcH2 ? calcH2.getBoundingClientRect().top <= 0 : cr.top < innerHeight)
+        && cr.bottom > 0;
       bar.classList.toggle('calcbar--live', inCalc);
+      if(rbar){
+        // герой пролистан, калькулятора на экране нет, футер ещё не показался
+        const passed = !heroCta || heroCta.getBoundingClientRect().bottom < 0;
+        const atFoot = ft && ft.getBoundingClientRect().top < innerHeight - 8;
+        rbar.classList.toggle('rbar--on', passed && !inCalc && !atFoot);
+      }
       if(!inCalc){ document.body.classList.remove('has-calcbar'); return; }
 
       let t=0;                                   // 0 — полоса внизу, 1 — эстафета передана
@@ -2403,15 +2454,6 @@
         clearTimeout(t); t = setTimeout(() => a.removeAttribute('data-done'), 1600);
       });
     });
-  })();
-
-  /* Плавающая CTA: показываем, когда кнопка из героя ушла с экрана. */
-  (function(){
-    const fab = document.querySelector('.fabbar');
-    const cta = document.querySelector('.hero__cta');
-    if(!fab || !cta || !('IntersectionObserver' in window)) return;
-    new IntersectionObserver(([e]) => fab.classList.toggle('fabbar--on', !e.isIntersecting),
-      {threshold:0}).observe(cta);
   })();
 
   /* МОБИЛКА: при скролле лист доклоняется по ТОЙ ЖЕ оси (phi) — 20° в покое → 62° к концу героя.
