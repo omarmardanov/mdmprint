@@ -1,0 +1,15 @@
+{
+  "name": "MDMprint — 3D-стикеры со смолой",
+  "short_name": "MDMprint",
+  "description": "Печать объёмных 3D-стикеров со смолой: любые формы и покрытия, тираж от 10 штук, срок от 3 дней.",
+  "lang": "ru",
+  "start_url": "./",
+  "display": "browser",
+  "background_color": "#fbfaf7",
+  "theme_color": "#fbfaf7",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

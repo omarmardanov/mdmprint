@@ -17,9 +17,13 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="3D-стикеры со смолой на заказ — MDMprint">
 <meta property="og:description" content="Объёмные стикеры со смолой: любые формы и покрытия, срок от 3 дней, Москва и вся Россия.">
-<!-- og:image — реальное фото продукта. На проде заменить на кадр 1200×630. -->
-<meta property="og:image" content="b2b/cmp-3.webp">
-<meta property="og:image:alt" content="3D-стикер со смолой на столе">
+<!-- og:image 1200×630 — обязательный размер для Telegram, ВК и соцсетей: фото 4:3
+     они обрезали по своему усмотрению, и текст мог попасть под кроп. Собрана из реального
+     кадра продукта: фото + затемнение слева + заголовок и факты. -->
+<meta property="og:image" content="og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="3D-стикер со смолой с логотипом MDMprint">
 <meta property="og:site_name" content="MDMprint">
 <meta property="og:locale" content="ru_RU">
 <!-- og:url и canonical заполняются на проде, здесь их нет намеренно: указывать несуществующий
@@ -131,7 +135,14 @@
 }
 </script>
 
-<link rel="icon" href="../assets/mdmprint-logo.svg">
+<!-- ИКОНКИ. Исходник — «фавка 2» от Omar: тот же знак, но крупнее в кадре — мелкий
+     детализированный самолётик в 16px не читался. Файл приехал сломанным (контуры лежали
+     за пределами холста 32×32 и обрезались маской), знак вписан трансформацией группы.
+     Раньше здесь стоял общий логотип 59×20 — во вкладке была нечитаемая полоска. -->
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="../assets/css/fonts.css?v=20260720a">
 <link rel="stylesheet" href="../assets/css/tokens.css?v=20260722b">
 <style>
@@ -555,6 +566,9 @@
        высоту липкого экрана, текст сверху — сцена на остаток.
        Верхний padding = место под шапку: она здесь absolute (см. .hd ниже), в потоке её нет. */
     .hero__pin{position:static;height:100svh;padding:64px 0 0;align-items:stretch}
+    /* Растворение низа: 22% от 844 — это 186px, и нижний стикер уходил в белое целиком.
+       Выглядело как обрезка, хотя он на месте. На телефоне достаточно 12%. */
+    .hero__pin::after{height:12%}
     /* одна колонка: текст сверху, сцена на остаток экрана */
     .hero__in{display:flex;flex-direction:column;align-items:center;
       gap:0;padding-inline:20px;min-height:0;justify-content:flex-start}
@@ -1571,7 +1585,10 @@
   #orderSheet .ord__spec dd{margin:0;font-size:14px;font-weight:700;line-height:1.2}
   /* в режиме образца расчёта нет — цену не показываем вообще */
   #orderSheet.sheet--sample .ord__price{display:none}
-  #orderSheet .ord__form{flex:1 1 auto;min-height:0;margin-top:0;padding:0;
+  /* gap:0 — в общем правиле .ord__form стоит 20px, и в шторке он рисовал белую полосу
+     между прокруткой формы и подвалом: подвал белый, зона прокрутки белая, а между ними
+     пустая щель — выглядело как плашка, обрезающая форму. Здесь подвал должен прилегать. */
+  #orderSheet .ord__form{flex:1 1 auto;min-height:0;margin-top:0;padding:0;gap:0;
     display:flex;flex-direction:column}
   /* Прокручивается только эта часть. Контакты и «макет и опции» рядом — так короче по высоте. */
   /* Колоночная идея снята: спека и форма рядом теряли обе. Спека — ПОЛОСОЙ в начале,
@@ -1661,8 +1678,12 @@
     #orderSheet .ord__spec{grid-template-columns:1fr 1fr}
     /* safe-area: на iPhone нижняя кромка отдана системному индикатору, без запаса кнопка
        «Отправить заявку» упирается в него */
-    #orderSheet .ord__foot{padding:var(--sp-16) var(--sp-20)
-      calc(var(--sp-16) + env(safe-area-inset-bottom,0px))}
+    /* Подвал занимал 147px из 844 — шестую часть экрана под цену, кнопку и заметку.
+       Ужат: поля меньше, заметка мельче и в одну-две строки. */
+    #orderSheet .ord__foot{padding:10px var(--sp-20)
+      calc(10px + env(safe-area-inset-bottom,0px));gap:4px var(--sp-16)}
+    #orderSheet .ord__note{font-size:11px;line-height:1.3}
+    #orderSheet .ord__price{font-size:26px}
     /* Заметка про предоплату во всю ширину, под ценой и кнопкой. В колонке рядом с кнопкой
        она ложилась в СЕМЬ строк и занимала четверть экрана — на телефоне это дороже,
        чем сама форма. */
@@ -1674,7 +1695,11 @@
     /* На одной колонке спека сверху отжимала первое поле за экран: человек открывает шторку
        и не видит, что от него хотят. На узких экранах она уходит под поля, на десктопе
        остаётся первой (проверить заказ дешевле, чем переделывать после ввода). */
-    #orderSheet .ord__grp--spec{order:2}
+    /* Сводка стояла ВПЛОТНУЮ к чекбоксам согласий: у неё отрицательные поля для растяжки
+       на всю ширину, а верхнего отступа не было вовсе — блок читался как продолжение
+       строки согласия. */
+    #orderSheet .ord__grp--spec{order:2;margin-top:var(--sp-20)!important;
+      padding-top:var(--sp-16)!important}
   }
   /* .ord__sum удалён 30.07: <dl> плашек заменён на .ord__price и .ord__spec */
   .ord__form{display:flex;flex-direction:column;gap:var(--sp-20);margin-top:var(--sp-20)}
@@ -2873,6 +2898,11 @@
         from:{x:88, y:66,  r:8,  s:.78, blur:1.5, o:[14,70,106]},
         to:  {x:96, y:80,  r:14, s:.72, blur:0,   o:[34,34,104]}}
     };
+
+    /* На узком экране сцена ниже, и прежний ход нижнего стикера (66 → 80% собственной высоты)
+       уводил его под самую кромку — в зону растворения. Ход уменьшен вдвое: движение
+       читается, а стикер остаётся в кадре. */
+    if(mob.matches){ OBJS.c.from.y = 34; OBJS.c.to.y = 42; }
 
     const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
     const mix = (a,b,t) => a+(b-a)*t;
