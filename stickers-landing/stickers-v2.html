@@ -108,7 +108,7 @@
    "name": "Вы разрабатываете дизайн?",
    "acceptedAnswer": {
     "@type": "Answer",
-    "text": "Да, нарисуем по вашей идее или доведём готовый макет: проверим вылеты, контур высечки и цвет. Подготовка контура — от 900 ₽."
+    "text": "Да, нарисуем по вашей идее или доведём готовый макет: проверим вылеты, контур высечки и цвет. Стоимость зависит от задачи — назовём при согласовании."
    }
   },
   {
@@ -207,6 +207,9 @@
     cursor:help;opacity:.75}
   [data-pending] svg{display:none}   /* стрелка «внешняя ссылка» врала бы */
   .ft__legal em{font-style:normal;opacity:.7}
+  /* последнее слово + стрелка «внешняя ссылка» не разрываются: иначе стрелка уезжает
+     на следующую строку и висит в пустоте отдельно от текста */
+  .ft__nb{white-space:nowrap}
   /* Ссылка-пропуск: не видна мышью, выезжает по табу первой. Ведёт к расчёту — это главное
      действие страницы, ради него сюда и приходят. */
   .skip{position:absolute;left:16px;top:-100px;z-index:200;padding:12px 18px;
@@ -419,6 +422,19 @@
   /* Три факта под кнопками. Набраны НЕ заголовочным 22px, как было: в таком весе они спорили
      с кнопкой «Рассчитать стоимость» и уводили взгляд вниз, мимо главного действия.
      Теперь это подпись — тем же телесным шрифтом, на ступень мельче кнопки. */
+  /* Плашка акции: жёлтый только на цифре — сплошная заливка перетянула бы внимание
+     с заголовка, как это было с прежним надстрочником. */
+  /* Купон, а не подпись: бледная плашка на brand-soft терялась рядом с чёрной кнопкой.
+     Собран инверсией — жёлтая пилюля, а цифра в чёрной вставке: контраст внутри самого
+     элемента делает его заметным, не увеличивая площадь. Жёлтый совпадает с брендом,
+     чёрная вставка рифмуется с кнопкой рядом. */
+  .hero__promo{display:inline-flex;align-items:center;gap:10px;margin:20px 0 0;
+    padding:5px 16px 5px 5px;border-radius:999px;background:var(--brand);
+    font-size:13px;font-weight:700;color:var(--v-ink);white-space:nowrap;
+    box-shadow:0 10px 22px -12px rgba(255,193,0,.95),inset 0 1px 0 rgba(255,255,255,.45)}
+  .hero__promo b{display:inline-flex;align-items:center;padding:6px 11px;border-radius:999px;
+    background:var(--v-ink);color:var(--brand);font-family:var(--font-head);font-size:14px;
+    letter-spacing:.005em}
   .hero__facts{display:flex;gap:26px;flex-wrap:wrap;margin-top:24px;font-size:12.5px;
     line-height:1.35;color:var(--v-muted)}
   .hero__facts b{display:block;font-size:14.5px;font-weight:800;color:var(--text-primary);
@@ -546,6 +562,9 @@
     .hero__eyebrow{align-self:center}
     .hero__sub{margin-inline:auto}
     .hero__facts{display:none}   /* три факта — десктопная строка, на 390 они ломают экран */
+    /* акцию оставляем: это единственный ценовой аргумент на первом экране */
+    .hero__promo{margin-top:14px;font-size:12px;padding:4px 13px 4px 4px;gap:8px}
+    .hero__promo b{font-size:13px;padding:5px 9px}
     /* ОДНА разметка заголовка на обе раскладки: раньше мобилка дублировала текст в h2,
        из-за чего на мобилке не рендерился H1 вообще (индексация mobile-first). */
     .hero__text{width:100%;max-width:none}
@@ -1076,14 +1095,17 @@
   .faq__chan a:hover{background:var(--surface-gray-2)}
   /* ── КОПИРОВАНИЕ ТЕЛЕФОНА И ПОЧТЫ (только мышь). На телефоне тап по номеру должен звонить,
      а не копировать, поэтому поведение включается лишь при hover:hover и pointer:fine. ── */
-  [data-copy]{position:relative}
-  [data-copy]::after{content:"Скопировано";position:absolute;left:50%;bottom:calc(100% + 6px);
+  /* Пустое значение = элемент подхватил ОБЩИЙ механизм копирования. У телефона в шапке
+     значение непустое: там своя, более ранняя реализация со своим индикатором .hd__copied —
+     и если не разделить, на номере всплывают ДВЕ подсказки сразу. */
+  [data-copy=""]{position:relative}
+  [data-copy=""]::after{content:"Скопировано";position:absolute;left:50%;bottom:calc(100% + 6px);
     transform:translate(-50%,4px);white-space:nowrap;pointer-events:none;opacity:0;
     padding:5px 9px;border-radius:8px;background:var(--v-ink);color:var(--surface-card);
     font-family:var(--font-body);font-size:11.5px;font-weight:700;letter-spacing:.01em;
     text-transform:none;transition:opacity .16s ease,transform .16s ease}
-  [data-copy].is-copied::after{opacity:1;transform:translate(-50%,0)}
-  @media(prefers-reduced-motion:reduce){[data-copy]::after{transition:none}}
+  [data-copy=""].is-copied::after{opacity:1;transform:translate(-50%,0)}
+  @media(prefers-reduced-motion:reduce){[data-copy=""]::after{transition:none}}
   .faq__note{margin:10px 0 0;font-size:var(--t-micro);line-height:var(--t-micro-lh);
     color:var(--text-tertiary)}
 
@@ -1109,10 +1131,16 @@
     color:var(--surface-card)!important;line-height:1.2;margin-bottom:2px}
   .ft__addr{margin:var(--sp-12) 0 0;font-size:12.5px;line-height:19px;color:rgba(255,255,255,.5)}
   /* юридическая строка — отдельным ярусом под линией */
+  /* Сетка ТА ЖЕ, что у колонок футера (.ft__in): раньше здесь было auto + 1fr, и дисклеймер
+     начинался на 598 — не под «Контактами» (502) и не под «Разделами» (783), а между ними.
+     Теперь реквизиты стоят под логотипом, дисклеймер — от колонки «Контакты» до правой кромки. */
   .ft__legal{max-width:var(--v-max);margin:clamp(28px,3vw,40px) auto 0;padding-inline:var(--v-pad);
     padding-top:var(--sp-20);border-top:1px solid var(--border-on-dark);
-    display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:var(--sp-12) var(--sp-32)}
-  @media(max-width:760px){.ft__legal{grid-template-columns:1fr}}
+    display:grid;grid-template-columns:1.3fr 1fr .8fr 1.1fr;gap:var(--sp-12) var(--sp-24)}
+  .ft__legal p:first-child{grid-column:1}
+  .ft__legal p:last-child{grid-column:2 / -1}
+  @media(max-width:760px){.ft__legal{grid-template-columns:1fr}
+    .ft__legal p:first-child,.ft__legal p:last-child{grid-column:1}}
   .ft__legal p{margin:0;font-size:12px;line-height:18px;color:rgba(255,255,255,.45)}
   .ft__legal a{display:inline;color:rgba(255,255,255,.62);text-decoration:underline;
     text-underline-offset:2px}
@@ -1824,6 +1852,10 @@
              с пометкой «Пробный стикер». Без JS ссылка ведёт к мессенджерам. -->
         <a class="btn btn--ghost" href="#zayavka" id="heroSample">Заказать образец</a>
       </div>
+      <!-- Акция вынесена на первый экран (решение Omar 05.08). Условие названо прямо:
+           скидка действует не на любой тираж, и умолчать о пороге — обмануть. Слово
+           «недорого» сознательно не используем: сверки с рынком у нас нет. -->
+      <p class="hero__promo"><b>−30%</b> на тиражи от 1000 шт — до 31 августа</p>
       <div class="hero__facts">
         <div><b>от 3 дней</b>срок изготовления</div>
         <div><b>от 1 шт</b>пробный стикер</div>
@@ -1848,6 +1880,7 @@
           environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"
           exposure="1" shadow-intensity="0" tone-mapping="neutral" interpolation-decay="90"
           camera-orbit="14deg 70deg 106%" max-camera-orbit="auto auto 300%"></model-viewer>
+        <span>Полиуретан</span>
       </div>
       <div class="obj obj--b" data-obj="b">
         <model-viewer class="hero__model" src="models/hero/mellow.glb" alt="Фигурный стикер по контуру"
@@ -1972,7 +2005,7 @@
       <!-- Форма и покрытие названы РАЗНЫМИ осями по правке маркетолога 03.08: круглые бывают
            не только с логотипом, светящиеся — не только круглыми. -->
       <p class="forms__note">Форму и покрытие выбираете отдельно: любая высечка — круг, пилюля,
-        прямоугольник, контур по рисунку — может быть белой, прозрачной, голографической
+        прямоугольник, контур по рисунку — может быть белой глянцевой, голографической
         или светящейся в темноте.</p>
     </div>
     <div class="lane" tabindex="0" role="group" aria-label="Виды стикеров — прокрутите по горизонтали">
@@ -2066,11 +2099,11 @@
             <legend>Дополнительно</legend>
             <div class="opts">
               <label class="opt"><input type="checkbox" id="needDesign">
-              <span class="opt--card"><b class="opt__txt">Нужен дизайн<em class="opt__desc">нарисуем контур, от 900 ₽</em></b></span></label>
+              <span class="opt--card"><b class="opt__txt">Нужен дизайн<em class="opt__desc">Нарисуем макет, стоимость скажет менеджер</em></b></span></label>
               <label class="opt" id="optSingleWrap"><input type="checkbox" id="optSingle">
-              <span class="opt--card"><b class="opt__txt">Поштучно<em class="opt__desc">разрежем на отдельные стикеры</em></b></span></label>
+              <span class="opt--card"><b class="opt__txt">Порезать поштучно<em class="opt__desc">Приедут отдельными, а не листом</em></b></span></label>
               <label class="opt"><input type="checkbox" id="optBox">
-              <span class="opt--card"><b class="opt__txt">Упаковка<em class="opt__desc">индивидуальная, каждого стикера</em></b></span></label>
+              <span class="opt--card"><b class="opt__txt">Упаковать по одному<em class="opt__desc">Каждый стикер в свой пакет</em></b></span></label>
             </div>
             <!-- Требования к макетам: целого блока под них не нужно (маркетолог 03.08),
                  ссылка живёт здесь — рядом с «Нужен дизайн», где человек и думает про макет.
@@ -2285,8 +2318,10 @@
       <article class="abt__card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M10.6 9.2 12.6 8v8M10.4 16h4.4"/></svg>
-        <h3>Пробный стикер — от одной штуки</h3>
-        <p>Посмотрите вживую, как ляжет смола на ваш макет, прежде чем заказывать тираж.</p>
+        <!-- цены и условия дал бизнес 05.08 -->
+        <h3>Пробный стикер — 1 700 ₽</h3>
+        <p>Одна штука за 3 дня: посмотрите вживую, как ляжет смола на ваш макет. Стикерпак —
+          2 500 ₽. Закажете тираж от 20 000 ₽ — стоимость пробника зачтём в него.</p>
       </article>
       <article class="abt__card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -2297,8 +2332,9 @@
       <article class="abt__card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
-        <h3>25 пунктов выдачи</h3>
-        <p>По Москве, часть работает круглосуточно. Курьер и доставка в регионы тоже есть.</p>
+        <h3>Самовывоз и доставка</h3>
+        <p>Забрать можно с производства или из офиса. Курьер по Москве и области, в регионы —
+          СДЭК или другой перевозчик на выбор.</p>
       </article>
     </div>
   </section>
@@ -2485,8 +2521,9 @@
         <h3>Контакты</h3>
         <a class="ft__phone" href="tel:+74952561000">+7 (495) 256-10-00</a>
         <a href="mailto:zakaz@mdmprint.ru">zakaz@mdmprint.ru</a>
-        <a href="#zayavka" data-msg="tg">Telegram и MAX</a>
-        <p class="ft__addr">Москва, ул. Орджоникидзе, 11с1А, подъезд 29<br>Ежедневно с 9 до 22</p>
+        <a href="#zayavka" data-msg="tg">Telegram</a>
+        <a href="#zayavka" data-msg="max">MAX</a>
+        <p class="ft__addr">Москва, ул.&nbsp;Орджоникидзе, 11с1А,&nbsp;подъезд&nbsp;29<br>Ежедневно с 9 до 22</p>
       </div>
       <div>
         <h3>Разделы</h3>
@@ -2499,11 +2536,13 @@
       </div>
       <div>
         <h3>Документы</h3>
-        <a data-legal="offer" target="_blank" rel="noopener">Публичная оферта<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-        <a data-legal="privacy" target="_blank" rel="noopener">Политика обработки персональных данных<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-        <a href="https://mdmprint.ru/dostavka" target="_blank" rel="noopener">Доставка и оплата<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-        <a href="https://mdmprint.ru/dostavka/punkty-samovyvoza" target="_blank" rel="noopener">Пункты выдачи<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-        <a href="https://mdmprint.ru/trebovaniya-k-maketam/trebovaniya-k-maketam-poligrafii#stikerpack" target="_blank" rel="noopener">Требования к макетам<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        <a data-legal="offer" target="_blank" rel="noopener">Публичная <span class="ft__nb">оферта<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span></a>
+        <a data-legal="privacy" target="_blank" rel="noopener">Политика <span class="ft__nb">конфиденциальности<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span></a>
+        <a data-legal="cookie" target="_blank" rel="noopener">Обработка <span class="ft__nb">cookies<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span></a>
+        <a href="https://mdmprint.ru/dostavka" target="_blank" rel="noopener">Доставка и <span class="ft__nb">оплата<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span></a>
+        <!-- было «Пункты выдачи» на страницу 25 ПВЗ: для стикеров их нет (Omar 05.08) -->
+        <a href="https://mdmprint.ru/dostavka/dostavka-po-rossii" target="_blank" rel="noopener">Доставка по <span class="ft__nb">России<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span></a>
+        <a href="https://mdmprint.ru/trebovaniya-k-maketam/trebovaniya-k-maketam-poligrafii#stikerpack" target="_blank" rel="noopener">Требования к <span class="ft__nb">макетам<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span></a>
       </div>
     </div>
     <div class="ft__legal">
@@ -2620,7 +2659,7 @@
           </div>
           <button class="calc__cta" type="submit">Отправить заявку</button>
           <p class="ord__note">Цена предварительная — зависит от срока и сложности макета.
-            Оплата после согласования, пришлём ссылку.</p>
+            Предоплата онлайн по ссылке от менеджера — после согласования.</p>
         </div>
       </form>
     </div>
@@ -2634,13 +2673,11 @@
       </button>
       <h3 class="sheet__title" id="shipTitle">Доставка и самовывоз</h3>
       <div class="sheet__grid">
+        <!-- 25 ПВЗ УБРАНЫ (Omar 05.08): для стикеров их нет. Самовывоз только с двух
+             своих адресов — офис и производство. -->
         <div class="sheet__item"><b>Самовывоз — бесплатно</b>
-          <!-- адреса дал директор 29.07: офис на Орджоникидзе, типография на Автозаводской -->
-          <p>Из типографии на Автозаводской или из офиса на Орджоникидзе. Плюс 25 пунктов выдачи
-            в Москве, часть круглосуточно. Скидки за самовывоз нет.
-            <a href="https://mdmprint.ru/dostavka/punkty-samovyvoza" target="_blank" rel="noopener">Все пункты<svg
-              width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
-              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></p></div>
+          <p>С производства на Автозаводской или из офиса на Орджоникидзе, 11с1А, подъезд 29.
+            Ежедневно с 9 до 22. Скидки за самовывоз нет.</p></div>
         <div class="sheet__item"><b>Курьер по Москве и МО</b>
           <!-- подтверждено директором 29.07: для стикеров тариф тот же 790 ₽; бесплатно от 40 000 ₽
                только по Москве в пределах МКАД и только не крупногабарит -->
@@ -2648,14 +2685,20 @@
           <p>Москва в пределах МКАД — 790 ₽, МО до ЦКАД — 1 100 ₽, за ЦКАД — 1 500 ₽.
             От 40 000 ₽ по Москве в пределах МКАД — бесплатно, кроме крупногабаритных:
             через 2–3 дня после готовности заказа.</p></div>
-        <!-- перевозчик не назван: СДЭК не нашёлся ни на /dostavka, ни на странице ПВЗ (30.07).
-             Раньше он был взят «со страницы доставки» — либо страница изменилась, либо ошибка. -->
+        <!-- СДЭК ВЕРНУЛСЯ: 05.08 он нашёлся на mdmprint.ru/dostavka/dostavka-po-rossii вместе
+             с формулировкой «любая другая транспортная компания на ваш выбор» и тарифами
+             до терминала. В июле его там не было — страницу с тех пор дополнили. -->
         <div class="sheet__item"><b>Доставка по России</b>
-          <p>Тариф и срок считает служба доставки — сообщим при согласовании заказа.
-            <a href="https://mdmprint.ru/dostavka" target="_blank" rel="noopener">Условия доставки<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></p></div>
+          <p>СДЭК или любая транспортная компания на ваш выбор — в любой город. До терминала
+            перевозчика: 790 ₽ малогабаритный заказ, 3 000 ₽ крупногабаритный. Дальше — тариф
+            перевозчика; менеджер подберёт удобный вариант.
+            <a href="https://mdmprint.ru/dostavka/dostavka-po-rossii" target="_blank" rel="noopener">Условия доставки<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></p></div>
+        <!-- «Любым способом» было нашей выдумкой (Omar 05.08): способ один — предоплата
+             онлайн по ссылке, которую присылает менеджер после согласования. -->
         <div class="sheet__item"><b>Оплата</b>
-          <p>Любым способом после согласования макета — пришлём ссылку на онлайн-оплату.
-            <a href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">Публичная оферта</a></p></div>
+          <p>Предоплата онлайн по ссылке от менеджера — после того, как согласуем макет,
+            тираж и срок. В производство заказ уходит после оплаты.
+            <a data-legal="offer" target="_blank" rel="noopener">Публичная оферта</a></p></div>
       </div>
     </div>
   </div>
@@ -2683,7 +2726,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
           stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 7 9 6 9-6"/></svg></a>
     </div>
-    <a class="rbar__btn" href="#zayavka">Заказать</a>
+    <!-- Вела на #zayavka — форму в блоке ЧАВО. Но полоса показывается, когда человек ещё
+         НЕ считал: главное действие для него — расчёт, а не заявка вслепую. Заявка рядом:
+         мессенджеры и телефон в той же полосе. -->
+    <a class="rbar__btn" href="#calc">Рассчитать</a>
   </div>
 
   <!-- Уведомление о cookie. На странице пока нет счётчиков, но метрику подключат при запуске
@@ -2694,8 +2740,8 @@
   <div class="cookie" id="cookieBar" hidden>
     <p>Мы используем cookie и собираем обезличенную статистику посещений — это нужно, чтобы
       страница работала и мы понимали, что на ней искать неудобно.
-      Подробности — в <a data-legal="privacy" target="_blank" rel="noopener">политике
-      конфиденциальности</a>.</p>
+      Подробности — в <a data-legal="cookie" target="_blank" rel="noopener">положении
+      об обработке файлов cookies</a>.</p>
     <button class="cookie__ok" type="button" id="cookieOk">Понятно</button>
   </div>
 
@@ -2728,6 +2774,7 @@
       }
     };
     for(const a of document.querySelectorAll('a[href^="tel:"],a[href^="mailto:"]')){
+      if(a.dataset.copy) continue;          // у элемента уже есть своё копирование (телефон в шапке)
       a.dataset.copy='';
       a.addEventListener('click', async e => {
         e.preventDefault();
@@ -2768,7 +2815,9 @@
     privacy: 'https://mdmprint.ru/terms',
     terms:   '',   // отдельного пользовательского соглашения по факту нет
     consent: '',   // отдельного согласия на обработку ПД нет — покрывается политикой
-    cookie:  ''    // уведомление об использовании cookie — НЕТ
+    /* Нашлось 05.08 в футере их сайта: отдельное «Положение об обработке файлов cookies».
+       Теперь плашка о cookie ведёт именно туда, а не в общую политику. */
+    cookie:  'https://mdmprint.ru/polozhenie-ob-obrabotke-fajlov-cookies'
   };
   (function(){
     for(const a of document.querySelectorAll('[data-legal]')){
@@ -3265,8 +3314,9 @@
       resinAt:100, resinLow:'эпоксидная', resinHigh:'полиуретановая',
       // их сайт: −30% до 31 августа, стикеры от 1000 шт, паки от 500 шт
       promo:{off:.3, till:'2026-08-31', label:'до 31 августа', minSt:1000, minPack:500},
-      // директор 29.07: подготовка контура для стикера/стикерпака — 900 ₽ за заказ, не за штуку
-      designFrom:900,
+      /* designFrom удалён 05.08 вместе с фиксированной ценой контура: услуга переформулирована
+         в «дизайн», её стоимость менеджер называет отдельно. Цифра 900 ₽ (директор 29.07)
+         сохранена в ANSWERS.md на случай, если вернёмся к тарифу за контур. */
     };
     const F={
       kind: [['Стикеры',1,'Отдельные наклейки любой формы'],['Стикерпаки',3.4,'Набор наклеек на одном листе']],
@@ -3279,10 +3329,15 @@
       // названия и описания — формулировки маркетолога 03.08 (см. ANSWERS.md).
       // Слово «плёнка» вынесено в легенду шага: в колонке ~185px «Голографическая плёнка»
       // рвётся на три строки и ряд карточек разъезжается.
-      mat:  [['Белая',1,'Виден контур наклейки'],
-             ['Прозрачная',1.1,'Видно поверхность, а не контур'],
-             ['Голографическая',1.45,'Радужный перелив'],
-             ['Светится в темноте',1.4,'Копит свет за день']],
+      /* ПРОЗРАЧНАЯ УБРАНА 05.08: бизнес говорит, что доступны только белый глянец,
+         фотолюминесцентная и голографическая. Прозрачную мы взяли с их же страницы
+         /nakleyki-obyomnye-so-smoloy — она расходится с реальной доступностью.
+         ВНИМАНИЕ, коэффициенты ниже ВРЕМЕННЫЕ и по сути неверны: бизнес объяснил, что
+         печать, смола и работа стоят одинаково для всех плёнок, дороже только резка
+         светящейся. Нужна не наценка процентом, а ТРИ отдельные таблицы цен. */
+      mat:  [['Белый глянец',1,'Виден контур наклейки'],
+             ['Голографическая',1.15,'Радужный перелив'],
+             ['Светится в темноте',1.2,'Копит свет за день']],
       /* Размеры взяты с их страницы «Наклейки объёмные со смолой» и от Omar (05.08):
          10×10, 15×15, 20×20, 25×25, 50×50 и свой. Прежние 30×30…70×50 были нашей выдумкой.
          Второе число — КОЭФФИЦИЕНТ цены, а не площадь: цена за штуку падает не пропорционально
@@ -3292,7 +3347,11 @@
       size: [['10×10',.55,null,100],['15×15',.65,null,225],['20×20',.75,null,400],
              ['25×25',.85,null,625],['50×50',1,null,2500],['Свой',null,'Свой размер']],
       sheet:[['А7',1],['А6',1.4],['А5',2.1]],   // у паков свой размер не задаётся
-      qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'Свой тираж']],
+      /* Ступень 10 добавлена 05.08: бизнес подтвердил минимальный тираж 10 штук.
+         Цена за штуку здесь ДЕМО и подобрана так, чтобы 10 штук стоили дороже пробника
+         (1 700 ₽): иначе страница противоречит сама себе — зачем брать пробник за 1 700,
+         если десять выходят дешевле. Настоящие цифры ждём прайсом. */
+      qty:  [[10,200],[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'Свой тираж']],
     };
     const S={kind:0,mat:0,size:0,qty:2};
     const $=id=>document.getElementById(id);
@@ -3385,7 +3444,10 @@
       if(packs) single.checked=false;
       // контур — фиксированная сумма за заказ. У поштучной резки и упаковки цены НЕТ (не выдумываем),
       // они уходят в заявку флагами и показываются строкой «Допы» в сводке.
-      const sum=Math.round(unit*q) + (design.checked?BIZ.designFrom:0);
+      /* Дизайн больше НЕ прибавляет фиксированную сумму (решение 05.08): 900 ₽ — это была
+         подготовка контура, а мы теперь предлагаем дизайн как услугу, и она считается
+         индивидуально. Галочка уходит в заявку, менеджер называет цену. */
+      const sum=Math.round(unit*q);
       const per=rub(Math.round(unit))+(packs?' / пак':' / шт');
       const term = q<BIZ.bigQty ? BIZ.termSmall : BIZ.termBig;
       const resin = q<BIZ.resinAt ? BIZ.resinLow : BIZ.resinHigh;
