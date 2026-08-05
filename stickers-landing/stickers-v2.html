@@ -17,8 +17,120 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="3D-стикеры со смолой на заказ — MDMprint">
 <meta property="og:description" content="Объёмные стикеры со смолой: любые формы и покрытия, срок от 3 дней, Москва и вся Россия.">
-<!-- TODO прод: og:image должна быть 1200×630 с САМИМ продуктом (сейчас это фон-градиент). -->
-<meta property="og:image" content="hero-bg.webp">
+<!-- og:image — реальное фото продукта. На проде заменить на кадр 1200×630. -->
+<meta property="og:image" content="b2b/cmp-3.webp">
+<meta property="og:image:alt" content="3D-стикер со смолой на столе">
+<meta property="og:site_name" content="MDMprint">
+<meta property="og:locale" content="ru_RU">
+<!-- og:url и canonical заполняются на проде, здесь их нет намеренно: указывать несуществующий
+     адрес хуже, чем не указывать вовсе. -->
+<meta name="twitter:card" content="summary_large_image">
+<!-- ═══ SEO. Всё, что можно подготовить БЕЗ домена, — готово. При переносе на прод:
+     1) заменить строку ДОМЕН в двух JSON-LD ниже и в og:url/canonical;
+     2) снять robots noindex;
+     3) положить og-картинку 1200×630 (сейчас указано фото продукта cmp-3).
+     Разметка LocalBusiness даёт карточку организации, FAQPage — раскрывающиеся вопросы
+     прямо в выдаче: шесть наших вопросов уже есть на странице, дублировать текст не нужно. -->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "LocalBusiness",
+ "name": "MDMprint",
+ "alternateName": "ООО «МДМпринт»",
+ "description": "Печать объёмных 3D-стикеров со смолой: любые формы и покрытия, тираж от 10 штук, срок от 3 дней.",
+ "url": "https://ДОМЕН/",
+ "image": "https://ДОМЕН/b2b/cmp-3.webp",
+ "telephone": "+7 495 256-10-00",
+ "email": "zakaz@mdmprint.ru",
+ "address": {
+  "@type": "PostalAddress",
+  "streetAddress": "ул. Орджоникидзе, д. 11, стр. 1А",
+  "addressLocality": "Москва",
+  "postalCode": "115419",
+  "addressCountry": "RU"
+ },
+ "openingHours": "Mo-Su 09:00-22:00",
+ "taxID": "7704815108",
+ "vatID": "7704815108",
+ "identifier": {
+  "@type": "PropertyValue",
+  "name": "ОГРН",
+  "value": "1127746679587"
+ },
+ "sameAs": [
+  "https://mdmprint.ru/"
+ ],
+ "makesOffer": {
+  "@type": "Offer",
+  "itemOffered": {
+   "@type": "Service",
+   "name": "Печать 3D-стикеров со смолой",
+   "serviceType": "Печать объёмных стикеров",
+   "areaServed": {
+    "@type": "Country",
+    "name": "Россия"
+   }
+  }
+ }
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "FAQPage",
+ "mainEntity": [
+  {
+   "@type": "Question",
+   "name": "Сколько времени занимает печать?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "От 3 дней. Срок зависит от тиража: на 10 штук — 3 дня, на очень большие тиражи берём до месяца. Считаем от согласования макета, точную дату назовём при расчёте."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Можно ли напечатать одну штуку?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Да, минимальный заказ — от одной штуки: можно напечатать пробный стикер и посмотреть на результат вживую. Для больших тиражей делаем цветопробу, чтобы согласовать цвет до печати."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Какая смола у стикеров?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Полимерная: мягкая и эластичная, не дубеет со временем и не желтеет. Заливка автоматическая, поэтому линза выходит одинаковой на всём тираже."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Вы разрабатываете дизайн?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Да, нарисуем по вашей идее или доведём готовый макет: проверим вылеты, контур высечки и цвет. Подготовка контура — от 900 ₽."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Как подготовить макет к печати?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "PDF, AI, EPS или CDR, CMYK, растр 300 dpi в масштабе 1:1, вылеты 3 мм, безопасная зона 5 мм, контур высечки вектором в отдельном слое плашечным цветом CUT. Полные требования."
+   }
+  },
+  {
+   "@type": "Question",
+   "name": "Можно ли мочить стикеры?",
+   "acceptedAnswer": {
+    "@type": "Answer",
+    "text": "Да. Смола защищает рисунок от влаги, царапин и выцветания, поэтому стикер держится на бутылке, чехле и технике."
+   }
+  }
+ ]
+}
+</script>
+
 <link rel="icon" href="../assets/mdmprint-logo.svg">
 <link rel="stylesheet" href="../assets/css/fonts.css?v=20260720a">
 <link rel="stylesheet" href="../assets/css/tokens.css?v=20260722b">
@@ -78,6 +190,10 @@
     background:var(--v-ink);color:var(--surface-card)}
   .cookie__ok:hover{background:var(--v-ink-hover)}
   .cookie__ok:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+  /* ОБЯЗАТЕЛЬНО: у .cookie задан display:flex, а он перебивает браузерное [hidden]{display:none}.
+     Без этой строки атрибут hidden ставится, но плашка остаётся на экране — она буквально
+     не закрывалась по кнопке. */
+  .cookie[hidden]{display:none}
   @media(min-width:861px){.cookie{left:auto;max-width:560px}}
   @media(max-width:860px){
     /* над мобильной строкой заказа, с запасом под системный индикатор iPhone */
@@ -642,15 +758,95 @@
      растянутая на 1200px она разносила текст и кнопку по краям и весила больше карточек. */
   /* с кем работали: слоты логотипов + «место для вашего стикера» */
   .b2b__logos{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--sp-12)}
-  @media(max-width:860px){.b2b__logos{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  @media(max-width:860px){
+    /* ── БЕГУЩАЯ ЛЕНТА вместо сетки. Сеткой на 390 плашки выходили мелкими: одиннадцать
+       знаков в столбик занимали пол-экрана и всё равно читались как пыль.
+       ТРИ СЛОЯ, и это принципиально: .b2b__logos — обычный блок, .b2b__lane — неподвижное
+       окно с маской и обрезкой, .b2b__row — едущий ряд. Когда маска висела на том же
+       элементе, что и анимация, она ехала вместе с ним: растворение уползало за экран,
+       и в кадре оставалось 2.5 плашки вместо трёх. ── */
+    .b2b__logos{display:block;grid-template-columns:none}
+    .b2b__lane{overflow:hidden;
+      -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+      mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+    .b2b__row{display:flex;gap:10px;width:max-content}
+    .b2b__row.is-lane{animation:b2bLane 26s linear infinite}
+    .b2b__lane:hover .b2b__row,.b2b__lane:active .b2b__row{animation-play-state:paused}
+    .b2b__logo{flex:0 0 auto;width:36vw;aspect-ratio:3/1}
+    .b2b__logo img{max-width:84%;max-height:calc(clamp(24px,7.6vw,38px) * var(--k,1))}
+    /* Прайм на телефоне лезет вперёд остальных: у него плотная плашечная гарнитура,
+       и при равной высоте масса заметно больше. На десктопе хватало .87, здесь нужно ниже. */
+    .b2b__logo[data-logo*="prime"]{--k:.72}
+    /* «Место для вашего стикера» — ПОД лентой, во всю ширину: в карусели оно уезжало
+       вместе со всеми, а это не логотип клиента, а приглашение. Ему место в покое. */
+    .b2b__logo--you{width:auto;aspect-ratio:auto;min-height:0;margin-top:10px;
+      font-size:12px;line-height:1.25;padding:14px 10px;text-wrap:balance}
+    @keyframes b2bLane{to{transform:translateX(calc(-50% - 5px))}}   /* 5px = половина gap */
+    /* Движение по кругу — из тех, что мешают: при reduce лента стоит и листается пальцем */
+    @media(prefers-reduced-motion:reduce){
+      .b2b__lane{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+      .b2b__row.is-lane{animation:none}
+      .b2b__logo{scroll-snap-align:start}
+    }
+  }
   /* Заглушки логотипов тише: белые плашки с обводкой читались как «у нас пусто».
      Тёплая подложка без обводки, ниже ростом. Настоящие логотипы ждём (ANSWERS.md, п.7). */
-  .b2b__logo{aspect-ratio:2.6/1;display:grid;place-items:center;border-radius:var(--radius-md);
-    background:var(--surface-gray);font-size:11.5px;color:var(--text-tertiary)}
-  .b2b__logo img{max-width:72%;max-height:60%;object-fit:contain;display:block}
+  /* Плашка ниже (было 2.6/1): знаки узкие и вытянутые, в высокой коробке над и под ними
+     оставалось пустое поле, и ряд выглядел рыхлым. */
+  /* ── ПЛАШКА = ЛОГОТИП ПОД СМОЛОЙ ────────────────────────────────────────────────
+     Первый заход выглядел дёшево: заливка-градиент плюс косая белая полоса через всю
+     плашку — это язык «веб-глянца» нулевых, а не смолы. Настоящая капля работает иначе:
+     центр ПРОЗРАЧНЫЙ и чистый (сквозь него видно печать), а весь эффект живёт на краях —
+     свет собирается у верхней кромки, у нижней идёт преломление, по периметру тонкая
+     тёмная линия. Блик короткий и мягкий, пятном у верхнего угла, а не полосой.
+     Собрано слоями-псевдоэлементами, как объём кнопок. ── */
+  .b2b__logo{position:relative;overflow:hidden;isolation:isolate;
+    aspect-ratio:3.4/1;display:grid;place-items:center;border-radius:var(--radius-md);
+    background:var(--surface-card);font-size:11.5px;color:var(--text-tertiary);
+    box-shadow:inset 0 0 0 1px rgba(20,18,18,.07),
+      inset 0 1.5px 1px -1px rgba(255,255,255,1),
+      inset 0 6px 10px -8px rgba(255,255,255,.9),
+      inset 0 -6px 10px -8px rgba(20,18,18,.30),
+      0 1px 1px rgba(20,18,18,.05)}
+  /* свет, собравшийся у верхней кромки купола; к центру сходит на нет */
+  .b2b__logo::before{content:"";position:absolute;inset:0;border-radius:inherit;
+    pointer-events:none;
+    background:radial-gradient(130% 150% at 50% -30%,rgba(255,255,255,.95),rgba(255,255,255,0) 42%)}
+  /* короткий мягкий блик — капля света, а не полоса */
+  .b2b__logo::after{content:"";position:absolute;left:5%;top:9%;width:34%;height:46%;
+    pointer-events:none;border-radius:50%;filter:blur(4px);
+    background:radial-gradient(60% 60% at 42% 38%,rgba(255,255,255,.85),rgba(255,255,255,0) 72%)}
+  /* Вес знаков выровнен НЕ лимитами, а обрезкой холста: у шести SVG с их сайта viewBox был
+     квадратным (4630×4630), а рисунок занимал 13–32% высоты — потому одни казались вдвое
+     мельче других. viewBox переписан по фактическому bbox, теперь все заполняют коробку
+     одинаково и лимиты работают предсказуемо. */
+  /* Высота в АБСОЛЮТНЫХ единицах, а не в процентах: у плашки высота задана через
+     aspect-ratio, и процентный max-height ребёнка в этом случае не резолвится — ограничивала
+     только ширина. Квадратный Oil Energy из-за этого вылезал за пределы плашки. */
+  .b2b__logo img{max-width:calc(74% * var(--k,1));
+    max-height:calc(clamp(17px,2.1vw,30px) * var(--k,1));
+    object-fit:contain;display:block}
+  /* Доводка по ОПТИЧЕСКОМУ весу: после обрезки холста знаки одинаковы по габаритам, но не
+     по массе — жирный плашечный РЖД тяжелее тонкого Москвариума при равной высоте.
+     Отсчёт вёлся от Генпро, дальше доводка по глазу на рендере. */
+  .b2b__logo[data-logo*="genpro"]  {--k:.94}
+  .b2b__logo[data-logo*="rzd"]     {--k:.86}
+  .b2b__logo[data-logo*="sber"]    {--k:.94}
+  .b2b__logo[data-logo*="vitobox"] {--k:.92}
+  .b2b__logo[data-logo*="prime"]   {--k:.87}
+  .b2b__logo[data-logo*="bam"]     {--k:1.10}
+  .b2b__logo[data-logo*="golubka"] {--k:1.12}
+  .b2b__logo[data-logo*="mosquar"] {--k:1.28}
+  /* Oil Energy пересобран горизонтально (капля слева, надпись справа) — см. прогресс-лог */
+  .b2b__logo[data-logo*="oil"]     {--k:1.06}
+  .b2b__logo[data-logo*="ferro"]   {--k:1.02}
+  .b2b__logo[data-logo*="endomet"] {--k:1.06}
   /* «место для вашего стикера» — пунктирный контур высечки, фирменный приём лендинга */
+  /* Пустое место — НЕ стикер: смолы, купола и блика тут быть не должно, иначе пунктирная
+     высечка читается как уже наклеенный знак. Гасим оба слоя эффекта. */
   .b2b__logo--you{background:none;box-shadow:none;border:1.5px dashed var(--v-gold-deep);color:var(--v-gold-text);
     font-weight:700;text-align:center;padding:6px;line-height:1.25}
+  .b2b__logo--you::before,.b2b__logo--you::after{display:none}
   /* моно-метка: тот же язык надписей, что у надстрочника героя и меток калькулятора */
   .b2b__cap{margin:clamp(24px,3vw,40px) 0 var(--sp-12);
     font-family:var(--font-body);font-size:var(--t-label);font-weight:700;letter-spacing:var(--t-label-ls);
@@ -750,7 +946,11 @@
      нельзя, а структура показывает, что тут будет, и блок перестаёт выглядеть дырой. */
   .rev__skel{display:flex;flex-direction:column;gap:12px;width:100%;padding:4px 2px}
   .rev__skel-top{display:flex;align-items:center;gap:10px}
-  .rev__ava{width:34px;height:34px;border-radius:50%;background:rgba(20,18,18,.09);flex:none}
+  .rev__ava{width:34px;height:34px;border-radius:50%;background:rgba(20,18,18,.09);flex:none;
+    display:grid;place-items:center;font-family:var(--font-head);font-weight:800;font-size:15px;
+    font-style:normal;color:var(--v-ink-2)}
+  .rev__rate{margin:0;font-size:var(--t-small);color:var(--text-secondary)}
+  .rev__rate b{font-family:var(--font-head);font-size:19px;color:var(--v-ink)}
   .rev__stars{display:flex;gap:3px;color:var(--brand)}
   .rev__stars svg{width:15px;height:15px}
   /* Вместо серых полос-скелетонов — рыба текстом. Специально Lorem ipsum, а не правдоподобный
@@ -874,6 +1074,16 @@
     padding:8px 12px;border-radius:12px;background:var(--surface-gray);
     transition:background-color .15s ease}
   .faq__chan a:hover{background:var(--surface-gray-2)}
+  /* ── КОПИРОВАНИЕ ТЕЛЕФОНА И ПОЧТЫ (только мышь). На телефоне тап по номеру должен звонить,
+     а не копировать, поэтому поведение включается лишь при hover:hover и pointer:fine. ── */
+  [data-copy]{position:relative}
+  [data-copy]::after{content:"Скопировано";position:absolute;left:50%;bottom:calc(100% + 6px);
+    transform:translate(-50%,4px);white-space:nowrap;pointer-events:none;opacity:0;
+    padding:5px 9px;border-radius:8px;background:var(--v-ink);color:var(--surface-card);
+    font-family:var(--font-body);font-size:11.5px;font-weight:700;letter-spacing:.01em;
+    text-transform:none;transition:opacity .16s ease,transform .16s ease}
+  [data-copy].is-copied::after{opacity:1;transform:translate(-50%,0)}
+  @media(prefers-reduced-motion:reduce){[data-copy]::after{transition:none}}
   .faq__note{margin:10px 0 0;font-size:var(--t-micro);line-height:var(--t-micro-lh);
     color:var(--text-tertiary)}
 
@@ -1656,8 +1866,12 @@
         <span class="top">Светится</span>
       </div>
       <div class="obj obj--main" data-obj="main">
-        <!-- poster виден, пока грузится модель, — на медленной сети первый экран не пустой -->
-        <model-viewer class="hero__model" src="models/hero/mdm.glb" poster="calc-icons/kind-0.webp"
+        <!-- POSTER УБРАН 05.08. Здесь стояла иконка из калькулятора (calc-icons/kind-0.webp) —
+             плоский жёлтый маскот на белой квадратной плашке. Пока грузилась модель, в герое
+             мелькал ЧУЖОЙ продукт: плоская наклейка вместо объёмного стикера, да ещё с белым
+             фоном поверх прозрачной сцены. Лучше доля секунды пустоты: mdm.glb весит 53 КБ,
+             у трёх спутников постера и не было. -->
+        <model-viewer class="hero__model" src="models/hero/mdm.glb"
           alt="3D-стикер со смолой с логотипом MDMprint"
           interaction-prompt="none" disable-tap disable-pan disable-zoom loading="eager"
           environment-image="https://modelviewer.dev/shared-assets/environments/lightroom_14b.hdr"
@@ -1730,11 +1944,24 @@
       </div>
       <p class="b2b__cap">С кем мы работали</p>
       <div class="b2b__logos">
-          <div class="b2b__logo" data-logo="b2b/logo-1">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-2">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-3">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-4">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-5">Логотип</div>
+          <!-- Логотипы взяты из блока «Клиенты и их благодарности» на mdmprint.ru: это уже
+               опубликованные самой компанией знаки, к каждому на их сайте приложено
+               благодарственное письмо. Выбор крупных клиентов — Omar 05.08.
+               ВАЖНО: блок говорит «работали», а не «печатали 3D-стикеры» — часть этих
+               клиентов заказывала полиграфию. Рисовать им стикеры нельзя. -->
+          <div class="b2b__logo" data-logo="b2b/logo-rzd.svg" data-name="РЖД">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-sber.svg" data-name="Сбер">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-bam.svg" data-name="Бамстройпуть">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-mosquar.svg" data-name="Москвариум">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-prime.svg" data-name="Прайм">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-genpro.svg" data-name="Генпро">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-golubka.svg" data-name="Голубка">Логотип</div>
+          <!-- vitobox собран из двух присланных картинок (иконка + надпись) в один знак:
+               белый фон снят, поэтому плашка просвечивает, как у векторных соседей -->
+          <div class="b2b__logo" data-logo="b2b/logo-vitobox.webp" data-name="Vitobox">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-ferro.svg" data-name="Феррострой">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-endomet.svg" data-name="Эндомедпроект">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-oil.svg" data-name="Oil Energy">Логотип</div>
           <div class="b2b__logo b2b__logo--you">Место для вашего стикера</div>
       </div>
     </div>
@@ -1997,12 +2224,16 @@
         <!-- Заголовок и лид переписаны 03.08: маркетолог просила акцент на ПОЛНОЙ АВТОМАТИЗАЦИИ
              и на больших тиражах в короткий срок, а не «всё в кучу». Цифры 10 шт / 3 дня
              и 50 000 / месяц — дословный ответ директора 30.07, см. ANSWERS.md. -->
-        <h2>Смолу льёт автоматическая линия</h2>
+        <!-- «Две линии» — не наше допущение: в акциях их карточки на Яндекс.Картах
+             (снято 05.08) сказано, что установлена ВТОРАЯ машина для автоматической
+             заливки стикеров полимерной смолой. Дословно — в ANSWERS.md. -->
+        <h2>Смолу льют две автоматические линии</h2>
         <!-- «типография полного цикла» и «ламинация» убраны 30.07: ни в ТЗ, ни в ответах,
              ни на их сайте этого нет. Осталось подтверждённое ТЗ оборудование. -->
-        <p class="abt__text">Заливка идёт потоком, а не вручную по одному стикеру — поэтому
-          большой тираж не растягивает срок. Десять штук делаем за три дня, пятьдесят тысяч —
-          за месяц. Печать и фигурная резка тоже свои, без подрядчиков.</p>
+        <p class="abt__text">Заливка идёт потоком, а не вручную по одному стикеру, и линий
+          на производстве две — поэтому большой тираж не растягивает срок. Десять штук делаем
+          за три дня, пятьдесят тысяч — за месяц. Печать и фигурная резка тоже свои,
+          без подрядчиков.</p>
       </div>
       <!-- Видео производства (about/v1) убрано 03.08: на нём РУЧНАЯ заливка — прямо спорит
            с тезисом об автоматизации (замечание маркетолога). Ждём съёмку линии, слот вернуть
@@ -2022,8 +2253,8 @@
       <article class="abt__card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="9" width="16" height="8" rx="1.6"/><path d="M7 9V4.5h10V9M7 17v2.5h10V17"/></svg>
-        <h3>Автоматическая заливка</h3>
-        <p>Линия работает потоком: тираж в тысячи штук не превращается в недели ожидания.</p>
+        <h3>Две линии заливки</h3>
+        <p>Вторую машину поставили, чтобы тираж в тысячи штук не превращался в недели ожидания.</p>
       </article>
       <article class="abt__card">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -2077,25 +2308,49 @@
     <div class="rev__in">
       <div class="rev__head">
         <h2>Спасибо, что выбрали нас</h2>
+        <!-- Рейтинг и число отзывов — с карточки на Яндекс.Картах (снято 05.08).
+             Первые два отзыва оттуда же и говорят ПРО САМ ПРОДУКТ: стикерпаки и объёмные
+             наклейки. Третий — с сайта mdmprint.ru, источник у каждого подписан свой. -->
+        <p class="rev__rate"><b>5,0</b> из 5 — 363 отзыва на Яндекс.Картах</p>
       </div>
       <div class="rev__grid">
-        <figure class="rev__slot rev__slot--story" data-shot="reviews/s1">
-          <span class="rev__ph rev__ph--media"><span class="rev__play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.2v13.6L19 12 8 5.2Z"/></svg></span><b>Сторис из соцсети</b>9:16 · ждём скрин</span>
-        </figure>
-        <figure class="rev__slot rev__slot--sq" data-shot="reviews/r1">
-          <span class="rev__ph"><span class="rev__card"><span class="rev__skel-top"><i class="rev__ava"></i><b class="rev__nick">Lorem Ipsum</b></span><span class="rev__stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg></span><span class="rev__body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span><span class="rev__from">Яндекс.Карты</span></span></span>
-        </figure>
-        <figure class="rev__slot rev__slot--long" data-shot="reviews/r2">
-          <span class="rev__ph"><span class="rev__card"><span class="rev__skel-top"><i class="rev__ava"></i><b class="rev__nick">Lorem Ipsum</b></span><span class="rev__stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg></span><span class="rev__body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span><span class="rev__from">2ГИС</span></span></span>
+        <figure class="rev__slot rev__slot--sq">
+          <div class="rev__ph"><span class="rev__card">
+            <span class="rev__skel-top"><i class="rev__ava">З</i><b class="rev__nick">Зарина Меркулова</b></span>
+            <span class="rev__stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg></span>
+            <span class="rev__body">Я напечатала стикерпаки в большом количестве за очень маленький срок, ни одна типография на эти сроки не брала в работу заказ. Не подвели, всё что было обещано — выполнили! Большое спасибо всей команде МДМпринт!</span>
+            <span class="rev__from">Яндекс.Карты · май 2026</span>
+          </span></div>
         </figure>
         <figure class="rev__slot rev__slot--sq" data-shot="reviews/p1">
           <span class="rev__ph"><b>Фото</b>работа клиента</span>
         </figure>
+        <figure class="rev__slot rev__slot--long">
+          <div class="rev__ph"><span class="rev__card">
+            <span class="rev__skel-top"><i class="rev__ava">Д</i><b class="rev__nick">Детские сердца</b></span>
+            <span class="rev__stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg></span>
+            <span class="rev__body">Мы очень рады давнему сотрудничеству с типографией «МДМпринт»! В этот раз заказывали печать объёмных наклеек. Всё сделано супер качественно и точно в срок! Общение по заказу оставило самые лучшие впечатления — всегда на связи, с вниманием к деталям, ответы на дополнительные вопросы и правки в макетах получали сразу.</span>
+            <span class="rev__from">Яндекс.Карты · ноябрь 2025</span>
+          </span></div>
+        </figure>
         <figure class="rev__slot rev__slot--sq" data-shot="reviews/p2">
           <span class="rev__ph"><b>Фото</b>работа клиента</span>
         </figure>
-        <figure class="rev__slot rev__slot--long" data-shot="reviews/r3">
-          <span class="rev__ph"><span class="rev__card"><span class="rev__skel-top"><i class="rev__ava"></i><b class="rev__nick">Lorem Ipsum</b></span><span class="rev__stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg></span><span class="rev__body">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</span><span class="rev__from">Переписка в мессенджере</span></span></span>
+        <figure class="rev__slot rev__slot--sq">
+          <div class="rev__ph"><span class="rev__card">
+            <span class="rev__skel-top"><i class="rev__ava">М</i><b class="rev__nick">Максим Орлов</b></span>
+            <span class="rev__stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg></span>
+            <span class="rev__body">Качественно и быстро сделали, хотя остальные типографии не брались сделать за такое короткое время. Качество отличное, вырезка супер. Очень рекомендую, если нужна быстрая и качественная печать.</span>
+            <span class="rev__from">Яндекс.Карты · февраль 2026</span>
+          </span></div>
+        </figure>
+        <figure class="rev__slot rev__slot--long">
+          <div class="rev__ph"><span class="rev__card">
+            <span class="rev__skel-top"><i class="rev__ava">Е</i><b class="rev__nick">Евгения</b></span>
+            <span class="rev__stars"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m12 2.6 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3-5.8 3 1.1-6.5L2.6 9.4l6.5-.9L12 2.6Z"/></svg></span>
+            <span class="rev__body">Я дизайнер и иллюстратор. Уже несколько лет отправляю заказы для больших клиентов в эту типографию, всегда всё чётко — и я, и клиенты довольны. В МДМпринт печатали папки для прайс-листов, пластиковые карты, картхолдеры, визитки, флаеры, стикеры — тут можно напечатать практически всё.</span>
+            <span class="rev__from">Отзыв на mdmprint.ru · 25 декабря 2025</span>
+          </span></div>
         </figure>
       </div>
     </div>
@@ -2111,7 +2366,10 @@
     <div class="show__in">
      <div class="show__band">
       <div class="show__text">
-        <h2>Приезжайте посмотреть вживую</h2>
+        <!-- Слово «шоурум» вернулось: Omar подтвердил 05.08, что в офисе он есть.
+             До этого писали обтекаемо «приезжайте посмотреть», потому что маркетолог просила
+             звать в шоурум, а подтверждения его существования у нас не было. -->
+        <h2>Приезжайте в наш шоурум</h2>
         <p>Покажем образцы разных плёнок и толщины смолы, дадим потрогать готовые стикеры
           и подскажем, что лучше сядет на вашу упаковку. Без записи и без обязательств.</p>
       </div>
@@ -2191,9 +2449,8 @@
             <label class="calc__ok">
               <input type="checkbox" class="mk-check" name="agree" required>
               <span>Я даю согласие на обработку персональных данных согласно <a data-legal="privacy"
-                target="_blank" rel="noopener">политике конфиденциальности</a>, принимаю <a data-legal="terms"
-                target="_blank" rel="noopener">пользовательское соглашение</a> и <a data-legal="offer"
-                target="_blank" rel="noopener">условия оферты</a></span>
+                target="_blank" rel="noopener">политике конфиденциальности</a> и принимаю
+                <a data-legal="offer" target="_blank" rel="noopener">условия оферты</a></span>
             </label>
             <button class="calc__cta" type="submit">Отправить вопрос</button>
           </form>
@@ -2202,6 +2459,9 @@
             <a href="#zayavka" data-msg="tg"><img src="../assets/telegram.svg" alt="" width="18" height="18">Telegram</a>
             <a href="#zayavka" data-msg="max"><img src="../assets/maxnew.svg" alt="" width="18" height="18">MAX</a>
             <a href="tel:+74952561000">+7 (495) 256-10-00</a>
+            <!-- почта тут была пропущена: в футере и в шторке она есть, а в блоке, куда
+                 человек приходит с вопросом, единственным письменным каналом были мессенджеры -->
+            <a href="mailto:zakaz@mdmprint.ru">zakaz@mdmprint.ru</a>
           </div>
           <p class="faq__note">Ежедневно с 9 до 22. В мессенджерах отвечаем за 10 минут в рабочее время.</p>
         </aside>
@@ -2240,17 +2500,17 @@
       <div>
         <h3>Документы</h3>
         <a data-legal="offer" target="_blank" rel="noopener">Публичная оферта<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-        <a data-legal="terms" target="_blank" rel="noopener">Пользовательское соглашение<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-        <a data-legal="privacy" target="_blank" rel="noopener">Политика конфиденциальности<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
-        <a data-legal="consent" target="_blank" rel="noopener">Согласие на обработку персональных данных<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        <a data-legal="privacy" target="_blank" rel="noopener">Политика обработки персональных данных<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
         <a href="https://mdmprint.ru/dostavka" target="_blank" rel="noopener">Доставка и оплата<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
         <a href="https://mdmprint.ru/dostavka/punkty-samovyvoza" target="_blank" rel="noopener">Пункты выдачи<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
         <a href="https://mdmprint.ru/trebovaniya-k-maketam/trebovaniya-k-maketam-poligrafii#stikerpack" target="_blank" rel="noopener">Требования к макетам<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
       </div>
     </div>
     <div class="ft__legal">
-      <p>ООО «МДМпринт» · ИНН 7704815108 · <span data-legal-req="ogrn">ОГРН —
-        <em>ждём от заказчика</em></span> · © 2012–2026</p>
+      <!-- Реквизиты сверены с публичной офертой на mdmprint.ru (05.08): ОГРН и юр. адрес
+           взяты дословно оттуда, ИНН совпал с футером их сайта. -->
+      <p>ООО «МДМпринт» · ИНН 7704815108 · ОГРН 1127746679587 · © 2012–2026<br>
+        115419, Москва, ул. Орджоникидзе, д. 11, стр. 1А</p>
       <p>Материалы сайта не являются публичной офертой; условия заказа —
         в <a href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">оферте</a>.
         Цены на странице предварительные, точную стоимость подтверждает менеджер.</p>
@@ -2338,9 +2598,8 @@
             <label class="calc__ok">
               <input type="checkbox" class="mk-check" name="agree" required>
               <span>Я даю согласие на обработку персональных данных согласно <a data-legal="privacy"
-                target="_blank" rel="noopener">политике конфиденциальности</a>, принимаю <a data-legal="terms"
-                target="_blank" rel="noopener">пользовательское соглашение</a> и <a data-legal="offer"
-                target="_blank" rel="noopener">условия оферты</a></span>
+                target="_blank" rel="noopener">политике конфиденциальности</a> и принимаю
+                <a data-legal="offer" target="_blank" rel="noopener">условия оферты</a></span>
             </label>
             <label class="calc__ok">
               <input type="checkbox" class="mk-check" name="promo">
@@ -2450,11 +2709,65 @@
      текстом с пунктирным подчёркиванием и не ведёт в никуда. Как только Omar пришлёт
      адреса — вписать сюда, больше нигде править не нужно.
      Статус на 04.08: оферта и пользовательское соглашение ЕСТЬ, остальное ЖДЁМ (ANSWERS п.10). */
+  /* Копирование телефона и почты по клику — только для мыши. Смысл: на десктопе ссылка
+     tel: обычно ведёт в никуда (или открывает ненужное приложение), а человеку нужен сам
+     номер, чтобы вставить его в свой телефон или CRM. На тач-устройствах поведение
+     стандартное: звонок и почтовый клиент.
+     navigator.clipboard живёт только на https и localhost — на http по локальной сети
+     (как при просмотре с телефона) он недоступен, поэтому есть запасной путь. */
+  (function(){
+    if(!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+    const copy = async text => {
+      try { await navigator.clipboard.writeText(text); return true; }
+      catch(e){
+        const t=document.createElement('textarea');
+        t.value=text; t.setAttribute('readonly',''); t.style.cssText='position:fixed;opacity:0';
+        document.body.appendChild(t); t.select();
+        let ok=false; try{ ok=document.execCommand('copy'); }catch(_){}
+        t.remove(); return ok;
+      }
+    };
+    for(const a of document.querySelectorAll('a[href^="tel:"],a[href^="mailto:"]')){
+      a.dataset.copy='';
+      a.addEventListener('click', async e => {
+        e.preventDefault();
+        const value = decodeURIComponent(a.getAttribute('href').replace(/^(tel|mailto):/,''));
+        if(await copy(value)){
+          a.classList.add('is-copied');
+          clearTimeout(a._ct);
+          a._ct = setTimeout(()=>a.classList.remove('is-copied'), 1500);
+        } else location.href = a.getAttribute('href');   // не вышло — ведём себя как обычная ссылка
+      });
+    }
+  })();
+
+  /* ═══════════ КАНАЛЫ СВЯЗИ — правятся ТОЛЬКО здесь ═══════════
+     Ссылки сняты с их сайта 05.08. В Telegram у бизнеса ДВА адреса: канал t.me/mdmprint
+     (туда только читают) и бот t.me/MDMprint_bot (туда пишут). Для кнопок «Написать»
+     нужен бот — канал в этой роли был бы тупиком. Если менеджеры предпочтут личный
+     аккаунт, поменять здесь одну строку.
+     Пусто = ссылки нет: кнопка тогда ведёт в форму заявки, как раньше. */
+  const CONTACTS = {
+    tg:  'https://t.me/MDMprint_bot',
+    max: 'https://max.ru/u/f9LHodD0cOI9Tc-bhH8PtupT-lmXfFhPewx04OC-N5XYug9PIubEzTbzfIk'
+  };
+  (function(){
+    for(const a of document.querySelectorAll('[data-msg]')){
+      const url = CONTACTS[a.dataset.msg];
+      if(!url) continue;                       // нет адреса — остаётся переход к форме
+      a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    }
+  })();
+
   const LEGAL = {
     offer:   'https://mdmprint.ru/publichnaya-oferta',   // публичная оферта — есть
-    terms:   'https://mdmprint.ru/terms',                // пользовательское соглашение — есть
-    privacy: '',   // политика конфиденциальности — НЕТ. Обязательна: форма собирает ПД
-    consent: '',   // согласие на обработку ПД отдельным документом — НЕТ
+    /* ВАЖНО, проверено 05.08: страница /terms озаглавлена «Пользовательское соглашение»,
+       но единственный документ на ней — «Политика в отношении обработки персональных данных».
+       То есть политика У НИХ ЕСТЬ, просто лежит по неочевидному адресу. Ссылаемся на неё
+       как на политику — по содержанию, а не по заголовку страницы. */
+    privacy: 'https://mdmprint.ru/terms',
+    terms:   '',   // отдельного пользовательского соглашения по факту нет
+    consent: '',   // отдельного согласия на обработку ПД нет — покрывается политикой
     cookie:  ''    // уведомление об использовании cookie — НЕТ
   };
   (function(){
@@ -2970,9 +3283,14 @@
              ['Прозрачная',1.1,'Видно поверхность, а не контур'],
              ['Голографическая',1.45,'Радужный перелив'],
              ['Светится в темноте',1.4,'Копит свет за день']],
-      // размер = ширина×высота, мм. Коэффициент считается по площади (50×50 = 1.0)
-      size: [['30×30',1,null,900],['44×44',1,null,1936],['55×44',1,null,2420],
-             ['70×50',1,null,3500],['Свой',null,'Свой размер']],
+      /* Размеры взяты с их страницы «Наклейки объёмные со смолой» и от Omar (05.08):
+         10×10, 15×15, 20×20, 25×25, 50×50 и свой. Прежние 30×30…70×50 были нашей выдумкой.
+         Второе число — КОЭФФИЦИЕНТ цены, а не площадь: цена за штуку падает не пропорционально
+         площади (смола и резка стоят почти одинаково на мелких), поэтому шкала пологая.
+         Числа ДЕМО, ждём прайс: 50×50 — база 1.0. Четвёртое число — площадь в мм²,
+         она нужна только для «своего» размера. */
+      size: [['10×10',.55,null,100],['15×15',.65,null,225],['20×20',.75,null,400],
+             ['25×25',.85,null,625],['50×50',1,null,2500],['Свой',null,'Свой размер']],
       sheet:[['А7',1],['А6',1.4],['А5',2.1]],   // у паков свой размер не задаётся
       qty:  [[50,38],[100,29],[300,22],[500,19],[1000,14],['Своё',null,'Свой тираж']],
     };
@@ -3043,10 +3361,18 @@
       if(packs) area=null;
       else if(sizeOwn){
         const t=(($('sizeOwn')||{}).value||'').replace(',','.').split(/[x×х*]/i);
-        const w=Math.min(99,parseFloat(t[0])||55), h=Math.min(99,parseFloat(t[1])||w);
+        // дефолт 20 мм — середина нового набора (было 55, от прежних выдуманных размеров)
+        const w=Math.min(99,parseFloat(t[0])||20), h=Math.min(99,parseFloat(t[1])||w);
         area=Math.max(100,w*h);
       } else area=sizes[S.size][3];
-      const dim = packs ? sizes[S.size][1] : Math.max(.7, area/2500);
+      /* У готовых размеров коэффициент берём из таблицы, а не считаем по площади: с новым
+         набором (10×10…50×50) прежняя формула area/2500 с полом .7 упирала ЧЕТЫРЕ мелких
+         размера в один и тот же пол — калькулятор переставал их различать.
+         У «своего» размера таблицы нет, там кривая по корню площади: она пологая, как и
+         ступени готовых размеров, и не проваливается на мелких. */
+      const dim = packs ? sizes[S.size][1]
+        : sizeOwn ? Math.max(.55, Math.min(1.6, Math.sqrt(area/2500)))
+        : sizes[S.size][1];
       let unit = baseFor(q) * F.kind[S.kind][1] * F.mat[S.mat][1] * dim;
 
       // акция считается ПОСЛЕ всех коэффициентов и сама выключится после даты
@@ -3155,6 +3481,13 @@
   (function(){
     document.querySelectorAll('[data-media]').forEach(fig=>{
       const base=fig.dataset.media, vertical=/v\d$/.test(base);
+      /* Медиа встаёт НА МЕСТО заглушки, а не в конец figure: в карточках сравнения дальше
+         идёт <figcaption>, и appendChild ставил фотографию ПОД подписью — подпись оказывалась
+         над картинкой. Заглушка лежит там, где картинке и место, поэтому вставляем перед ней. */
+      const put = el => {
+        const ph = fig.querySelector('.adv__ph,.abt__ph,.cmp__ph');
+        if(ph) fig.insertBefore(el, ph); else fig.appendChild(el);
+      };
       if(vertical){
         const v=document.createElement('video');
         Object.assign(v,{muted:true,loop:true,playsInline:true,autoplay:true,preload:'metadata'});
@@ -3164,25 +3497,69 @@
           const s=document.createElement('source'); s.src=base+'.'+ext; s.type=type; v.appendChild(s);
         });
         v.addEventListener('loadeddata',()=>{ fig.querySelector('.adv__ph,.abt__ph,.cmp__ph')?.remove(); v.play().catch(()=>{}); });
-        fig.appendChild(v);
+        put(v);
       } else {
         const i=document.createElement('img');
         i.loading='lazy'; i.decoding='async'; i.alt='';
         i.addEventListener('load',()=> fig.querySelector('.adv__ph,.abt__ph,.cmp__ph')?.remove());
         i.addEventListener('error',()=> i.remove());
         i.src=base+'.webp';
-        fig.appendChild(i);
+        put(i);
       }
     });
   })();
+  /* Мобильная лента логотипов. Для бесшовного цикла нужен второй такой же набор: ряд едет
+     ровно на половину своей ширины, и в конце вторая копия стоит там, где стартовала первая.
+     Клоны помечены aria-hidden, чтобы скринридер не зачитывал список дважды.
+     «Место для вашего стикера» в ленту НЕ едет — остаётся под ней. */
+  (function(){
+    const box=document.querySelector('.b2b__logos');
+    if(!box) return;
+    const mob=matchMedia('(max-width:860px)');
+    const you=box.querySelector('.b2b__logo--you');
+    const logos=[...box.querySelectorAll('.b2b__logo:not(.b2b__logo--you)')];
+    let lane=null;
+    function sync(){
+      if(mob.matches){
+        if(lane) return;
+        lane=document.createElement('div'); lane.className='b2b__lane';
+        const row=document.createElement('div'); row.className='b2b__row is-lane';
+        logos.forEach(el=>row.appendChild(el));
+        logos.forEach(el=>{
+          const c=el.cloneNode(true);
+          c.setAttribute('aria-hidden','true');
+          row.appendChild(c);
+        });
+        lane.appendChild(row);
+        box.insertBefore(lane, you || null);
+      } else {
+        if(!lane) return;
+        logos.forEach(el=>box.insertBefore(el, you || null));   // порядок восстанавливаем
+        lane.remove(); lane=null;
+      }
+    }
+    mob.addEventListener('change', sync);
+    sync();
+  })();
+
   /* Логотипы партнёров: подхватываем по имени файла (b2b/logo-1.webp), иначе остаётся слот. */
   (function(){
     document.querySelectorAll('.b2b__logo[data-logo]').forEach(box=>{
       const i=document.createElement('img');
-      i.loading='lazy'; i.decoding='async'; i.alt='';
-      i.addEventListener('load',()=> box.textContent='');
+      i.loading='lazy'; i.decoding='async';
+      /* Название компании в alt, а не пустая строка: логотип здесь несёт смысл («с кем
+         работали»), без подписи блок для скринридера — шесть пустых плашек. */
+      i.alt=box.dataset.name || '';
+      /* Убираем ТОЛЬКО текстовую заглушку «Логотип», а не всё содержимое: box.textContent=''
+         стирал и сам <img>, который уже лежал внутри, — плашки оставались пустыми.
+         Баг лежал с самого начала, но проявился лишь когда появились реальные файлы. */
+      i.addEventListener('load',()=>{
+        [...box.childNodes].forEach(n=>{ if(n.nodeType===3) n.remove(); });
+      });
       i.addEventListener('error',()=> i.remove());
-      i.src=box.dataset.logo+'.webp';
+      /* расширение указано прямо в data-logo: почти все знаки векторные (svg), но vitobox
+         собран из растровых исходников и лежит webp */
+      i.src=box.dataset.logo;
       box.appendChild(i);
     });
   })();
