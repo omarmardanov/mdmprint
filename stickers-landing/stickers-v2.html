@@ -1387,6 +1387,9 @@
     color:var(--text-primary);background:var(--surface-card);border-radius:var(--radius-outside);
     padding:var(--sp-20);box-shadow:inset 0 0 0 1px var(--border),0 18px 34px -26px rgba(20,18,18,.45)}
   .calc__price{font-family:var(--font-head);font-weight:800;font-size:clamp(30px,3vw,40px);line-height:1;letter-spacing:-.01em}
+  /* «от» вдвое мельче цены и тише по цвету: приставка не должна спорить с цифрой,
+     но обязана быть в одном с ней объекте — иначе читается как отдельная подпись */
+  .calc__from{font-style:normal;font-size:.5em;color:var(--text-secondary);margin-right:.28em}
   /* 11.5px — тот же кегль метки, что у легенд шагов слева. Было 12 против 11.5: разницу не видно,
      а система от этого перестаёт быть системой */
   .calc__cap{display:block;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
@@ -2158,16 +2161,17 @@
 
         <div class="calc__out" aria-live="polite">
           <div>
-            <!-- «от» в подписи, а не в цифре: базовая цена не включает поштучную резку
-                 и упаковку, и она должна читаться как нижняя граница, а не как итог -->
-            <span class="calc__cap">Предварительная цена от</span>
+            <span class="calc__cap">Предварительная цена</span>
             <div class="calc__sum">
-              <span class="calc__price" id="total">—</span>
+              <!-- «от» стоит ВПЛОТНУЮ к цифре, а не в подписи сверху: в подписи 11.5px
+                   капслоком его не замечают, а именно оно и делает цену нижней границей
+                   (поштучная резка и упаковка в базовую цену не входят) -->
+              <span class="calc__price"><i class="calc__from">от</i><span id="total">—</span></span>
               <span class="calc__unit" id="unit"></span>
             </div>
           </div>
           <div class="calc__rows">
-            <div class="calc__row"><span>За тираж от</span><b id="sumOut">—</b></div>
+            <div class="calc__row"><span>За тираж</span><b id="sumOut">—</b></div>
             <div class="calc__row"><span>Срок</span><b id="term">—</b></div>
             <!-- смолу клиент не выбирает, её определяет тираж — показываем как вывод -->
             <div class="calc__row"><span>Смола</span><b id="resinOut">—</b></div>
@@ -3613,7 +3617,7 @@
       $('total').textContent = unitTxt;
       $('unit').textContent = packs?'за пак':'за штуку';   // у .calc__unit есть точка-разделитель в ::before,
       // поэтому «/ шт» давало «27 ₽ · / шт»; словами читается как «27 ₽ · за штуку»
-      $('sumOut').textContent = rub(sum);
+      $('sumOut').textContent = 'от '+rub(sum);   // «от» при цифре, а не в подписи строки
       $('term').textContent = term;
       $('resinOut').textContent = resin;
       $('promo').hidden = !onPromo;
