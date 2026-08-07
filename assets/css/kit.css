@@ -328,19 +328,32 @@
 /* ---- Плитка-ссылка (горизонтальная) ----
    Для технологий/материалов: миниатюра + название + пояснение + стрелка.
    Отличается формой от вертикальной .mk-mcard: продукт — витрина, технология — навигация. */
+/* ВЫСОТА ФИКСИРОВАНА (07.08). До этого её задавало содержимое, и плитки разъезжались: длинное
+   название переносилось на вторую строку, грид тянул по нему весь ряд — вкладки «Технологий»
+   отличались на 24px и блок дёргался при переключении таба. Резервируем ровно две строки
+   заголовка: 24+24 поля + 2×24 заголовок + 2 зазор + 13×1.45 подпись = 117px. Коротким названиям
+   достаётся воздух снизу — это плата за то, что блок одинаков на любой вкладке, ширине и
+   контенте из админки. Лимиты текста под эту высоту — DESIGN_SYSTEM §Лимиты. */
 .mk-tilelink{display:flex;align-items:center;gap:var(--sp-16);text-decoration:none;
+  min-height:calc(var(--sp-24) * 2 + var(--t-body-lh) * 2 + 2px + var(--t-caption) * 1.45);
   background:var(--surface-gray);border-radius:var(--radius-outside);overflow:hidden;
   transition:background .15s,transform .2s}
 @media (hover:hover){.mk-tilelink:hover{background:var(--surface-gray-2);transform:translateY(-2px)}}
 .mk-tilelink:active{background:var(--surface-gray-2)}
 .mk-tilelink:focus-visible{outline:2px solid var(--brand-dark);outline-offset:2px}
-/* картинка вплотную к краям плитки: тянется на всю высоту слева, левые углы клипует сама плитка (overflow:hidden) */
-.mk-tilelink__media{flex-shrink:0;width:140px;align-self:stretch;
+/* картинка вплотную к краям плитки: тянется на всю высоту слева, левые углы клипует сама плитка (overflow:hidden).
+   Картинка вынута из потока (07.08): height:100% у неё не резолвился (у колонки высота auto), и
+   браузер брал пропорции ФАЙЛА — при ширине 140 фото 1536×1024 давало 93px, 800×600 уже 105px,
+   квадрат 140. Так разъехались «Материалы». Теперь высоту задаёт только плитка, а формат
+   исходника не влияет ни на что: кроп по центру любой пропорции. */
+.mk-tilelink__media{position:relative;flex-shrink:0;width:140px;align-self:stretch;
   overflow:hidden;background:var(--surface-card);border-right:1px solid var(--border)}
-.mk-tilelink__media img{width:100%;height:100%;object-fit:cover;display:block}
+.mk-tilelink__media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .mk-tilelink__txt{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:2px;padding-block:var(--sp-24)}
+/* потолок в две строки: без него редактор вернёт разнобой первым же длинным названием */
 .mk-tilelink__title{font-family:var(--font-body);font-weight:600;
-  font-size:var(--t-body);line-height:var(--t-body-lh);color:var(--text-primary)}
+  font-size:var(--t-body);line-height:var(--t-body-lh);color:var(--text-primary);
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
 .mk-tilelink__note{font-family:var(--font-body);font-size:var(--t-caption);line-height:1.45;
   color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mk-tilelink .arr-ico{flex-shrink:0;margin-right:var(--sp-12);color:var(--text-tertiary);transition:transform .15s}

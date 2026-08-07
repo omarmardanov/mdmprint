@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Песочница: высота плитки .mk-tilelink — три варианта на крайних значениях</title>
+<link rel="stylesheet" href="../assets/css/fonts.css?v=20260722a">
+<link rel="stylesheet" href="../assets/css/tokens.css?v=20260722a">
+<link rel="stylesheet" href="../assets/css/kit.css?v=20260807a">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);color:var(--text-primary);background:var(--surface-page);
+    -webkit-font-smoothing:antialiased;padding:32px 24px 80px}
+  .doc{max-width:760px;margin:0 auto 32px}
+  .doc h1{font-family:var(--font-head);font-size:28px;line-height:32px;text-transform:uppercase;margin-bottom:12px}
+  .doc p{font-size:15px;line-height:1.55;color:var(--text-secondary);margin-bottom:10px}
+  .doc ol{font-size:14px;line-height:1.6;color:var(--text-secondary);padding-left:22px;margin:12px 0}
+  .doc code{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--surface-gray);padding:1px 5px;border-radius:4px}
+
+  /* ПУЛЬТ. Ширину переключаем контейнером, а не окном: --window-size в headless на macOS врёт,
+     да и вручную таскать край окна ради четырёх ступеней — долго. */
+  .panel{position:sticky;top:0;z-index:5;background:var(--surface-page);padding:12px 0 16px;
+    max-width:760px;margin:0 auto 28px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    border-bottom:1px solid var(--border)}
+  .panel label{font-size:13px;color:var(--text-secondary);display:inline-flex;align-items:center;gap:6px;margin-left:auto}
+
+  /* Сцена: раскладка на @container, а не на @media — иначе кнопки ширины не переключали бы
+     число колонок (медиа-запрос смотрит на окно, а окно широкое). Ступени те же: 1023 / 767. */
+  .stage{container-type:inline-size;width:var(--w,1200px);margin:0 auto}
+  .combo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap-card,20px)}
+  .combo-grid .mk-tilelink__media{background:transparent;border-right:none}
+  .combo-grid .mk-tilelink__media img{mix-blend-mode:darken}
+  @container (max-width:1023px){.combo-grid{grid-template-columns:repeat(2,1fr)}}
+  @container (max-width:767px){.combo-grid{grid-template-columns:1fr}}
+  .ph{display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);font-size:11px;
+    background:linear-gradient(135deg,#efeae0,#e4ddcf)!important;width:100%;height:100%}
+
+  .var{margin-bottom:56px}
+  .var__head{max-width:760px;margin:0 auto 16px}
+  .var__ttl{font-family:var(--font-head);font-size:20px;line-height:24px;text-transform:uppercase}
+  .var__sub{font-size:14px;line-height:1.5;color:var(--text-secondary);margin-top:6px}
+  .var__sub b{color:var(--text-primary);font-weight:600}
+  .setlbl{width:var(--w,1200px);margin:0 auto 10px;font-size:12px;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--text-tertiary)}
+  .setlbl+.stage{margin-bottom:28px}
+
+  /* Бейдж высоты — только для замера, в бою его нет. */
+  .stage .mk-tilelink{position:relative}
+  .hbadge{display:none;position:absolute;top:4px;left:144px;z-index:2;
+    font:600 10px/1 ui-monospace,Menlo,monospace;color:#fff;background:rgba(0,0,0,.55);
+    padding:3px 5px;border-radius:4px;pointer-events:none}
+  body.show-h .hbadge{display:block}
+
+  /* ---- ВЫБРАН ВАРИАНТ В (07.08), он уехал в кит ----
+     Поэтому теперь наоборот: В — это чистый кит, ничего добавлять не нужно, а А и Б приходится
+     ОТКАТЫВАТЬ обратно. Иначе стенд врал бы: все три варианта выглядели бы одинаково. */
+
+  /* ВАРИАНТ А — как было до правки. Возвращаем оба источника разнобоя: высота от содержимого
+     и картинка в потоке (её height:100% не резолвится, и высоту диктуют пропорции файла:
+     800×600 при ширине 140 → 105px, 1536×1024 → 93px, квадрат → 140px). */
+  .v-a .mk-tilelink{min-height:0}
+  .v-a .mk-tilelink__media{position:static}
+  .v-a .mk-tilelink__media img{position:static}
+  .v-a .mk-tilelink__title{display:block;overflow:visible}
+
+  /* ВАРИАНТ Б — фиксы кита оставляем, снимаем только резерв высоты: ряды равны самому высокому
+     в блоке. Воздуха нет, если все названия короткие, но высота блока зависит от содержимого —
+     при переключении вкладки страница подпрыгивает. Из-за этого вариант и не взяли. */
+  .v-b .mk-tilelink{min-height:0}
+  .v-b .combo-grid{grid-auto-rows:1fr}
+</style>
+</head>
+<body>
+
+<div class="doc">
+  <h1>Высота плитки: три варианта</h1>
+  <p>Один и тот же набор из девяти плиток в трёх раскладках. Набор специально составлен из крайних
+     значений — так, как контент придёт из админки, а не как его подобрал верстальщик.</p>
+  <ol>
+    <li><b>Норма.</b> «Конгрев», фото 3:2 — эталонная плитка.</li>
+    <li><b>Длинное название.</b> 22 знака — на десктопе переносится на вторую строку.</li>
+    <li><b>Фото 4:3.</b> Текст короткий, а плитка выше соседей — виновата пропорция файла.</li>
+    <li><b>Длинное название + длинная подпись.</b> 26 и 29 знаков, фото квадратное 1:1.</li>
+    <li><b>Одно неразрывное слово,</b> 29 знаков, фото 16:9 — переносить негде.</li>
+    <li><b>Минимум.</b> Название в 2 знака, подписи нет, фото вертикальное 3:4.</li>
+    <li><b>Без фото</b> — плейсхолдер, пока кадра нет.</li>
+    <li><b>Максимум.</b> Название 50 знаков — проверка обрезки.</li>
+    <li><b>Подпись длиннее плитки,</b> 44 знака — проверка многоточия.</li>
+  </ol>
+  <p>Ширину переключай кнопками — они меняют контейнер, а не окно. Ступени как в проекте:
+     3 колонки, <code>≤1023</code> — 2, <code>≤767</code> — 1.</p>
+</div>
+
+<div class="panel">
+  <button type="button" class="mk-tab is-active" data-w="1200">1200 — десктоп</button>
+  <button type="button" class="mk-tab" data-w="900">900 — планшет</button>
+  <button type="button" class="mk-tab" data-w="700">700 — узкий</button>
+  <button type="button" class="mk-tab" data-w="390">390 — телефон</button>
+  <label><input type="checkbox" id="showh"> показать высоты</label>
+</div>
+
+<section class="var">
+  <div class="var__head">
+    <div class="var__ttl">А — как было до 07.08</div>
+    <div class="var__sub">Высоту диктуют <b>и текст, и пропорции фото</b>. Ряд растягивается по самой
+      высокой плитке, соседний ряд остаётся низким.</div>
+  </div>
+  <div class="setlbl">Крайние значения</div>
+  <div class="stage v-a"><div class="combo-grid" data-set="edge"></div></div>
+  <div class="setlbl">Обычный контент — все названия короткие</div>
+  <div class="stage v-a"><div class="combo-grid" data-set="short"></div></div>
+</section>
+
+<section class="var">
+  <div class="var__ttl var__head">Б — выравнивание по блоку</div>
+  <div class="var__head">
+    <div class="var__sub">Фото больше не влияет, заголовок не длиннее двух строк, все ряды равны
+      самому высокому в блоке. <b>Лишнего воздуха нет</b>, если названия короткие — но высота блока
+      зависит от содержимого, и при переключении вкладки страница подпрыгнет.</div>
+  </div>
+  <div class="setlbl">Крайние значения</div>
+  <div class="stage v-b"><div class="combo-grid" data-set="edge"></div></div>
+  <div class="setlbl">Обычный контент — все названия короткие</div>
+  <div class="stage v-b"><div class="combo-grid" data-set="short"></div></div>
+</section>
+
+<section class="var">
+  <div class="var__ttl var__head">В — фиксированный резерв под две строки</div>
+  <div class="var__head">
+    <div class="var__sub"><b>ПРИНЯТ 07.08, лежит в ките.</b> То же самое плюс минимальная высота 117px. Одинаково всегда — на любой
+      вкладке, любой ширине, при любом контенте. Плата: у коротких названий воздух снизу.</div>
+  </div>
+  <div class="setlbl">Крайние значения</div>
+  <div class="stage v-c"><div class="combo-grid" data-set="edge"></div></div>
+  <div class="setlbl">Обычный контент — все названия короткие</div>
+  <div class="stage v-c"><div class="combo-grid" data-set="short"></div></div>
+</section>
+
+<script>
+// SVG-заглушки нужных пропорций: пропорция берётся из файла, а среди реальных кадров
+// есть только 3:2 и 4:3 — квадрат и вертикаль подделываем, чтобы увидеть худший случай.
+const svg = (w,h,label) => "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='"+w+"' height='"+h+
+  "'%3E%3Crect width='100%25' height='100%25' fill='%23e4ddcf'/%3E%3Ctext x='50%25' y='50%25' fill='%23968c78' "+
+  "font-family='monospace' font-size='"+Math.round(Math.min(w,h)/6)+"' text-anchor='middle' dominant-baseline='middle'%3E"+
+  label+"%3C/text%3E%3C/svg%3E";
+
+// Второй набор — реальная группа «Печать»: шесть коротких названий, все кадры одного формата.
+// Ради него и стоит смотреть Б рядом с В: на таком контенте Б даёт 93px, В — те же 117 с воздухом.
+const SHORT = [
+  {t:'Офсетная печать', n:'большие тиражи', src:'../assets/img/tech/pur-kleevoe.webp', w:1536, h:1024},
+  {t:'Цифровая печать', n:'малые тиражи', src:'../assets/img/tech/pereplet-kbs.webp', w:1536, h:1024},
+  {t:'УФ-печать', n:'по любым материалам', src:'../assets/img/tech/uf-lak.webp', w:1536, h:1024},
+  {t:'Шелкография', n:'плотный слой краски', src:'../assets/img/tech/kongrev.webp', w:1536, h:1024},
+  {t:'Ризография', n:'дёшево и быстро', src:'../assets/img/tech/broshurovka-skoba.webp', w:1536, h:1024},
+  {t:'Конгрев', n:'рельеф без фольги', src:'../assets/img/tech/kongrev2.webp', w:1536, h:1024}
+];
+
+const TILES = [
+  {t:'Конгрев', n:'Рельеф без фольги', src:'../assets/img/tech/kongrev.webp', w:1536, h:1024},
+  {t:'ПУР-клеевое скрепление', n:'Прочный клеевой корешок', src:'../assets/img/tech/pur-kleevoe.webp', w:1536, h:1024},
+  {t:'Zponge', n:'натуральный белый · 350 г/м²', src:'../assets/img/mat/bumaga-zponge-natur-belyj-350-g-m2.webp', w:800, h:600},
+  {t:'Нумерация и персонализация', n:'до 10 000 экземпляров в сутки', src:svg(600,600,'1:1'), w:600, h:600},
+  {t:'Ультрафиолетоваяполимеризация', n:'мгновенное отверждение', src:svg(1600,900,'16:9'), w:1600, h:900},
+  {t:'УФ', n:'', src:svg(600,800,'3:4'), w:600, h:800},
+  {t:'Ламинация', n:'кадр ещё не снят', src:null},
+  {t:'Тиснение фольгой с конгревом и вырубкой по контуру', n:'полный цикл отделки', src:'../assets/img/tech/uf-lak.webp', w:1536, h:1024},
+  {t:'Скругление углов', n:'матовая, глянцевая, soft-touch, с антибликом', src:'../assets/img/tech/pereplet-7bc.webp', w:1536, h:1024}
+];
+
+const media = d => d.src
+  ? '<span class="mk-tilelink__media"><img src="'+d.src+'" alt="" loading="lazy" width="'+d.w+'" height="'+d.h+'"></span>'
+  : '<span class="mk-tilelink__media"><span class="ph">кадр</span></span>';
+
+const markup = set => set.map(d =>
+  '<a href="#" class="mk-tilelink" onclick="return false">'+ media(d) +
+  '<span class="mk-tilelink__txt"><span class="mk-tilelink__title">'+d.t+'</span>'+
+  (d.n ? '<span class="mk-tilelink__note">'+d.n+'</span>' : '')+
+  '</span><i class="arr-ico"></i><span class="hbadge"></span></a>').join('');
+
+document.querySelectorAll('[data-set]').forEach(g =>
+  g.innerHTML = markup(g.dataset.set === 'short' ? SHORT : TILES));
+
+const badges = () => document.querySelectorAll('.mk-tilelink').forEach(t =>
+  t.querySelector('.hbadge').textContent = Math.round(t.getBoundingClientRect().height));
+
+document.querySelector('.panel').addEventListener('click', e => {
+  const b = e.target.closest('[data-w]'); if(!b) return;
+  document.querySelectorAll('[data-w]').forEach(x => x.classList.toggle('is-active', x===b));
+  document.body.style.setProperty('--w', b.dataset.w+'px');
+  badges();
+});
+document.getElementById('showh').addEventListener('change', e =>
+  document.body.classList.toggle('show-h', e.target.checked));
+addEventListener('load', badges);
+addEventListener('resize', badges);
+</script>
+</body>
+</html>
