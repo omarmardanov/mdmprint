@@ -465,23 +465,37 @@
   .btn--primary{background:var(--v-ink);color:var(--surface-card)}
   .btn--primary:hover{background:var(--v-ink-hover)}
   .btn--primary:active{background:var(--v-ink-press)}
-  .btn--ghost{background:transparent;color:var(--v-ink);box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.3)}
-  .btn--ghost:hover{background:rgba(20,18,18,.05)}
-  .btn--ghost:active{background:rgba(20,18,18,.1)}
+  /* Вторая кнопка рядом с объёмной первой выглядела наклейкой на стекле. Дали ей тот же
+     купол, что у плашек логотипов, — светлая смола, а не контур. Ободок сохранён. */
+  .btn--ghost{background:var(--surface-card);color:var(--v-ink);
+    transition:background .15s ease,transform .12s ease,box-shadow .12s ease;
+    box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.22),
+      inset 0 2px 1px -1px rgba(255,255,255,1),
+      inset 0 -7px 10px -8px rgba(20,18,18,.35),
+      0 2px 2px -1px rgba(20,18,18,.10),
+      0 10px 18px -12px rgba(20,18,18,.45)}
+  .btn--ghost:hover{background:var(--surface-gray)}
+  .btn--ghost:active{background:var(--surface-gray);transform:translateY(2px);
+    box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.22),inset 0 3px 6px -4px rgba(20,18,18,.3),
+      0 2px 6px -6px rgba(20,18,18,.4)}
   .btn:focus-visible{outline:3px solid var(--v-ink);outline-offset:3px}
   /* ── ОБЪЁМ И БЛИК у плотных чёрных кнопок (просьба маркетолога 03.08: «кнопки хочется 3д
      и с бликом»). Собрано слоями-псевдоэлементами, а НЕ background-image: у кнопок ховер
      задан shorthand'ом `background:`, он бы затирал картинку.
      ::before — верхняя подсветка (свет падает сверху), ::after — блик, уезжающий по наведению.
      Список селекторов = все плотные действия страницы; призрачные и ссылки не трогаем. ── */
+  /* 10.08, повторная просьба маркетолога «хочется больше 3D»: первый заход (03.08) на рендере
+     читался почти плоским. Усилено на ступень — кромка-стенка снизу, контактная тень,
+     ход при нажатии. В стиль стоковых надувных кнопок не идём: блестеть должен продукт. */
   .btn--primary,.hd__cta,.calc__cta,.calc__big-cta,.show__btn,.rbar__btn,.calcbar__btn{
     position:relative;overflow:hidden;isolation:isolate;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1.5px 0 rgba(0,0,0,.45),
-      0 10px 20px -12px rgba(20,18,18,.8)}
+    transition:background .15s ease,transform .12s ease,box-shadow .12s ease;
+    box-shadow:inset 0 1.5px 0 rgba(255,255,255,.34),inset 0 -2px 0 rgba(0,0,0,.55),
+      0 2px 0 rgba(20,18,18,.45),0 12px 22px -12px rgba(20,18,18,.85)}
   .btn--primary::before,.hd__cta::before,.calc__cta::before,.calc__big-cta::before,
   .show__btn::before,.rbar__btn::before,.calcbar__btn::before{
     content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;
-    background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,.02) 52%,rgba(0,0,0,.14))}
+    background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.03) 54%,rgba(0,0,0,.2))}
   /* блик — узкая наклонная полоса, в покое стоит слева за кромкой */
   .btn--primary::after,.hd__cta::after,.calc__cta::after,.calc__big-cta::after,
   .show__btn::after,.rbar__btn::after,.calcbar__btn::after{
@@ -494,8 +508,9 @@
   /* нажатие — кнопка «садится»: верхняя подсветка гаснет, тень уходит */
   .btn--primary:active,.hd__cta:active,.calc__cta:active,.calc__big-cta:active,
   .show__btn:active,.rbar__btn:active,.calcbar__btn:active{
+    transform:translateY(2px);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(0,0,0,.35),
-      0 4px 10px -8px rgba(20,18,18,.7)}
+      0 0 0 rgba(20,18,18,.45),0 4px 10px -8px rgba(20,18,18,.7)}
   @media(prefers-reduced-motion:reduce){
     .btn--primary::after,.hd__cta::after,.calc__cta::after,.calc__big-cta::after,
     .show__btn::after,.rbar__btn::after,.calcbar__btn::after{transition:none;display:none}
@@ -844,11 +859,16 @@
   .b2b__logo{position:relative;overflow:hidden;isolation:isolate;
     aspect-ratio:3.4/1;display:grid;place-items:center;border-radius:var(--radius-md);
     background:var(--surface-card);font-size:11.5px;color:var(--text-tertiary);
-    box-shadow:inset 0 0 0 1px rgba(20,18,18,.07),
-      inset 0 1.5px 1px -1px rgba(255,255,255,1),
-      inset 0 6px 10px -8px rgba(255,255,255,.9),
-      inset 0 -6px 10px -8px rgba(20,18,18,.30),
-      0 1px 1px rgba(20,18,18,.05)}
+    /* 10.08: купол дожат. Весь эффект жил внутри плашки, а снаружи она лежала вровень
+       с фоном — ряд читался как белые прямоугольники, и метафора «ваш логотип под смолой»
+       не долетала. Добавлены тёмный ободок, преломление у нижней кромки и контактная тень. */
+    box-shadow:inset 0 0 0 1px rgba(20,18,18,.12),
+      inset 0 2px 1px -1px rgba(255,255,255,1),
+      inset 0 8px 12px -8px rgba(255,255,255,.95),
+      inset 0 -9px 12px -8px rgba(20,18,18,.42),
+      inset 0 -1.5px 0 rgba(20,18,18,.10),
+      0 2px 2px -1px rgba(20,18,18,.10),
+      0 10px 18px -12px rgba(20,18,18,.45)}
   /* свет, собравшийся у верхней кромки купола; к центру сходит на нет */
   .b2b__logo::before{content:"";position:absolute;inset:0;border-radius:inherit;
     pointer-events:none;
@@ -888,15 +908,17 @@
   .b2b__logo--you{background:none;box-shadow:none;border:1.5px dashed var(--v-gold-deep);color:var(--v-gold-text);
     font-weight:700;text-align:center;padding:6px;line-height:1.25}
   .b2b__logo--you::before,.b2b__logo--you::after{display:none}
-  /* моно-метка: тот же язык надписей, что у надстрочника героя и меток калькулятора */
-  .b2b__cap{margin:clamp(24px,3vw,40px) 0 var(--sp-12);
-    font-family:var(--font-body);font-size:var(--t-label);font-weight:700;letter-spacing:var(--t-label-ls);
-    text-transform:uppercase;color:var(--text-secondary)}
+  /* Были моно-метками 11.5px, как подписи калькулятора. Правка маркетолога 10.08: под каждой
+     строкой живёт целый под-блок, метка для него мелкая. Теперь заголовок уровнем ниже
+     секционного h2 — тот же гротеск капсом, кегль между h2 и заголовком карточки. */
+  .b2b__cap,.cmp__cap{margin:0 0 var(--sp-16);
+    font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(20px,2.2vw,28px);line-height:1.08;letter-spacing:-.005em;
+    color:var(--text-primary)}
+  .b2b__cap{margin-top:clamp(28px,3.5vw,44px)}
   /* ── ФОТО-СРАВНЕНИЕ внутри B2B (просьба маркетолога 03.08): обычный мерч → плоская наклейка
      → 3D-стикер. Третья карточка выделена обводкой: сравнение должно заканчиваться выводом. ── */
   .cmp{margin-top:clamp(28px,3.5vw,48px)}
-  .cmp__cap{margin:0 0 var(--sp-12);font-family:var(--font-body);font-size:var(--t-label);
-    font-weight:700;letter-spacing:var(--t-label-ls);text-transform:uppercase;color:var(--text-secondary)}
   .cmp__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-12)}
   @media(max-width:720px){.cmp__grid{grid-template-columns:1fr}}
   /* Обводка вынесена в ::after, а не в box-shadow самой карточки: внутренняя тень рисуется
@@ -1880,8 +1902,12 @@
    <div class="hero__pin">
     <div class="hero__in">
     <div class="hero__text">
-      <span class="hero__eyebrow">От дизайна до печати</span>
-      <h1>Печатаем объёмные <span class="hl">3D-стикеры</span> и стикерпаки</h1>
+      <!-- 10.08: надстрочник называл процесс («от дизайна до печати»), а первый экран должен
+           сказать, для кого страница — маркетолог 23.07 определила главной ЦА B2B.
+           H1 был описанием того, что мы делаем; теперь он про выгоду, ключ «3D-стикеры»
+           остался на месте и в леттеринге. -->
+      <span class="hero__eyebrow">Брендам, селлерам и агентствам</span>
+      <h1><span class="hl">3D-стикеры</span> и стикерпаки, которые замечают</h1>
       <p class="hero__sub">Со смолой, любой формы и покрытия — от пробной штуки до тиража
         в 50 000. Считаем цену на странице, срок от трёх дней.</p>
       <div class="hero__cta">
@@ -1983,7 +2009,7 @@
         </li>
         <li class="b2b__item">
           <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Охват</span>
-          <h3>Реклама без бюджета</h3>
+          <h3>Реклама, которая работает годами</h3>
           <p>Клиент видит стикер каждый день — на ноутбуке, машине, бутылке. Бренд остаётся в поле зрения.</p>
         </li>
         <li class="b2b__item">
@@ -1996,7 +2022,7 @@
            Фотографий ещё нет, стоят слоты — подхватятся по имени файла b2b/cmp-1.webp…
            Подписи предварительные: маркетолог сама просила доработать тексты. -->
       <div class="cmp">
-        <p class="cmp__cap">Почему объём вообще замечают</p>
+        <h3 class="cmp__cap">Почему объём замечают, а плоское — нет</h3>
         <div class="cmp__grid">
           <figure class="cmp__item" data-media="b2b/cmp-1">
             <span class="cmp__ph"><b>Фото</b>обычный мерч</span>
@@ -2013,7 +2039,7 @@
           </figure>
         </div>
       </div>
-      <p class="b2b__cap">С кем мы работали</p>
+      <h3 class="b2b__cap">С кем мы работали</h3>
       <div class="b2b__logos">
           <!-- Логотипы взяты из блока «Клиенты и их благодарности» на mdmprint.ru: это уже
                опубликованные самой компанией знаки, к каждому на их сайте приложено
