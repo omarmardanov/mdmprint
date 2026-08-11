@@ -22,7 +22,7 @@
   /* ТАБЫ = 3 группы. Компонент КИТОВЫЙ (.mk-tabs/.mk-tab) — раньше здесь был третий по счёту
      самописный вариант тех же табов (первый в ките, второй в подшапке услуги). Своё тут только
      горизонтальная прокрутка: групп может стать больше, чем влезает в строку на телефоне. */
-  .mk-tabs{margin:8px 0 22px;overflow-x:auto;scrollbar-width:none}
+  .mk-tabs{margin:8px 0 var(--sp-20);overflow-x:auto;scrollbar-width:none}
   .mk-tabs::-webkit-scrollbar{display:none}
   .mk-tab{white-space:nowrap}
 
@@ -41,7 +41,7 @@
     background:linear-gradient(135deg,#efeae0,#e4ddcf)!important;width:100%;height:100%}
 
   /* ссылка на страницу группы — НЕ теряем промежуточную страницу (SEO + обзор группы) */
-  .allgroup{display:inline-flex;align-items:center;gap:8px;margin-top:22px;font-size:var(--t-ui);font-weight:600;
+  .allgroup{display:inline-flex;align-items:center;gap:8px;margin-top:var(--sp-20);font-size:var(--t-ui);font-weight:600;
     color:var(--brand-text);text-decoration:none}
   .allgroup:hover{color:var(--text-primary)}
   .allgroup .arr-ico{color:currentColor}
