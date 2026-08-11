@@ -505,6 +505,18 @@
   .btn--primary:hover::after,.hd__cta:hover::after,.calc__cta:hover::after,.calc__big-cta:hover::after,
   .show__btn:hover::after,.rbar__btn:hover::after,.calcbar__btn:hover::after{
     transform:translateX(420%) rotate(9deg)}
+  /* 10.08, уточнение маркетолога: «при наведении нижняя тень уходит — эффект прижимания».
+     На наведении кнопка садится НАПОЛОВИНУ: кромка-стенка тоньше, контактная тень мягче.
+     Полный ход оставлен нажатию — иначе у наведённой кнопки не остаётся запаса на клик.
+     Правило под @media(hover:hover): на тач-экранах :hover залипает после тапа, и кнопка
+     осталась бы прижатой навсегда; там отклик даёт :active ниже. */
+  @media(hover:hover){
+    .btn--primary:hover,.hd__cta:hover,.calc__cta:hover,.calc__big-cta:hover,
+    .show__btn:hover,.rbar__btn:hover,.calcbar__btn:hover{
+      transform:translateY(1px);
+      box-shadow:inset 0 1.5px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(0,0,0,.5),
+        0 1px 0 rgba(20,18,18,.4),0 7px 14px -13px rgba(20,18,18,.8)}
+  }
   /* нажатие — кнопка «садится»: верхняя подсветка гаснет, тень уходит */
   .btn--primary:active,.hd__cta:active,.calc__cta:active,.calc__big-cta:active,
   .show__btn:active,.rbar__btn:active,.calcbar__btn:active{
@@ -791,8 +803,11 @@
   .b2b__shot{margin:0;border-radius:var(--radius-outside);overflow:hidden;aspect-ratio:3/2;
     box-shadow:0 26px 44px -30px rgba(20,18,18,.6)}
   .b2b__shot img{width:100%;height:100%;object-fit:cover;display:block}
-  .b2b__grid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-20);
+  /* было три карточки; с 10.08 их четыре — маркетолог просила развести два сценария:
+     подарить стикерпак клиенту и брендировать стикером свои подарки */
+  .b2b__grid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-20);
     margin-top:clamp(24px,3vw,40px)}
+  @media(max-width:1100px){.b2b__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   @media(max-width:860px){.b2b__grid{grid-template-columns:1fr}}
   /* карточки — тот же язык, что в «Преимуществах»: белая плашка, пилюля-бейдж сверху */
   .b2b__item{background:var(--surface-card);border-radius:var(--radius-outside);padding:var(--sp-20);
@@ -931,9 +946,32 @@
   /* Жёлтая обводка сама по себе читалась как случайность («почему выделена последняя?»),
      поэтому у выделенной карточки есть подпись, которая её объясняет. */
   .cmp__item--win::after{box-shadow:inset 0 0 0 2px var(--brand)}
-  .cmp__win{position:absolute;top:var(--sp-12);left:var(--sp-12);z-index:3;
-    background:var(--brand);color:var(--v-ink);border-radius:999px;padding:5px 11px;
-    font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+  /* Ярлыки («наш вариант», «хит», «топ») убраны совсем — просьба маркетолога 10.08.
+     Первый заход был мимо: плашка осталась плашкой, только с сердечками внутри, а уйти
+     просили именно от плашки. Выбран вариант Б из _sandbox-hearts.html — из карточки-
+     победителя взлетают сердечки, как лайки в сторис.
+     Слой повторяет пропорцию кадра, а не всю карточку: иначе сердечко всплывало поверх
+     подписи и читалось как опечатка. */
+  .cmp__fly{position:absolute;left:0;right:0;top:0;aspect-ratio:4/3;z-index:3;
+    overflow:hidden;pointer-events:none}
+  .cmp__fly i{position:absolute;bottom:-8%;color:var(--brand);
+    filter:drop-shadow(0 1px 3px rgba(20,18,18,.4));
+    animation:cmpFly 3.6s ease-in infinite}
+  .cmp__fly svg{display:block;width:100%;height:100%}
+  .cmp__fly i:nth-child(1){left:13%;width:22px;height:22px;animation-delay:0s}
+  .cmp__fly i:nth-child(2){left:39%;width:15px;height:15px;animation-delay:.9s}
+  .cmp__fly i:nth-child(3){left:65%;width:26px;height:26px;animation-delay:1.8s}
+  .cmp__fly i:nth-child(4){left:85%;width:17px;height:17px;animation-delay:2.7s}
+  @keyframes cmpFly{
+    0%{transform:translateY(0) scale(.55) rotate(-8deg);opacity:0}
+    15%{opacity:1}
+    70%{opacity:.8}
+    100%{transform:translateY(-320px) scale(1.05) rotate(9deg);opacity:0}
+  }
+  /* без движения сердечки не исчезают, а лежат внизу кадра: смысл «это нравится» остаётся */
+  @media(prefers-reduced-motion:reduce){
+    .cmp__fly i{animation:none;opacity:.9;bottom:12px}
+  }
   /* картинка и заглушка занимают одну и ту же коробку 4:3 — при подстановке фото ничего не прыгает */
   .cmp__ph,.cmp__item img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
   .cmp__ph{display:grid;place-items:center;align-content:center;gap:5px;background:var(--surface-gray);
@@ -1564,7 +1602,7 @@
   .sheet__box{position:relative;width:min(720px,100%);max-height:88vh;overflow:auto;
     background:var(--surface-card);border-radius:var(--radius-outside);padding:var(--sp-32)}
   .sheet__title{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
-    font-size:24px;line-height:1.05;margin:0 40px 0 0}
+    font-size:24px;line-height:1.05;margin:0 56px 0 0}
   .sheet__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--sp-20);
     margin-top:var(--sp-20)}
   .sheet__item b{display:block;font-size:var(--t-body);margin-bottom:5px}
@@ -2003,9 +2041,18 @@
       </div>
       <ul class="b2b__grid">
         <li class="b2b__item">
-          <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4v13h16V7Z"/><path d="M2 7h20v4H2zM12 7v13M12 7S9.5 3 7.5 3a2.5 2.5 0 0 0 0 5M12 7s2.5-4 4.5-4a2.5 2.5 0 0 1 0 5"/></svg>Мерч</span>
-          <h3>Мерч, который заметят</h3>
-          <p>Стикерпаки в подарок к заказу, раздатка на мероприятиях, наклейки на технику и упаковку.</p>
+          <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4v13h16V7Z"/><path d="M2 7h20v4H2zM12 7v13M12 7S9.5 3 7.5 3a2.5 2.5 0 0 0 0 5M12 7s2.5-4 4.5-4a2.5 2.5 0 0 1 0 5"/></svg>Подарок</span>
+          <h3>Подарок, который клеят</h3>
+          <p>Стикерпак кладём в заказ или дарим на встрече — клиент сам выберет, куда наклеить:
+            ноутбук, термос, телефон, чехол.</p>
+        </li>
+        <!-- Второй сценарий (маркетолог 10.08): стикером брендируют СВОИ подарки.
+             Формулировки осторожные: «дешевле» — про печать на каждом изделии, без цифр. -->
+        <li class="b2b__item">
+          <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2c0 .5.2 1 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4Z"/><path d="M7.5 7.5h.01"/></svg>Экономия</span>
+          <h3>Брендируйте свои подарки</h3>
+          <p>Наклейка превращает в фирменный подарок что угодно — коробку, блокнот, бутылку.
+            Дешевле, чем печатать логотип на каждом изделии, и не нужен большой тираж.</p>
         </li>
         <li class="b2b__item">
           <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Охват</span>
@@ -2019,21 +2066,30 @@
         </li>
       </ul>
       <!-- ФОТО-СРАВНЕНИЕ (просьба маркетолога 03.08): обычный мерч → плоская наклейка → 3D.
-           Фотографий ещё нет, стоят слоты — подхватятся по имени файла b2b/cmp-1.webp…
-           Подписи предварительные: маркетолог сама просила доработать тексты. -->
+           Фото подхватываются по имени файла b2b/cmp-1.webp…
+           ЖДЁТ ПЕРЕСЪЁМКИ: cmp-3 сейчас «логотип на столе», а маркетолог 10.08 просит там
+           тоже НАБОР МЕРЧА — предметы с наклеенными 3D-стикерами (бриф в STICKERS_PROGRESS.md).
+           Файл подменится по тому же имени, вёрстку трогать не придётся. -->
       <div class="cmp">
-        <h3 class="cmp__cap">Почему объём замечают, а плоское — нет</h3>
+        <h3 class="cmp__cap">Что из этого захочется оставить себе</h3>
         <div class="cmp__grid">
           <figure class="cmp__item" data-media="b2b/cmp-1">
             <span class="cmp__ph"><b>Фото</b>обычный мерч</span>
-            <figcaption><b>Обычный мерч</b>Ручки, кружки, пакеты. Стоят денег, а взгляд не цепляют.</figcaption>
+            <!-- предметы перечислены по кадру: набор сменился на кружку, блокнот и термос,
+                 когда сцену свели к одной на все три карточки (11.08) -->
+            <figcaption><b>Обычный мерч</b>Кружка, блокнот, термос. Нужны в деле, но такие уже есть у всех.</figcaption>
           </figure>
           <figure class="cmp__item" data-media="b2b/cmp-2">
             <span class="cmp__ph"><b>Фото</b>плоская наклейка</span>
-            <figcaption><b>Плоская наклейка</b>Печать на плёнке. Дёшево, но выглядит расходником.</figcaption>
+            <figcaption><b>Плоская наклейка</b>Печать на плёнке. Дёшево и быстро, но рядом с объёмной — просто картинка.</figcaption>
           </figure>
           <figure class="cmp__item cmp__item--win" data-media="b2b/cmp-3">
-            <span class="cmp__win">Наш вариант</span>
+            <span class="cmp__fly" aria-hidden="true">
+              <i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg></i>
+              <i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg></i>
+              <i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg></i>
+              <i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg></i>
+            </span>
             <span class="cmp__ph"><b>Фото</b>3D-стикер со смолой</span>
             <figcaption><b>3D-стикер со смолой</b>Объём и глянец: его хочется потрогать и оставить на виду.</figcaption>
           </figure>
@@ -2762,9 +2818,12 @@
       <div class="sheet__grid">
         <!-- 25 ПВЗ УБРАНЫ (Omar 05.08): для стикеров их нет. Самовывоз только с двух
              своих адресов — офис и производство. -->
+        <!-- «Скидки за самовывоз нет» убрано (Omar 10.08): фраза отвечала на вопрос, которого
+             никто не задавал, и в блоке «бесплатно» читалась как отказ. В ответах бизнеса
+             такого условия нет — это была наша перестраховка. Не возвращать. -->
         <div class="sheet__item"><b>Самовывоз — бесплатно</b>
           <p>С производства на Автозаводской или из офиса на Орджоникидзе, 11с1А, подъезд 29.
-            Ежедневно с 9 до 22. Скидки за самовывоз нет.</p></div>
+            Ежедневно с 9 до 22.</p></div>
         <div class="sheet__item"><b>Курьер по Москве и МО</b>
           <!-- подтверждено директором 29.07: для стикеров тариф тот же 790 ₽; бесплатно от 40 000 ₽
                только по Москве в пределах МКАД и только не крупногабарит -->
