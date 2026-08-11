@@ -948,29 +948,43 @@
   .cmp__item--win::after{box-shadow:inset 0 0 0 2px var(--brand)}
   /* Ярлыки («наш вариант», «хит», «топ») убраны совсем — просьба маркетолога 10.08.
      Первый заход был мимо: плашка осталась плашкой, только с сердечками внутри, а уйти
-     просили именно от плашки. Выбран вариант Б из _sandbox-hearts.html — из карточки-
-     победителя взлетают сердечки, как лайки в сторис.
+     просили именно от плашки. Из карточки-победителя взлетают сердечки, как лайки в сторис.
      Слой повторяет пропорцию кадра, а не всю карточку: иначе сердечко всплывало поверх
-     подписи и читалось как опечатка. */
+     подписи и читалось как опечатка.
+
+     11.08, вариант Г из _sandbox-hearts2.html:
+     · КРАСНЫЕ, а не фирменные жёлтые. Жёлтое сердечко на светлом чехле тонуло — видно было,
+       только когда попадало на тёмный участок. Красный тут не «ошибка из токенов», а цвет
+       лайка: на сердце он читается однозначно. Белая обводка держит его на любом кадре.
+     · Вылет ИЗ-ПОД СТИКЕРА, а не со дна карточки: так читается «лайкнули именно его».
+       Стартуют по бокам от знака и расходятся в стороны — поверх знака не проходят. */
   .cmp__fly{position:absolute;left:0;right:0;top:0;aspect-ratio:4/3;z-index:3;
     overflow:hidden;pointer-events:none}
-  .cmp__fly i{position:absolute;bottom:-8%;color:var(--brand);
-    filter:drop-shadow(0 1px 3px rgba(20,18,18,.4));
-    animation:cmpFly 3.6s ease-in infinite}
+  .cmp__fly i{position:absolute;bottom:42%;color:#e0483a;
+    filter:drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 2px 4px rgba(20,18,18,.3));
+    animation:cmpFlyL 3.2s ease-in infinite}
   .cmp__fly svg{display:block;width:100%;height:100%}
-  .cmp__fly i:nth-child(1){left:13%;width:22px;height:22px;animation-delay:0s}
-  .cmp__fly i:nth-child(2){left:39%;width:15px;height:15px;animation-delay:.9s}
-  .cmp__fly i:nth-child(3){left:65%;width:26px;height:26px;animation-delay:1.8s}
-  .cmp__fly i:nth-child(4){left:85%;width:17px;height:17px;animation-delay:2.7s}
-  @keyframes cmpFly{
-    0%{transform:translateY(0) scale(.55) rotate(-8deg);opacity:0}
+  .cmp__fly i:nth-child(1){left:33%;width:20px;height:20px;animation-delay:0s}
+  .cmp__fly i:nth-child(2){left:28%;width:14px;height:14px;animation-delay:1.1s}
+  .cmp__fly i:nth-child(3){left:36%;width:16px;height:16px;animation-delay:2.2s}
+  .cmp__fly i:nth-child(4){left:64%;width:22px;height:22px;animation-delay:.6s;animation-name:cmpFlyR}
+  .cmp__fly i:nth-child(5){left:70%;width:15px;height:15px;animation-delay:1.7s;animation-name:cmpFlyR}
+  .cmp__fly i:nth-child(6){left:61%;width:17px;height:17px;animation-delay:2.7s;animation-name:cmpFlyR}
+  @keyframes cmpFlyL{
+    0%{transform:translate(0,0) scale(.5) rotate(-6deg);opacity:0}
     15%{opacity:1}
-    70%{opacity:.8}
-    100%{transform:translateY(-320px) scale(1.05) rotate(9deg);opacity:0}
+    70%{opacity:.75}
+    100%{transform:translate(-30px,-150px) scale(1) rotate(-16deg);opacity:0}
   }
-  /* без движения сердечки не исчезают, а лежат внизу кадра: смысл «это нравится» остаётся */
+  @keyframes cmpFlyR{
+    0%{transform:translate(0,0) scale(.5) rotate(6deg);opacity:0}
+    15%{opacity:1}
+    70%{opacity:.75}
+    100%{transform:translate(30px,-150px) scale(1) rotate(16deg);opacity:0}
+  }
+  /* без движения сердечки не исчезают, а лежат по бокам от стикера: смысл «это нравится» остаётся */
   @media(prefers-reduced-motion:reduce){
-    .cmp__fly i{animation:none;opacity:.9;bottom:12px}
+    .cmp__fly i{animation:none;opacity:.9}
   }
   /* картинка и заглушка занимают одну и ту же коробку 4:3 — при подстановке фото ничего не прыгает */
   .cmp__ph,.cmp__item img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
@@ -2065,23 +2079,19 @@
           <p>Печатаем по вашему макету или дорисуем: цвет, форма и контур высечки — под бренд.</p>
         </li>
       </ul>
-      <!-- ФОТО-СРАВНЕНИЕ (просьба маркетолога 03.08): обычный мерч → плоская наклейка → 3D.
+      <!-- ФОТО-СРАВНЕНИЕ (просьба маркетолога 03.08): печать → плоская наклейка → 3D со смолой.
            Фото подхватываются по имени файла b2b/cmp-1.webp…
-           ЖДЁТ ПЕРЕСЪЁМКИ: cmp-3 сейчас «логотип на столе», а маркетолог 10.08 просит там
-           тоже НАБОР МЕРЧА — предметы с наклеенными 3D-стикерами (бриф в STICKERS_PROGRESS.md).
-           Файл подменится по тому же имени, вёрстку трогать не придётся. -->
+           11.08: все три кадра сняты ОДНОЙ сценой (телефон в чехле в руках), меняется только
+           способ нанесения. До этого сцены были разные — сравнивать было нечего, и маркетолог
+           справедливо ловила на том, что первая карточка выигрывает не по сути.
+           Кроп подобран Omar'ом в _crop-lab.html: zoom 1.80, cx 0.50, cy 0.35. Общий план
+           не годился — в карточке 400px знак получался с ноготь и разница пропадала. -->
       <div class="cmp">
         <h3 class="cmp__cap">Что из этого захочется оставить себе</h3>
         <div class="cmp__grid">
           <figure class="cmp__item" data-media="b2b/cmp-1">
-            <span class="cmp__ph"><b>Фото</b>обычный мерч</span>
-            <!-- предметы перечислены по кадру: набор сменился на кружку, блокнот и термос,
-                 когда сцену свели к одной на все три карточки (11.08) -->
-            <figcaption><b>Обычный мерч</b>Кружка, блокнот, термос. Нужны в деле, но такие уже есть у всех.</figcaption>
-          </figure>
-          <figure class="cmp__item" data-media="b2b/cmp-2">
-            <span class="cmp__ph"><b>Фото</b>плоская наклейка</span>
-            <figcaption><b>Плоская наклейка</b>Печать на плёнке. Дёшево и быстро, но рядом с объёмной — просто картинка.</figcaption>
+            <span class="cmp__ph"><b>Фото</b>печать на изделии</span>
+            <figcaption><b>Печать на изделии</b>Наносим прямо на предмет. Дёшево, а взгляд не цепляет.</figcaption>
           </figure>
           <figure class="cmp__item cmp__item--win" data-media="b2b/cmp-3">
             <span class="cmp__fly" aria-hidden="true">
@@ -2089,9 +2099,15 @@
               <i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg></i>
               <i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg></i>
               <i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg></i>
+              <i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg></i>
+              <i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg></i>
             </span>
             <span class="cmp__ph"><b>Фото</b>3D-стикер со смолой</span>
             <figcaption><b>3D-стикер со смолой</b>Объём и глянец: его хочется потрогать и оставить на виду.</figcaption>
+          </figure>
+          <figure class="cmp__item" data-media="b2b/cmp-2">
+            <span class="cmp__ph"><b>Фото</b>плоская наклейка</span>
+            <figcaption><b>Плоская наклейка</b>Печать на плёнке. Дёшево и быстро, но рядом с объёмной — просто картинка.</figcaption>
           </figure>
         </div>
       </div>
