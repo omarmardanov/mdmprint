@@ -65,7 +65,9 @@
 </div>
 <article class="doc" id="doc"><p class="loading">Загрузка…</p></article>
 
-<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<!-- marked лежит локально: с CDN он мог не догрузиться (медленная или закрытая сеть),
+     и тогда вся документация показывалась сплошным <pre> — нечитаемо. -->
+<script src="assets/js/marked.min.js?v=20260812"></script>
 <script>
   // Доки на проде (IA_catalog.md и трансзвонка.md в .gitignore — их тут нет).
   const DOCS = ['START.md','BRIEF_PM.md','HANDOFF.md','DEV_WALKTHROUGH.md','QUESTIONS.md',
