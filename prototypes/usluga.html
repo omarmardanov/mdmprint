@@ -59,7 +59,7 @@
      При правке assets/css/* бампать число, иначе телефон покажет новый HTML со старым CSS
      (ловили 16.07: мобильная шкала уехала в токены, страница осталась на десктопной). -->
 <link rel="stylesheet" href="../assets/css/fonts.css?v=20260717l">
-<link rel="stylesheet" href="../assets/css/tokens.css?v=20260722b">
+<link rel="stylesheet" href="../assets/css/tokens.css?v=20260817a">
 <link rel="stylesheet" href="../assets/css/kit.css?v=20260807a">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
@@ -1656,7 +1656,6 @@
   @keyframes mDrawerFade{from{opacity:0}to{opacity:1}}
 
   @media(max-width:1023px){
-    :root{--container-pad:16px}
     /* clip вместо hidden: клипует так же, но НЕ создаёт скролл-контейнер — а hidden его создавал
        и ломал position:sticky у подшапки (замер: top=-188 вместо 58, уезжала вместе со страницей).
        hidden оставлен первым как фолбэк для браузеров без clip (Safari <16). */
