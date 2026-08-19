@@ -7,78 +7,8 @@
 <link rel="stylesheet" href="../assets/css/fonts.css?v=20260722a">
 <link rel="stylesheet" href="../assets/css/tokens.css?v=20260817a">
 <link rel="stylesheet" href="../assets/css/kit.css?v=20260819a">
-<style>
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--surface-subtle);color:var(--text-primary);font-family:var(--font-body);
-    font-size:var(--t-body);line-height:var(--t-body-lh)}
-  svg{display:block}
-  /* тот же базовый сброс, что на страницах сайта: цвет и подчёркивание ссылки задаёт компонент */
-  a{color:inherit;text-decoration:none}
-  .page > header a{color:var(--brand-text);text-decoration:underline}
-
-  .page{max-width:1240px;margin:0 auto;padding:56px 24px 120px;
-    display:grid;grid-template-columns:212px 1fr;gap:40px;align-items:start}
-  .page > header{grid-column:1 / -1;margin-bottom:8px}
-  .page > header p{color:var(--text-secondary);max-width:660px;margin:12px 0 0}
-
-  /* ---- боковое оглавление ---- */
-  .toc{position:sticky;top:24px;font-size:var(--t-small);line-height:1.35}
-  .toc b{display:block;font-size:var(--t-label);letter-spacing:var(--t-label-ls);text-transform:uppercase;
-    color:var(--text-tertiary);font-weight:500;margin:20px 0 8px}
-  .toc b:first-child{margin-top:0}
-  .toc a{display:block;padding:4px 0;color:var(--text-secondary);text-decoration:none}
-  .toc a:hover{color:var(--text-primary)}
-
-  .body{min-width:0}
-  section{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-outside);
-    padding:32px;margin-bottom:24px;scroll-margin-top:24px}
-  section > h2{margin:0 0 4px}
-  section > .note{color:var(--text-secondary);font-size:var(--t-small);line-height:var(--t-small-lh);margin:0 0 28px}
-
-  /* таблица-сетка: подпись строки слева, образцы справа */
-  .row{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;
-    padding:20px 0;border-top:1px solid var(--border)}
-  .row:first-of-type{border-top:none}
-  .row--top{align-items:start}
-  .row > .k{font-size:var(--t-small);line-height:1.35}
-  .row > .k b{display:block;font-weight:600}
-  .row > .k span{color:var(--text-tertiary);font-size:var(--t-caption)}
-  .row > .v{display:flex;flex-wrap:wrap;gap:12px;align-items:center;min-width:0}
-  /* селектор с .row обязателен: у `.row > .v` специфичность выше, одиночный класс её не перебьёт.
-     align-items:stretch снимаем оттуда же — оно действует и на grid-раскладку из инлайна,
-     и образцы-карточки вставали по центру вместо одинаковой высоты. */
-  .row > .v.v--block{display:block;align-items:stretch}
-
-  .dark-bg{background:var(--surface-dark);border-radius:var(--radius-md);padding:20px}
-  .gray-bg{background:var(--surface-gray);border-radius:var(--radius-outside);padding:20px}
-
-  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
-    background:var(--surface-subtle);border:1px solid var(--border);border-radius:var(--radius-inside);padding:1px 5px}
-  .usage{margin:28px 0 0;padding:20px 0 0;border-top:1px solid var(--border);
-    font-size:var(--t-small);line-height:1.7;color:var(--text-secondary)}
-  .usage b{color:var(--text-primary);font-weight:600}
-  .usage--flat{border:none;padding-top:0;margin-top:0}
-  .warn{background:var(--brand-soft);border:1px solid var(--brand-soft-2);border-radius:var(--radius-md);
-    padding:14px 16px;font-size:var(--t-small);line-height:1.6;margin-top:28px}
-  /* статус компонента: стоит ли он в разметке хоть одной страницы */
-  .st{display:inline-block;vertical-align:2px;margin-left:8px;padding:2px 7px;border-radius:var(--radius-inside);
-    font-family:var(--font-body);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-  .st--off{background:var(--surface-gray);color:var(--text-tertiary)}
-
-  /* заглушка вместо фото — витрине картинки не нужны */
-  .demo-img{width:100%;height:100%;background:
-    repeating-linear-gradient(135deg,var(--surface-gray-2) 0 10px,var(--surface-gray) 10px 20px)}
-  .demo-w{max-width:280px}
-
-  @media (max-width:1023px){   /* канон проекта: мобильная раскладка с 1023 */
-    .page{grid-template-columns:1fr;gap:24px}
-    .toc{position:static;display:flex;flex-wrap:wrap;gap:4px 16px;
-      background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px}
-    .toc b{margin:0;width:100%}
-    .row{grid-template-columns:1fr;gap:12px}
-    section{padding:20px}
-  }
-</style>
+<!-- Стили ВИТРИНЫ (не кита): сетка примеров, подписи, разделители -->
+<link rel="stylesheet" href="../assets/css/kit-showcase.css?v=20260819a">
 </head>
 <body>
 <a class="mk-skip" href="#buttons">К содержимому</a>
@@ -106,6 +36,9 @@
     <a href="#chip">Чип</a>
     <a href="#rowlink">Строка-действие</a>
     <a href="#check">Чекбокс</a>
+    <a href="#subnav">Подшапка</a>
+    <a href="#rate">Оценка звёздами</a>
+    <a href="#cookie">Куки-баннер</a>
     <a href="#badge">Бейдж</a>
     <b>Контейнеры</b>
     <a href="#card">Карточка</a>
@@ -946,6 +879,77 @@
   </section>
 
   <!-- ═══════════ ОТКРЫТЫЕ ВОПРОСЫ ═══════════ -->
+  <!-- ═══════════ ПОДШАПКА ═══════════ -->
+  <section id="subnav">
+    <h2 class="mk-h3">Подшапка-навигация</h2>
+    <p class="note">Ссылки по разделам длинной страницы, активный помечен бренд-подчёркиванием.
+      В ките только вид: липкость и <code>top</code> зависят от высоты конкретной шапки, поэтому
+      живут на странице.</p>
+    <div class="row">
+      <div class="k"><b>Строка</b><span><code>.mk-subnav</code> + <code>.mk-subnav__list</code></span></div>
+      <div class="v" style="display:block">
+        <nav class="mk-subnav" aria-label="Пример подшапки">
+          <div class="mk-subnav__list">
+            <a href="#subnav" class="is-active">Обзор</a>
+            <a href="#subnav">Преимущества</a>
+            <a href="#subnav">Виды</a>
+            <a href="#subnav">Цены</a>
+            <a href="#subnav">Отзывы</a>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <div class="row">
+      <div class="k"><b>Активный</b><span><code>a.is-active</code></span></div>
+      <div class="v"><span class="mk-caption">Ставит скроллспай страницы. Своего класса
+        <code>active</code> больше нет — соглашение кита одно на все компоненты.</span></div>
+    </div>
+  </section>
+
+  <!-- ═══════════ ОЦЕНКА ═══════════ -->
+  <section id="rate">
+    <h2 class="mk-h3">Оценка звёздами</h2>
+    <p class="note">Форма отзыва. Работает без скрипта: ряд развёрнут, поэтому в разметке звёзды
+      идут от 5 к 1, а подсветка «до наведённой» делается соседним селектором. Переключатели
+      уведены за пределы видимости, но не спрятаны — иначе их не поймает клавиатура.</p>
+    <div class="row">
+      <div class="k"><b>1–5</b><span><code>.mk-rate</code></span></div>
+      <div class="v">
+        <div class="mk-rate" role="radiogroup" aria-label="Пример оценки">
+          <input type="radio" name="kitrate" id="kr5" value="5"><label for="kr5" aria-label="5 из 5">★</label>
+          <input type="radio" name="kitrate" id="kr4" value="4"><label for="kr4" aria-label="4 из 5">★</label>
+          <input type="radio" name="kitrate" id="kr3" value="3"><label for="kr3" aria-label="3 из 5">★</label>
+          <input type="radio" name="kitrate" id="kr2" value="2"><label for="kr2" aria-label="2 из 5">★</label>
+          <input type="radio" name="kitrate" id="kr1" value="1"><label for="kr1" aria-label="1 из 5">★</label>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ КУКИ ═══════════ -->
+  <section id="cookie">
+    <h2 class="mk-h3">Куки-баннер</h2>
+    <p class="note">Две кнопки, а не одна: согласие по 152-ФЗ должно быть активным действием,
+      а отказ — такой же законный выбор, поэтому он полноценная кнопка. Полоса во всю ширину,
+      содержимое по контейнеру страницы. Здесь показан статично, на странице
+      <code>position:fixed</code> внизу.</p>
+    <div class="row">
+      <div class="k"><b>Полоса</b><span><code>.mk-cookie</code>, внутри <code>__row / __tx / __btns</code></span></div>
+      <div class="v" style="display:block">
+        <div class="mk-cookie" style="position:static">
+          <div class="mk-cookie__row">
+            <p class="mk-cookie__tx">Мы используем cookie, чтобы сайт работал и чтобы понимать,
+              какими разделами пользуются. Подробности — в <a href="#cookie">политике обработки данных</a>.</p>
+            <div class="mk-cookie__btns">
+              <button type="button" class="mk-btn mk-btn--ghost mk-btn--md">Только необходимые</button>
+              <button type="button" class="mk-btn mk-btn--primary mk-btn--md">Принять все</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="open">
     <h2 class="mk-h3">Решения 22.07</h2>
     <p class="note">Что было «зафиксировано, но не исправлено» — и чем закончилось.</p>
@@ -969,8 +973,6 @@
       сроки спринта не двигает: пункты попадут в кит по мере готовности, вёрстка получит их уже
       компонентами. Если удобнее сделать по ходу своей задачи — не возбраняется, но тогда
       напишите, чтобы не разошлись две версии.<br>
-      · <b>Подшапка</b> <code>.usl-subnav</code> — дубль <code>.mk-tab</code> под другим именем.
-      Вынести как <code>.mk-subnav</code>.<br>
       · <b>Кнопки шапки</b> <code>.hbtn</code> (иконка + подпись: «Войти», «Корзина», компактный
       «Калькулятор») — отдельный тип, а не <code>.mk-btn</code>. Часть компонента «шапка»;
       заводить в кит имеет смысл вместе с ней.<br>
@@ -982,30 +984,6 @@
   </div>
 </div>
 
-<script>
-  // табы: переключение панели + высота обёртки без скачка
-  document.querySelectorAll('.mk-tabs').forEach(function(tabs){
-    var panels = tabs.parentNode.querySelector('.mk-tabpanels');
-    tabs.addEventListener('click', function(e){
-      var btn = e.target.closest('.mk-tab');
-      if (!btn) return;
-      tabs.querySelectorAll('.mk-tab').forEach(function(b){
-        b.classList.toggle('is-active', b === btn);
-        b.setAttribute('aria-selected', b === btn);
-      });
-      panels.querySelectorAll('.mk-tabpanel').forEach(function(p, i){
-        p.classList.toggle('is-active', i === +btn.dataset.tab);
-      });
-    });
-  });
-
-  // стрелки ленты: шаг на ширину кадра
-  document.querySelectorAll('.mk-scroller__nav').forEach(function(nav){
-    nav.addEventListener('click', function(){
-      var track = nav.parentNode.querySelector('.mk-scroller__track');
-      track.scrollBy({left: +nav.dataset.dir * track.clientWidth, behavior: 'smooth'});
-    });
-  });
-</script>
+  <script src="../assets/js/kit-showcase.js?v=20260819a"></script>
 </body>
 </html>

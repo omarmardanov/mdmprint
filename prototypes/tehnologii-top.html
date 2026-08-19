@@ -7,65 +7,9 @@
 <link rel="stylesheet" href="../assets/css/fonts.css?v=20260722a">
 <link rel="stylesheet" href="../assets/css/tokens.css?v=20260817a">
 <link rel="stylesheet" href="../assets/css/kit.css?v=20260819a">
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:var(--font-body);color:var(--text-primary);background:var(--surface-page);-webkit-font-smoothing:antialiased}
-  /* 1200 — под живой контейнер (.container_small), не 1176 наш: шва по ширине не будет */
-  .wrap{width:min(100% - 48px, 1200px);margin-inline:auto}
-
-  /* Меняем ТОЛЬКО табы+плитки. Крошки и заголовок — существующие на старой странице,
-     фон белый как на старом. Ниже — только новый компонент, врезается на место 3 плиток-ссылок. */
-  .top{background:var(--surface-page);padding:24px 0 40px}
-  .stub{color:var(--text-tertiary);font-size:13px}
-  .stub .h{font-family:var(--font-head);font-size:30px;line-height:36px;text-transform:uppercase;color:var(--text-primary);margin:6px 0}
-
-  /* ТАБЫ = 3 группы. Компонент КИТОВЫЙ (.mk-tabs/.mk-tab) — раньше здесь был третий по счёту
-     самописный вариант тех же табов (первый в ките, второй в подшапке услуги). Своё тут только
-     горизонтальная прокрутка: групп может стать больше, чем влезает в строку на телефоне. */
-  .mk-tabs{margin:8px 0 var(--sp-20);overflow-x:auto;scrollbar-width:none}
-  .mk-tabs::-webkit-scrollbar{display:none}
-  .mk-tab{white-space:nowrap}
-
-  /* плитки — НАШ .mk-tilelink из кита + combo-раскладка (те же правила, что в usluga «Сочетается») */
-  .pane{display:none}
-  .pane.show{display:block}
-  /* Сетка 3 / 2 / 1. Средняя ступень появилась 23.07: на планшете три плитки в ряд сжимались
-     так, что подпись под названием обрезалась на втором слове — плитка горизонтальная, ей нужна
-     ширина. Ступени взяты по канону проекта: мобилка начинается с 1023 (как в токенах и на
-     странице услуги), одна колонка — с 767, это ширина, на которой проверяем вёрстку. */
-  .combo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap-card, 20px)}
-  .combo-grid .mk-tilelink__media{background:transparent;border-right:none}
-  .combo-grid .mk-tilelink__media img{mix-blend-mode:darken}
-  /* плейсхолдер-медиа для групп без снимков */
-  .ph{display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);font-size:11px;
-    background:linear-gradient(135deg,#efeae0,#e4ddcf)!important;width:100%;height:100%}
-
-  /* ссылка на страницу группы — НЕ теряем промежуточную страницу (SEO + обзор группы) */
-  .allgroup{display:inline-flex;align-items:center;gap:8px;margin-top:var(--sp-20);font-size:var(--t-ui);font-weight:600;
-    color:var(--brand-text);text-decoration:none}
-  .allgroup:hover{color:var(--text-primary)}
-  .allgroup .arr-ico{color:currentColor}
-
-  /* ПУСТАЯ ГРУППА. Таб не прячем: список групп — это карта раздела, дырка в нём читается как
-     «у них этого нет», хотя услуги просто ещё не привязаны в админке. Вместо пустоты одна плитка,
-     ведущая на страницу группы: человек не упирается в ничто, а страница группы (она живая и
-     нужна для SEO) получает вход. Ссылку «Все услуги группы» под сеткой в этом случае прячем —
-     иначе два одинаковых входа подряд. */
-  .pane--empty .allgroup{display:none}
-
-  .seam{padding:40px 0;text-align:center;color:var(--text-tertiary);font-size:13px}
-
-  @media(max-width:1023px){
-    .combo-grid{grid-template-columns:repeat(2,1fr)}
-  }
-  @media(max-width:767px){
-    /* .stub .h — не h1, а див: правило целилось в тег и мимо. На «Технологиях» заголовок короткий
-       и промах не был виден, на «Материалах» строка уезжала за правый край экрана. */
-    h1,.stub .h{font-size:26px;line-height:30px}
-    .combo-grid{grid-template-columns:1fr}
-    .wrap{width:min(100% - 32px, 1200px)}
-  }
-</style>
+<!-- Стили страниц-«топов»: файл общий для технологий и материалов — раньше эти 57 строк
+     лежали инлайном в обеих страницах и совпадали дословно -->
+<link rel="stylesheet" href="../assets/css/top.css?v=20260819a">
 </head>
 <body>
 <section class="top">
@@ -156,17 +100,6 @@
 
 <div class="seam">↓ ниже — старое тело страницы (Требования, Портфолио, FAQ, форма) — НЕ трогаем</div>
 
-<script>
-  const tabs = document.getElementById('tabs');
-  tabs.addEventListener('click', e=>{
-    const b = e.target.closest('.mk-tab'); if(!b) return;
-    tabs.querySelectorAll('.mk-tab').forEach(x=>{
-      const on = x===b;
-      x.classList.toggle('is-active', on);
-      x.setAttribute('aria-selected', on);
-    });
-    document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('show', p.dataset.pane===b.dataset.tab));
-  });
-</script>
+  <script src="../assets/js/top.js?v=20260819a"></script>
 </body>
 </html>

@@ -1,0 +1,74 @@
+/* Стили ВИТРИНЫ кита (prototypes/kit.html) — сетка примеров, подписи, разделители.
+   К самому киту отношения не имеют: это оформление страницы, где кит показывают.
+   Вынесено из inline 19.08. */
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--surface-subtle);color:var(--text-primary);font-family:var(--font-body);
+    font-size:var(--t-body);line-height:var(--t-body-lh)}
+  svg{display:block}
+  /* тот же базовый сброс, что на страницах сайта: цвет и подчёркивание ссылки задаёт компонент */
+  a{color:inherit;text-decoration:none}
+  .page > header a{color:var(--brand-text);text-decoration:underline}
+
+  .page{max-width:1240px;margin:0 auto;padding:56px 24px 120px;
+    display:grid;grid-template-columns:212px 1fr;gap:40px;align-items:start}
+  .page > header{grid-column:1 / -1;margin-bottom:8px}
+  .page > header p{color:var(--text-secondary);max-width:660px;margin:12px 0 0}
+
+  /* ---- боковое оглавление ---- */
+  .toc{position:sticky;top:24px;font-size:var(--t-small);line-height:1.35}
+  .toc b{display:block;font-size:var(--t-label);letter-spacing:var(--t-label-ls);text-transform:uppercase;
+    color:var(--text-tertiary);font-weight:500;margin:20px 0 8px}
+  .toc b:first-child{margin-top:0}
+  .toc a{display:block;padding:4px 0;color:var(--text-secondary);text-decoration:none}
+  .toc a:hover{color:var(--text-primary)}
+
+  .body{min-width:0}
+  section{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-outside);
+    padding:32px;margin-bottom:24px;scroll-margin-top:24px}
+  section > h2{margin:0 0 4px}
+  section > .note{color:var(--text-secondary);font-size:var(--t-small);line-height:var(--t-small-lh);margin:0 0 28px}
+
+  /* таблица-сетка: подпись строки слева, образцы справа */
+  .row{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;
+    padding:20px 0;border-top:1px solid var(--border)}
+  .row:first-of-type{border-top:none}
+  .row--top{align-items:start}
+  .row > .k{font-size:var(--t-small);line-height:1.35}
+  .row > .k b{display:block;font-weight:600}
+  .row > .k span{color:var(--text-tertiary);font-size:var(--t-caption)}
+  .row > .v{display:flex;flex-wrap:wrap;gap:12px;align-items:center;min-width:0}
+  /* селектор с .row обязателен: у `.row > .v` специфичность выше, одиночный класс её не перебьёт.
+     align-items:stretch снимаем оттуда же — оно действует и на grid-раскладку из инлайна,
+     и образцы-карточки вставали по центру вместо одинаковой высоты. */
+  .row > .v.v--block{display:block;align-items:stretch}
+
+  .dark-bg{background:var(--surface-dark);border-radius:var(--radius-md);padding:20px}
+  .gray-bg{background:var(--surface-gray);border-radius:var(--radius-outside);padding:20px}
+
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;
+    background:var(--surface-subtle);border:1px solid var(--border);border-radius:var(--radius-inside);padding:1px 5px}
+  .usage{margin:28px 0 0;padding:20px 0 0;border-top:1px solid var(--border);
+    font-size:var(--t-small);line-height:1.7;color:var(--text-secondary)}
+  .usage b{color:var(--text-primary);font-weight:600}
+  .usage--flat{border:none;padding-top:0;margin-top:0}
+  .warn{background:var(--brand-soft);border:1px solid var(--brand-soft-2);border-radius:var(--radius-md);
+    padding:14px 16px;font-size:var(--t-small);line-height:1.6;margin-top:28px}
+  /* статус компонента: стоит ли он в разметке хоть одной страницы */
+  .st{display:inline-block;vertical-align:2px;margin-left:8px;padding:2px 7px;border-radius:var(--radius-inside);
+    font-family:var(--font-body);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+  .st--off{background:var(--surface-gray);color:var(--text-tertiary)}
+
+  /* заглушка вместо фото — витрине картинки не нужны */
+  .demo-img{width:100%;height:100%;background:
+    repeating-linear-gradient(135deg,var(--surface-gray-2) 0 10px,var(--surface-gray) 10px 20px)}
+  .demo-w{max-width:280px}
+
+  @media (max-width:1023px){   /* канон проекта: мобильная раскладка с 1023 */
+    .page{grid-template-columns:1fr;gap:24px}
+    .toc{position:static;display:flex;flex-wrap:wrap;gap:4px 16px;
+      background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px}
+    .toc b{margin:0;width:100%}
+    .row{grid-template-columns:1fr;gap:12px}
+    section{padding:20px}
+  }
