@@ -293,6 +293,14 @@
   .usl-rev .rev-score{font-family:var(--font-head);font-weight:700;font-size:var(--t-h2);
     line-height:1;color:var(--text-primary)}
   .usl-rev .rev-of{font-size:var(--t-small);color:var(--text-secondary)}
+  /* Кнопка уходит к правому краю: слева оценка и количество — это подпись к блоку, справа
+     действие. Так же устроена шапка портфолио (заголовок слева, переключатель справа).
+     align-self:center — остальные дети выровнены по baseline, а у кнопки с рамкой базовая
+     линия текста внутри плашки, и по ней плашка встаёт выше строки. */
+  .usl-rev .rev-badge{display:inline-flex;align-self:center;line-height:0}
+  /* натуральные 150×50: ужимали до высоты кнопки — вторая строка бейджа переставала читаться */
+  .usl-rev .rev-badge img{display:block}
+  .usl-rev .rev-add{margin-left:auto;align-self:center}
   /* карточки компактнее: 4 строки цитаты вместо 5, padding 24 вместо 28 */
   /* текст отзыва скроллится внутри карточки; max-height ≈ 5 строк, дальше — вертикальный скролл */
   .usl-rev .mk-review__text{font-size:var(--t-small);line-height:var(--t-small-lh);max-height:7.5em;
@@ -497,14 +505,6 @@
      Глифы монохромные (fill:currentColor), те же контуры, что у кнопок мессенджеров в шапке:
      растровый max.png в плитку не годится и цвет не наследует. */
 
-  /* ЗАГЛУШКА: бейдж «Хорошее место» — товарный знак Яндекса, рисовать свой нельзя.
-     Нужен официальный ассет/виджет Яндекс.Бизнеса. */
-  .usl-foot .fbadge{display:inline-flex;align-items:center;gap:var(--sp-10);justify-self:start;
-    border:1px dashed var(--border-on-dark);border-radius:var(--radius-md);
-    padding:var(--sp-10) var(--sp-12);max-width:260px}
-  .usl-foot .fbadge b{color:var(--text-on-dark);font-size:var(--t-small);line-height:var(--t-small-lh);font-weight:600}
-  .usl-foot .fbadge span{font-size:var(--t-caption);line-height:var(--t-caption-lh)}
-
   /* ПОДПИСКА + СОЦСЕТИ — отдельная зона: цель «следить за нами», а не «связаться». */
   /* дайджест и соцсети живут в верхней полосе; своей зоны у них больше нет */
   .usl-foot .fsub h5{margin-bottom:var(--sp-8)}
@@ -552,8 +552,8 @@
     font-size:var(--t-caption);line-height:var(--t-caption-lh);padding:var(--sp-4) 0}
   @media (prefers-reduced-motion:reduce){.usl-foot a,.usl-foot .fsub-form{transition:none}}
 
-  /* Последним правилом футера: .usl-foot a{display:block}, .flogo{display:block},
-     .fbadge{display:inline-flex} — все той же специфичности, что и селектор ниже.
+  /* Последним правилом футера: .usl-foot a{display:block}, .flogo{display:block} —
+     той же специфичности, что и селектор ниже.
      При равной специфичности решает порядок, поэтому [hidden] должен идти после них. */
   .usl-foot [hidden]{display:none}
 
@@ -753,6 +753,11 @@
     .usl-rev .rev-head{display:contents}
     .usl-rev .rev-score::before{content:"·";margin-right:var(--sp-8);color:var(--text-tertiary)}
     .usl-rev .rev-of{width:100%;margin-top:var(--sp-4)}
+    /* На узком кнопке в строку с подписью не встать: роняем на свою строку (width:100% + ширина
+       по контенту), прижимать её вправо не к чему — рядом ничего нет. */
+    .usl-rev .rev-badge{width:100%;margin-top:var(--sp-12)}
+    .usl-rev .rev-add{width:100%;margin:var(--sp-12) 0 0;justify-content:flex-start;
+      max-width:max-content}
     /* Косяк №3: ссылка-источник («Яндекс Карты») давала цель 16px по высоте. */
     .usl-rev .mk-review__source{min-height:32px;padding-block:var(--sp-8)}
     /* .usl-art .art-grid — см. второй брейкпоинт в <style id="port-after">: здесь правило
@@ -4177,8 +4182,17 @@
             <!-- Ведёт на СВОЮ форму отзыва, а не на карты: у услуги на сайте свой поток отзывов
                  (на mdmprint.ru это отзывы WooCommerce, привязанные к странице услуги). Здесь
                  заглушка — при переносе href указывает на форму отзыва этой страницы.
-                 Вид — текстовая ссылка: рядом заявка и расчёт, вторая плашка спорила бы с ними. -->
-            <a class="rev-add mk-btn mk-btn--link" href="#">Добавить отзыв</a>
+                 Вид — вторичная кнопка (.mk-btn--ghost): по ДС вторичная на светлом — белая
+                 с рамкой. Жёлтую не берём, чтобы не спорить с «Оставить заявку». -->
+            <!-- Бейдж Яндекс.Бизнеса. Тёмный взят из подвала mdmprint.ru/contacts, здесь стоит
+                 СВЕТЛЫЙ — на белом блоке тёмная плашка читается как чужеродная врезка.
+                 Светлый собран перекраской тёмного, то есть это ВРЕМЕННЫЙ ассет: у Яндекса в
+                 промоматериалах есть официальная светлая тема, её и ставить на бой (там же берётся
+                 их код — оценка живая и клик ведёт в профиль; у картинки цифра зашита). -->
+            <a class="rev-badge" href="https://yandex.ru/maps/org/mdmprint/1299127609/" target="_blank" rel="noopener">
+              <img src="../assets/img/badge-yandex-light.svg" width="150" height="50" alt="Хорошее место по версии Яндекса — оценка 5,0" loading="lazy">
+            </a>
+            <a class="rev-add mk-btn mk-btn--ghost mk-btn--sm" href="#">Добавить отзыв</a>
           </div>
         </div>
         <div class="mk-scroller revs" data-scroller>
@@ -4453,11 +4467,6 @@
             <p class="fabout">Типография полного цикла: печать, постпечать и брендирование под ключ. Работаем с 2012 года.</p>
             <p class="fcopy-line">© 2012–2026 ООО «МДМпринт»</p>
 
-            <!-- ЗАГЛУШКА: официальный бейдж Яндекс.Бизнеса. Свой рисовать нельзя — товарный знак. -->
-            <div class="fbadge">
-              <b>Хорошее место</b>
-              <span>Яндекс · 4,9 из 5</span>
-            </div>
           </div>
 
           <div>
