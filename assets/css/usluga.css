@@ -1,0 +1,2245 @@
+/* Стили страницы услуги (prototypes/usluga.html).
+   Вынесено из inline 19.08 по замечанию разработчиков.
+
+   ПОРЯДОК ЗНАЧИМ. Файл собран из двух inline-блоков в том же порядке, в каком они шли в разметке.
+   Второй блок назывался <style id="port-after"> и существовал ровно затем, чтобы перебивать
+   первый порядком и специфичностью, — здесь он просто идёт следом, и та же цель достигается
+   естественно. Границу оставляю видимой: половина правок ниже писалась с оглядкой на то, что
+   они стоят ПОСЛЕ, и перетасовка их сломает.
+
+   Подключается ПОСЛЕ kit.css: страница переопределяет кит, а не наоборот. */
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font-body);color:var(--text-primary);background:var(--surface-subtle);font-size:var(--t-small);line-height:1.45}
+  a{color:inherit;text-decoration:none}
+  .wrap{width:min(100% - var(--container-pad) * 2, var(--container));margin-inline:auto}
+  svg{display:block}
+
+  /* ===== ВЕРХНЯЯ ТЁМНАЯ ПОЛОСА ===== */
+  .topbar{background:var(--surface-dark);color:var(--text-on-dark-2);font-size:var(--t-small);position:relative;z-index:50}
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:40px}
+  .topbar a{color:var(--text-on-dark-2);transition:color .15s}
+  .topbar a:hover{color:var(--text-on-dark)}
+  .topbar .menu{display:flex;gap:22px;align-items:center;font-weight:400}
+  .topbar .info{display:flex;gap:18px;align-items:center}
+  /* .tb-cta = .mk-btn--primary --sm (класс оставлен: за него держится JS).
+     Перебиваем .topbar a — оно специфичнее модификатора кита. */
+  .topbar .tb-cta,.topbar .tb-cta:hover{color:var(--on-brand)}
+  .topbar .info .it{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;color:var(--text-on-dark-2)}
+  .topbar .info .it:hover{color:var(--text-on-dark)}
+  /* почта — выделена белым + подсказка «скопировать кликом» */
+  .topbar .tb-mail{color:var(--text-on-dark);position:relative;cursor:pointer}
+  .topbar .tb-mail .ml-tx{border-bottom:1px dashed rgba(255,255,255,.45);transition:border-color .15s}
+  .topbar .tb-mail:hover{color:var(--text-on-dark)}
+  .topbar .tb-mail:hover .ml-tx{border-color:var(--text-on-dark)}
+  .topbar .tb-mail::after{content:attr(data-hint);position:absolute;top:calc(100% + 7px);left:0;background:var(--surface-card);color:var(--text-primary);font-size:11.5px;font-weight:600;padding:5px 9px;border-radius:var(--radius-inside);white-space:nowrap;opacity:0;pointer-events:none;transform:translateY(-3px);transition:opacity .15s,transform .15s;box-shadow:0 8px 22px rgba(0,0,0,.2);z-index:60}
+  .topbar .tb-mail:hover::after{opacity:1;transform:translateY(0)}
+  /* подтверждение копирования — как в футере (вариант Б): жёлтая плашка «Скопировано», без галочки */
+  .topbar .tb-mail.is-done::after{content:"Скопировано";background:var(--brand);color:var(--on-brand);opacity:1;transform:translateY(0)}
+  /* «О компании» — выпадающее меню в топбаре */
+  .topbar .tb-drop{position:relative;height:40px;display:flex;align-items:center}
+  .topbar .tb-drop-t{display:inline-flex;align-items:center;gap:5px;cursor:pointer;height:40px;transition:color .15s}
+  .topbar .tb-drop-t svg{transition:transform .15s}
+  .topbar .tb-drop:hover .tb-drop-t{color:var(--text-on-dark)}
+  .topbar .tb-drop:hover .tb-drop-t svg{transform:rotate(180deg)}
+  /* панель = продолжение самого бара: наследует его поверхность, «выезжает» снизу без парящей карточки */
+  .topbar .tb-menu{position:absolute;top:100%;left:-16px;display:none;grid-template-columns:1fr 1fr;gap:1px 20px;
+    background:var(--surface-dark-2);border:1px solid var(--border-on-dark);border-top:none;border-radius:0 0 var(--radius-outside) var(--radius-outside);
+    box-shadow:0 18px 34px -12px rgba(0,0,0,.5);padding:13px 16px 15px;z-index:60}
+  .topbar .tb-drop:hover .tb-menu{display:grid}
+  /* min-width должен вмещать самый длинный пункт («Сертификаты и лицензии» ≈157px)
+     + горизонтальные паддинги пункта (2×10): иначе текст упирается в правый край подсветки */
+  .topbar .tb-col{display:flex;flex-direction:column;min-width:180px}
+  .topbar .tb-col-h{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;color:var(--text-tertiary);padding:2px 10px 7px}
+  .topbar .tb-menu a{color:var(--text-on-dark-2);padding:8px 10px;border-radius:var(--radius-inside);font-size:var(--t-caption);white-space:nowrap}
+  .topbar .tb-menu a:hover{background:var(--surface-on-dark);color:var(--text-on-dark)}
+  /* ============================================================
+     СТРАНИЦА УСЛУГИ / МАТЕРИАЛА (namespace .usl) — пример «Тиснение»
+     ============================================================ */
+  /* tabindex=-1 — цель skip-link; своего фокус-кольца не рисуем, фокус тут технический */
+  .usl{background:var(--surface-page);color:var(--text-primary);scroll-margin-top:118px}
+  .usl:focus{outline:none}
+  .usl .wrap{width:min(100% - var(--container-pad) * 2, var(--container));margin-inline:auto}
+  .usl section{padding:var(--section-y) 0;border-top:1px solid var(--border);scroll-margin-top:118px}
+  .usl section:first-child{border-top:none}
+  .usl .eyebrow{display:inline-block;font-family:var(--font-body);font-size:var(--t-label);font-weight:500;line-height:var(--t-label-lh);letter-spacing:var(--t-label-ls);text-transform:uppercase;color:var(--brand-text)}
+  /* базовая типографика — только для тегов БЕЗ класса, иначе перебивает кит (.mk-*) */
+  .usl h2:not([class]){font-family:var(--font-head);font-size:var(--t-h2);font-weight:700;letter-spacing:var(--t-h2-ls);text-transform:uppercase;line-height:var(--t-h2-lh);margin:8px 0 0}
+  .usl .sec-head{margin-bottom:32px}
+  .usl h3:not([class]){font-family:var(--font-head);font-size:var(--t-h3);font-weight:700;text-transform:uppercase;letter-spacing:var(--t-h3-ls);line-height:var(--t-h3-lh);margin:0}
+  .usl p:not([class]){color:var(--text-secondary);line-height:1.55}
+  .usl .lead{font-family:var(--font-body);font-weight:400;font-size:var(--t-lead);color:var(--text-secondary);line-height:var(--t-lead-lh)}
+
+  /* кнопки — из кита (.mk-btn), локальных больше нет */
+
+  /* breadcrumbs */
+  .usl .crumbs{display:flex;gap:var(--sp-8);align-items:center;font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-secondary);margin-bottom:var(--sp-24)}
+  .usl .crumbs a{transition:color .12s}
+  @media (hover:hover){.usl .crumbs a:hover{color:var(--text-primary)}}
+  .usl .crumbs a:active{color:var(--text-primary)}
+  .usl .crumbs span{color:var(--text-tertiary)}   /* был --text-on-dark-2: токен ТЁМНЫХ поверхностей + холодный серый на светлом тёплом фоне */
+  .usl .crumbs b{color:var(--text-primary);font-weight:600}   /* текущая страница — акцент, а не просто bold от браузера */
+
+  /* HERO */
+  .usl-hero{padding:var(--sp-40) 0 var(--sp-64)!important;background:var(--surface-subtle)}
+  .usl-hero .hero-grid{display:grid;grid-template-columns:619fr 557fr;align-items:start}
+  .usl-hero .hero-left{padding-top:50px}
+  .usl-hero h1{font-family:var(--font-head);font-size:var(--t-h1);font-weight:700;letter-spacing:var(--t-h1-ls);text-transform:uppercase;line-height:var(--t-h1-lh);margin:var(--sp-10) 0 var(--sp-20)}
+  .usl-hero .hero-bullets{margin-top:var(--sp-20)}
+  .usl-hero .hero-cta{display:flex;gap:var(--sp-16);margin-top:var(--sp-32);flex-wrap:wrap}
+  /* фото на белом фоне: darken убирает подложку (как в Figma), тень запечена в пиксели */
+  .usl-hero .hero-media{aspect-ratio:4/3}
+  .usl-hero .hero-media img{width:100%;height:100%;object-fit:contain;mix-blend-mode:darken}
+
+  /* полоса доверия = .mk-statbar из кита; своё — только отмена паддинга секции */
+  .usl-statbar{padding:0!important}
+
+  /* STICKY SUBNAV */
+  /* сверху линию даёт .mk-statbar, снизу — своя (нужна, когда подменю прилипло) */
+  /* низ липкой зоны = top подрубрикатора (54) + его высота (53) */
+  .usl-req{--stack-top:107px}
+  /* фон плотный: сквозь rgba(...,.92) при скролле просвечивал контент под липкой полосой */
+  .usl-subnav{position:sticky;top:54px;z-index:30;background:var(--surface-card);border-bottom:1px solid var(--border);padding:0!important}
+  .usl-subnav + section{border-top:none}
+  .usl-subnav .wrap{display:flex;gap:28px;height:52px;align-items:stretch;overflow-x:auto}
+  /* -webkit-tap-highlight-color: iOS рисует свою вспышку серым ПРЯМОУГОЛЬНИКОМ, игнорируя радиус.
+     В ките гасим явным списком компонентов (чужую разметку он трогать не вправе), а тут — страница
+     целиком наша, поэтому одним правилом: иначе список пришлось бы вести вручную и он бы отставал
+     (так и вышло: лого, крошки, согласие и весь футер вспышку сохранили). Взамен — свой :active. */
+  a,button{-webkit-tap-highlight-color:transparent}
+  .logo:active{opacity:.7}
+  .usl .cbm-check a:active{opacity:.6}
+
+  /* подшапка — не компонент кита, поэтому под его правило не попадала,
+     и на ней оставалась родная вспышка iOS (серый прямоугольник поверх пункта). Гасим и даём :active. */
+  .usl-subnav a{display:inline-flex;align-items:center;font-size:var(--t-small);color:var(--text-secondary);border-bottom:2px solid transparent;white-space:nowrap;transition:.15s;-webkit-tap-highlight-color:transparent}
+  @media (hover:hover){.usl-subnav a:hover{color:var(--text-primary)}}
+  .usl-subnav a:active{color:var(--text-primary)}
+  .usl-subnav a.active{color:var(--text-primary);font-weight:600;border-bottom-color:var(--brand)}
+
+  /* generic card */
+  .usl .card{background:var(--surface-card);border:1px solid var(--border);border-radius:14px}
+
+  /* ПРЕИМУЩЕСТВА — плитки и списки из кита (.mk-tile / .mk-list / .mk-ph) */
+  .usl-adv .adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-24);align-items:stretch}
+  .usl-adv .adv-media{min-height:300px;overflow:hidden;position:relative}
+  /* Размер диктует КОЛОНКА, а не файл: на десктопе медиа тянется по высоте столбика плиток
+     (align-items:stretch у .adv-grid, нижняя граница — min-height), на мобилке у неё
+     aspect-ratio 4/3. Без этих трёх свойств вертикальный кадр 600×1200 растил секцию с 572 до
+     1446px и вылезал за свою колонку (замер 19.08). Кадр вписывается с обрезкой по центру —
+     как в китовых карточках (.mk-mcard__media img).
+     Картинка ОБЯЗАНА быть absolute: при обычном потоке height:100% упирается в высоту auto у
+     родителя, резолвится в натуральные 1148px — и колонка снова растёт по файлу. Тот же приём,
+     что у .mk-tilelink__media в ките. */
+  .usl-adv .adv-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+  .usl-adv .tiles{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-24)}
+
+  /* ВИДЫ */
+  /* ВИДЫ — карточки из кита (.mk-mcard); фото пока плейсхолдер-градиент */
+  .usl-vidy .vidy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap-card)}
+  .usl-vidy .mk-mcard__media{background:linear-gradient(135deg,#faf8f3,#eee9df)}
+  .usl-vidy .mk-mcard__media.gold{background:linear-gradient(135deg,#fff6da,#f3d488)}
+  .usl-vidy .vidy-note{margin-top:var(--sp-24);font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-secondary)}
+
+  /* ЦЕНЫ */
+  /* ЦЕНЫ — карточки и прайс-строки из кита (.mk-card / .mk-pricelist) */
+  .usl-price .price-grid{display:grid;grid-template-columns:776fr 376fr;gap:var(--sp-24);align-items:stretch}
+  .usl-price .ptable{display:flex;flex-direction:column;gap:var(--sp-16);align-items:flex-start;padding:var(--sp-24)}
+  .usl-price .calc{display:flex;flex-direction:column;gap:var(--sp-12);align-items:flex-start;padding:var(--sp-24)}
+  /* один в один с .fnote «Готовых материалов», включая margin-top: два блока-помощника
+     набраны одинаково, различает их только сторона — тёмная или светлая */
+  .usl-price .calc .calc-sub{color:var(--text-on-dark-2);font-size:var(--t-small);
+    line-height:var(--t-small-lh);margin-top:var(--sp-4)}
+
+  /* ПОРТФОЛИО */
+  /* ПОРТФОЛИО — одна карточка (.mk-mcard) в обоих видах; отличаются только пропорция и число колонок.
+     Видео — вертикали 9:16 по 5 в ряд, фото — 4:3 по 3 в ряд. Медиа пока плейсхолдеры-градиенты. */
+  .usl-port .port-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-16)}
+  /* сколько карточек в кадре: 5 вертикалей / 3 горизонтали. Стрелки — по центру медиа, не всей карточки */
+  .usl-port .port-grid--video{--item-w:calc((100% - 4 * var(--gap-card)) / 5);--nav-top:calc((100% - 74px) / 2)}
+  .usl-port .port-grid--photo{--item-w:calc((100% - 2 * var(--gap-card)) / 3);--nav-top:calc((100% - 104px) / 2)}
+  .usl-port .mk-mcard__media{background:linear-gradient(135deg,#33414f,#151c22)}
+  .usl-port .mk-mcard:nth-child(3n+1) .mk-mcard__media{background:linear-gradient(135deg,#8a1f2b,#4a0f16)}
+  .usl-port .mk-mcard:nth-child(3n+2) .mk-mcard__media{background:linear-gradient(135deg,#2a2a2a,#0b0b0b)}
+  .usl-port .port-note{margin-top:var(--sp-24);font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-secondary)}
+
+  /* ТРЕБОВАНИЯ — композиция «Цен»: слева контент, справа липкая карточка с файлами.
+     Строки требований и параметров — белые плашки на серой карточке (язык прайс-листа). */
+  .usl-req .req-grid{display:grid;grid-template-columns:776fr 376fr;gap:var(--sp-24);align-items:start}
+  .usl-req .req-main{padding:var(--sp-24);min-width:0}
+  .usl-req .req-head{margin:0 0 var(--sp-18)}
+  /* Своего правила у h3 тут нет и не должно быть: базовое .usl h3:not([class]) даёт и гарнитуру,
+     и капс, и margin:0, и ступень --t-h3. Прежнее правило всё это дублировало ради font-size:19px —
+     кегля, которого в шкале нет вовсе, отчего заголовок был мельче равного себе по уровню
+     «Примерная стоимость и сроки» (.mk-h3 = 24), да ещё и с чужим леадингом 28. */
+  /* статичный чек-лист (.mk-reqlist) переехал в кит целиком — здесь только мобильный full-bleed */
+  .usl-req .req-cta{margin-top:var(--sp-20);display:flex;flex-direction:column;align-items:center;gap:var(--sp-14)}
+  .usl-req .req-cta .mk-btn--primary{width:100%}
+  .usl-req .req-cta .mk-btn--link{display:inline-flex;align-items:center;gap:var(--sp-6)}
+  .usl-req .req-cta .mk-btn--link:hover .mk-arr{transform:translateX(2px)}
+
+  .usl-req .files{position:sticky;top:calc(var(--stack-top) + var(--sp-16));display:flex;flex-direction:column;gap:var(--sp-16);padding:var(--sp-24)}
+  /* Шапка карточки-помощника: кружок-иконка + заголовок с подписью. Одна на два блока —
+     «Готовые материалы» и «Онлайн-калькулятор»: обе живут в правой колонке и играют одну роль,
+     поэтому классы общие, а не скопированные. Кандидат в кит (как .mk-subnav): пока два
+     применения на одной странице, выносим, когда паттерн повторится на другой. */
+  .usl .fhead{display:flex;gap:var(--sp-12);align-items:flex-start}
+  .usl .fhead .fh-ic{width:38px;height:38px;flex-shrink:0;border-radius:var(--radius-md);
+    background:var(--surface-on-light);color:var(--text-secondary);display:flex;align-items:center;justify-content:center}
+  .usl .fhead .fh-ic svg{width:20px;height:20px}
+  /* на тёмной карточке кружок берёт поверхность своей стороны */
+  .usl-price .calc .fh-ic{background:var(--surface-on-dark);color:var(--text-on-dark)}
+  .usl-req .files .fnote{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-secondary);margin-top:var(--sp-4)}
+  .usl-req .files .flist{display:flex;flex-direction:column;gap:var(--sp-8)}
+
+  /* FAQ — 2 колонки как в блоке «Требования»: аккордеоны (узкие) слева + форма-вопрос справа (sticky).
+     Аккордеоны — из кита (.mk-acc). Набор полей формы — как в блоке FAQ на mdmprint.ru, оформление на ките (.cbm-*). */
+  .usl-faq .faq-grid{display:grid;grid-template-columns:776fr 376fr;gap:var(--sp-24);align-items:start}
+  .usl-faq .mk-acclist--card{min-width:0}
+  /* форма — тихая белая карточка (.mk-card): не спорит с аккордеонами по весу и не прячет неактивную кнопку
+     (в ките .mk-btn:disabled = --surface-gray — на серой плашке CTA сливался). Здесь только липкость и отступы. */
+  .faq-form{position:sticky;top:calc(var(--stack-top, 107px) + var(--sp-16));padding:var(--sp-24)}
+  .faq-form form{margin-top:var(--sp-16);display:flex;flex-direction:column;gap:13px}
+  .faq-form .cbm-sub{margin-top:6px}
+  .faq-form .cbm-done{padding:8px 4px 4px}
+  /* .cbm-field{display:flex} перебивает [hidden] — возвращаем для скрытых контакт-полей (как .mk-btn[hidden] в ките) */
+  .faq-form .cbm-field[hidden]{display:none}
+  /* элементы мобильной ЧАВО-шторки — на десктопе скрыты (специфичность бьёт .cbm-x) */
+  .faq-cta,.faq-backdrop{display:none}
+  .faq-form .cbm-x{display:none}
+
+  /* ГДЕ ПРИМЕНЯЕТСЯ / продукты */
+  /* ПРОДУКТЫ — .mk-mcard из кита. Figma: 176px × 6 в ряд (176*6 + 24*5 = 1176),
+     текстовый блок p16 + заголовок h40 с выравниванием по низу → одинаковая высота при 1 и 2 строках. */
+  .usl-prod .pcards{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--gap-card)}
+  .usl-prod .mk-mcard__body{padding:var(--sp-16);min-height:72px;justify-content:flex-end}
+
+  /* СОЧЕТАЕТСЯ */
+  /* плитки-ссылки — из кита (.mk-tilelink); подзаголовок секции */
+  .usl-combo .combo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap-card)}
+  /* Снимки сняты на белом. darken = поканальный минимум: белый фон кадра схлопывается
+     в подложку плитки и белый прямоугольник исчезает. Работает только если под картинкой
+     светлая подложка — поэтому снимаем белый фон медиа и разделительную линию кита.
+     (Зеркало приёма в CTA: там подложка тёмная, и фон снимается через lighten.) */
+  .usl-combo .mk-tilelink__media{background:transparent;border-right:none}
+  .usl-combo .mk-tilelink__media img{mix-blend-mode:darken}
+  .usl .sec-head .sub{margin-top:var(--sp-10);max-width:720px;  /* Figma: desc w=720 */
+    font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-secondary)}
+
+  /* ОТЗЫВЫ */
+  /* отзывы — из кита (.mk-review + .mk-card). Figma: 2 колонки по 576, gap 24.
+     Данные: виджет SmartWidgets (Яндекс.Карты + 2ГИС) + свои отзывы с сайта.
+     Виджет рендерит в обычный DOM (#sw-app-<key>), данные лежат в window.swapp_data
+     после события swAppComplite → рисуем своей разметкой, чужой свайпер не используем. */
+  /* лента: 2 карточки в кадре (Figma: 576 + 24 + 576 = 1176) */
+  .usl-rev .revs{--item-w:calc((100% - 2 * var(--gap-card)) / 3)}
+  /* align-items:stretch выравнивает карточки по самой высокой; height:100% его бы отменил */
+  /* зазор — от кита (--gap-card); свой был 24 против китовых 20, отчего ленты жили по разным законам */
+  .usl-rev .mk-scroller__track{align-items:stretch;padding-block:2px}
+  /* Оценка и подпись — по БАЗОВОЙ линии (низы коробок у 32px и 18px кегля не совпадают).
+     Бейдж с кнопкой вынесены из потока: иначе бейдж (50px) растит строку, и зазор под
+     заголовком раздувается с 12 до 30px. */
+  .usl-rev .rev-head{position:relative;display:flex;align-items:baseline;gap:var(--sp-12);
+    flex-wrap:wrap;margin-top:var(--sp-12)}
+  .usl-rev .rev-actions{position:absolute;right:0;bottom:0;display:flex;align-items:flex-end;
+    gap:var(--sp-12)}
+  .usl-rev .rev-score{font-family:var(--font-head);font-weight:700;font-size:var(--t-h2);
+    line-height:1;color:var(--text-primary)}
+  .usl-rev .rev-of{font-size:var(--t-small);color:var(--text-secondary)}
+  /* Кнопка уходит к правому краю: слева оценка и количество — это подпись к блоку, справа
+     действие. Так же устроена шапка портфолио (заголовок слева, переключатель справа).
+     align-self:center — остальные дети выровнены по baseline, а у кнопки с рамкой базовая
+     линия текста внутри плашки, и по ней плашка встаёт выше строки. */
+  /* Бейдж уходит вправо, к кнопке: 5,0 нарисована и на нём, и крупно слева — рядом две
+     одинаковые цифры читались как дубль. По краям они не спорят. */
+  /* Низ бейджа совпадает с низом кнопки, при этом кнопка остаётся на своём месте: строку
+     держит бейдж (50px против 32px у кнопки), поэтому поднимаем его на половину разницы. */
+  .usl-rev .rev-badge{display:inline-flex;line-height:0}
+
+  /* ОЦЕНКА ЗВЁЗДАМИ в модалке отзыва. Ряд развёрнут (row-reverse), поэтому в разметке звёзды
+     идут от 5 к 1, а на экране — слева направо. Такой порядок позволяет подсветить «до
+     наведённой» одним соседним селектором (~), без единой строки скрипта.
+     Сами переключатели не display:none — иначе их не поймает клавиатура; уводим за пределы
+     видимости, фокус показываем на звезде. */
+  .rev-rate{display:inline-flex;flex-direction:row-reverse;justify-content:flex-end;gap:var(--sp-4)}
+  .rev-rate input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .rev-rate label{font-size:28px;line-height:1.1;color:var(--surface-gray-2);cursor:pointer;
+    padding:0 2px;border-radius:var(--radius-inside);transition:color .12s,transform .12s}
+  .rev-rate label:hover,
+  .rev-rate label:hover ~ label,
+  .rev-rate input:checked ~ label{color:var(--brand)}
+  /* Как на mdmprint.ru: звезда под курсором слегка подрастает и приподнимается. Только та, на
+     которую навели: если поднимать весь ряд, движется половина строки и эффект превращается в шум. */
+  .rev-rate label:hover{transform:translateY(-2px) scale(1.12)}
+  .rev-rate input:focus-visible + label{outline:2px solid var(--brand-dark);outline-offset:2px}
+  /* Ошибка у оценки: рамку рисовать не на чем (это не поле ввода), поэтому краснеет подпись */
+  .cbm-field.invalid .rev-rate label{color:var(--surface-gray-2)}
+  @media (prefers-reduced-motion:reduce){.rev-rate label{transition:none}
+    .rev-rate label:hover{transform:none}}
+  /* натуральные 150×50: ужимали до высоты кнопки — вторая строка бейджа переставала читаться */
+  .usl-rev .rev-badge img{display:block}
+
+  /* карточки компактнее: 4 строки цитаты вместо 5, padding 24 вместо 28 */
+  /* текст отзыва скроллится внутри карточки; max-height ≈ 5 строк, дальше — вертикальный скролл */
+  .usl-rev .mk-review__text{font-size:var(--t-small);line-height:var(--t-small-lh);max-height:7.5em;
+    scrollbar-width:thin;scrollbar-color:var(--border-strong) transparent}
+  /* видимый признак прокрутки: стилизованный скролл — на webkit это ещё и отключает исчезающий overlay,
+     т.е. полоса видна в покое ровно когда текст не влез (короткие отзывы её не показывают) */
+  .usl-rev .mk-review__text::-webkit-scrollbar{width:6px}
+  .usl-rev .mk-review__text::-webkit-scrollbar-track{background:transparent}
+  .usl-rev .mk-review__text::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:var(--radius-pill)}
+  /* подсказка «снизу есть продолжение»: нижний край текста тает, пока не долистан до конца (класс ставит JS) */
+  .usl-rev .mk-review__text.has-more{
+    -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 1.6em),transparent);
+    mask-image:linear-gradient(to bottom,#000 calc(100% - 1.6em),transparent)}
+
+  /* СТАТЬИ — карточки кита (.mk-mcard--link) как в «Видах», без медиа: у статьи нет кадра,
+     ценность в заголовке. 4 в ряд — рубрика/имя сверху, время чтения прижато вниз.
+     Заголовок наборный (.mk-mcard__title, Roboto 16/600) — имя статьи читают, а не опознают. */
+  .usl-art .art-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap-card)}
+  .usl-art .art-card{height:100%}
+  .usl-art .art-card .mk-mcard__body{flex:1}   /* паддинг — китовый (16), см. лестницу в ДС */
+  /* --text-secondary, а не --text-tertiary: время чтения — осмысленный текст (норма 4.5:1) */
+  .usl-art .art-card__time{margin-top:auto;padding-top:var(--sp-12);
+    color:var(--text-secondary);font-size:var(--t-small);line-height:var(--t-small-lh)}
+
+  /* ФИНАЛЬНЫЙ CTA + ФУТЕР — одна тёмная поверхность.
+     Было: CTA — чёрная «коробка» #1b1b1d с радиусом на белом, под ней футер #141416.
+     Два разных чёрных подряд и лишний шов. Стало: общий --surface-dark, CTA и футер
+     разделены линией --border-on-dark внутри контентной ширины.
+     (Старые правила были на хардкодах — переписаны на токены, а не восстановлены.) */
+  .usl-final{border-top:none!important;background:var(--surface-dark);color:var(--text-on-dark);
+    padding-bottom:var(--sp-48)!important;
+    /* фигура ныряет ниже секции, а низ секции — это и есть линия футера: она её и обрезает */
+    position:relative;overflow:hidden}
+  /* 436 + 356 + 336 + два гэпа по 24 = 1176 — та же сетка, что в нижней зоне футера */
+  .usl-final .cta-box{position:relative;display:grid;grid-template-columns:436fr 356fr 336fr;
+    gap:var(--sp-32) var(--sp-24);align-items:start}
+  .usl-final h2{color:var(--text-on-dark);margin:0}
+  /* класс обязателен: .usl p:not([class]) (0,2,1) перебил бы цвет и покрасил абзац в --text-secondary */
+  .usl-final .cta-sub{color:var(--text-on-dark-2);margin:var(--sp-10) 0 var(--sp-24)}
+  /* снимает главный страх перед кнопкой — «оставлю заявку, и начнут звонить» */
+  .usl-final .cta-note{margin:var(--sp-12) 0 0;color:var(--text-tertiary);
+    font-size:var(--t-caption);line-height:var(--t-caption-lh)}
+
+  /* Оптическое выравнивание: заголовки выравниваются по верху БУКВ, а не по боксам.
+     Крупный h2 (32/44) несёт больше полулиньяжа, чем подпись (12/16), поэтому его
+     буквы начинаются на 18,6px ниже. Сдвигаем колонку вниз, а не поднимаем h2. */
+  .usl-final .cta-side{margin-top:var(--sp-18)}
+
+  /* «Как это будет» — те же кружки-плитки, что у иконок контактов в футере */
+  .usl-final .cta-steps{list-style:none;margin:var(--sp-14) 0 0;padding:0;
+    display:flex;flex-direction:column;gap:var(--sp-16)}
+  .usl-final .cta-steps li{display:flex;gap:var(--sp-12);align-items:flex-start;
+    color:var(--text-on-dark-2);font-size:var(--t-small);line-height:var(--t-small-lh)}
+  .usl-final .cta-steps li::before{counter-increment:step;content:counter(step);
+    flex-shrink:0;width:24px;height:24px;border-radius:var(--radius-inside);
+    background:var(--surface-on-dark);color:var(--text-on-dark);
+    display:flex;align-items:center;justify-content:center;
+    font-size:var(--t-label);line-height:1;font-weight:600}
+  .usl-final .cta-steps{counter-reset:step}
+
+  /* Фигура вынута из потока: иначе её высота задавала бы высоту строки и растягивала
+     секцию под картинку. Третья колонка сетки остаётся пустой — она держит для неё место.
+     Уходит на 80px ниже секции, а низ секции — линия футера: overflow:hidden режет по ней. */
+  /* Верх обложки — на одной линии с заголовком, низ на 80px ниже секции. Высоту задают
+     top/bottom, ширину — пропорция файла: при любой длине текста картинка не вылезет вверх. */
+  .usl-final .cta-fig{position:absolute;right:0;top:0;
+    bottom:calc(-1 * (var(--sp-48) + var(--sp-80)));width:auto;aspect-ratio:840 / 1024}
+  /* lighten = поканальный максимум с подложкой. Фон кадра (12–26) темнее --surface-dark
+     (34,34,32), поэтому схлопывается ровно в неё, а светлая обложка остаётся нетронутой.
+     Зеркало приёма с товарными фото: там белый фон и darken на белой карточке. */
+  .usl-final .cta-fig img{width:100%;height:100%;display:block;object-fit:contain;
+    mix-blend-mode:lighten}
+
+  /* Разделители зон идут от края до края — как .usl section{border-top} и .mk-statbar.
+     На .wrap линия обрывалась бы по контентной ширине и спорила с ритмом страницы. */
+  /* Разделители зон идут от края до края — как .usl section{border-top} и .mk-statbar.
+     На .wrap линия обрывалась бы по контентной ширине и спорила с ритмом страницы. */
+  .usl-foot{background:var(--surface-dark);color:var(--text-on-dark-2);
+    border-top:1px solid var(--border-on-dark)}
+  /* навигация идёт первой; линия отделяет её от нижней полосы с контактами */
+  .usl-foot .fmain{border-top:1px solid var(--border-on-dark);padding:var(--sp-40) 0}
+  /* Нижняя полоса: контакты | дайджест | соцсети.
+     436 + 476 + 216 + два гэпа по 24 = 1176. Адрес встаёт в одну строку,
+     а форма (max-width 420) не упирается в соседнюю колонку. */
+  /* Колонки ПО СЕТКЕ (12 × 76, гаттер 24): 5 + 4 + 3. Было 436/476/216 — в сумме те же 1176,
+     но мимо колонок: последняя колонка начиналась на x=1092, а у ссылок выше — на 1032.
+     Взято 5+4+3, а не 4+5+3: при 376 контакты внутри .fbrand переставали помещаться (замер),
+     а 476 им даже просторнее прежних 436. Последняя колонка при обоих раскладах встаёт на 1032. */
+  .usl-foot .ftop{display:grid;grid-template-columns:476fr 376fr 276fr;
+    gap:var(--sp-32) var(--sp-24);align-items:start}
+  /* Навигация — своя зона во всю ширину. 6 колонок по 176px: 176*6 + 24*5 = 1176,
+     та же сетка, что у блока «Продукты». По одному заголовку на колонку, поэтому
+     все h5 стоят на одной линии — раньше вторые заголовки («Материалы», «Компания»)
+     садились на разной высоте и колонки визуально скакали. */
+  .usl-foot .flinks{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-24);
+    padding:var(--sp-48) 0 var(--sp-40)}
+  /* Второй заголовок внутри колонки не ломает линию первых: подзаголовки есть
+     только у «Услуг», сравнивать их по высоте не с чем. */
+  .usl-foot .flinks h5:not(:first-child){margin-top:var(--sp-24)}
+  .usl-foot h5{color:var(--text-on-dark);margin:0 0 var(--sp-14)}
+  .usl-foot .fabout{margin:0 0 var(--sp-24);max-width:300px;
+    font-size:var(--t-small);line-height:var(--t-small-lh)}
+  .usl-foot a{display:block;color:var(--text-on-dark-2);padding:var(--sp-4) 0;
+    font-size:var(--t-small);line-height:var(--t-small-lh);transition:color .15s}
+  @media (hover:hover){.usl-foot a:hover{color:var(--text-on-dark)}}
+  .usl-foot a:active{color:var(--text-on-dark)}
+  .usl-foot a:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:2px}
+
+  .usl-foot .flogo{display:block;margin-bottom:var(--sp-16)}
+  .usl-foot .flogo img{height:26px;width:auto;display:block}
+
+  /* Контакты. Панель на --surface-dark-2 была ошибкой: её тон отличался от футера на 1.12:1,
+     то есть зону держали радиус и замкнутый контур, а не цвет — коробка ради коробки.
+     Ни фона, ни рамок: контакты опознаются иконками, а текст живёт по общему стилю
+     ссылок футера (.usl-foot a) — своего кегля и цвета у них нет. */
+  .usl-foot .fcontacts{display:flex;flex-direction:column;gap:var(--sp-16);
+    margin:var(--sp-14) 0 var(--sp-24)}
+  .usl-foot .fcont-col{display:flex;flex-direction:column;gap:var(--sp-16);min-width:0}
+  .usl-foot .fcontact{display:flex;align-items:center;gap:var(--sp-12)}
+  /* Иконка на плитке: текст контактов теперь ничем не отличается от прочих ссылок,
+     поэтому опознаваемость строки держит именно плитка. Фон белый @10% (1.36:1 к футеру):
+     заметен, но не спорит с текстом. --surface-dark-2 здесь не годится — он даёт 1.12:1. */
+  /* ПРАВИЛО ФОРМ (16.07): контейнер с глифом — скруглённый квадрат, как вся страница
+     (--radius-md от 26px, --radius-inside у мелких бейджей ≤24: 8 на 22px даёт уже не квадрат,
+     а кляксу). Кружок остаётся только там, где круг — суть элемента: точки-маркеры списков
+     (5–8px) и аватар в отзывах. Раньше форма выбиралась по месту: шесть кружков, квадрат в
+     футере, жёлтый тайл в каталоге — три языка без правила. */
+  .usl-foot .fcontact__ic{display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    width:32px;height:32px;border-radius:var(--radius-md);
+    background:var(--surface-on-dark);color:var(--text-on-dark-2);
+    transition:background .15s,color .15s}
+  .usl-foot .fcontact:hover .fcontact__ic{background:var(--surface-on-dark-2);color:var(--text-on-dark)}
+  .usl-foot .fcontact__ic svg{width:16px;height:16px;display:block}
+  .usl-foot .fcontacts a{padding:0}
+  /* адрес + график одной строкой: график — подпись к адресу, а не самостоятельный контакт */
+  .usl-foot .fcontact__body{display:flex;flex-direction:column;gap:var(--sp-2);min-width:0}
+  .usl-foot .fcontact__body .fnote{font-size:var(--t-caption);line-height:var(--t-caption-lh);
+    color:var(--text-tertiary)}
+  @media (prefers-reduced-motion:reduce){.usl-foot .fcontact__ic{transition:none}}
+
+  /* Копирование телефона/почты. Кнопка видна всегда, а не по наведению: иначе о ней
+     не догадаться, пока не наведёшь. В покое приглушена, на hover строки — белая.
+     Ссылка остаётся ссылкой (tel:/mailto:), копирует отдельная кнопка — так работает
+     и клавиатура, и тап по номеру на телефоне. */
+  /* Кнопка держится текста, но не липнет: gap строки (12) отодвигал глиф на ~18px и он читался
+     как отдельный элемент. Гасим gap отрицательным полем, оставляя 6px — на них не наезжает
+     подложка кнопки при наведении. */
+  .usl-foot .fcopy{display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    width:26px;height:26px;margin-left:calc(var(--sp-6) - var(--sp-12));
+    padding:0;border:none;background:none;cursor:pointer;
+    border-radius:var(--radius-inside);color:var(--text-on-dark-2);opacity:.6;
+    transition:opacity .15s,background .15s,color .15s}
+  .usl-foot .fcontact:hover .fcopy,.usl-foot .fcopy:focus-visible{opacity:1}
+  .usl-foot .fcopy:hover{background:var(--surface-dark-2);color:var(--text-on-dark)}
+  .usl-foot .fcopy:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .usl-foot .fcopy svg{width:15px;height:15px;display:block}
+  .usl-foot .fcopy .ic-done{display:none}
+  .usl-foot .fcopy.is-done{opacity:1;color:var(--brand)}
+  .usl-foot .fcopy.is-done .ic-copy{display:none}
+  .usl-foot .fcopy.is-done .ic-done{display:block}
+  /* сенсорный ввод: копировать нечего — там тап по номеру звонит, по почте открывает клиент */
+  @media (hover:none){.usl-foot .fcopy{display:none}}
+  @media (prefers-reduced-motion:reduce){.usl-foot .fcopy{transition:none}}
+
+  /* ── ВАРИАНТ Б копирования: без кнопок, подсказка при наведении ──
+     Включается классом body. Кнопки-иконки (вариант А) при этом скрыты.
+     Клик по номеру копирует вместо перехода — но только там, где есть мышь:
+     на тач-устройстве tel:/mailto: должны работать как обычные ссылки.
+     Оформление висит на [data-hint], а не на .fcopy-link: адрес не копируется,
+     но ведёт себя так же — пунктир и подсказка «Показать на карте». */
+  .usl-foot .fcopy{display:none}
+  .usl-foot [data-hint]{position:relative}
+  @media (hover:hover){
+    .usl-foot [data-hint]{cursor:pointer;
+      border-bottom:1px dashed var(--border-on-dark-2);transition:border-color .15s}
+    .usl-foot [data-hint]:hover{border-bottom-color:var(--text-on-dark)}
+    /* подсказка справа, а не снизу: строки идут через 12px и снизу она накрывала соседнюю */
+    .usl-foot [data-hint]::after{content:attr(data-hint);position:absolute;
+      left:calc(100% + var(--sp-10));top:50%;z-index:5;
+      background:var(--surface-card);color:var(--text-primary);
+      font-size:11.5px;font-weight:600;line-height:1.3;padding:5px 9px;
+      border-radius:var(--radius-inside);white-space:nowrap;box-shadow:var(--shadow);
+      opacity:0;pointer-events:none;transform:translate(-3px,-50%);
+      transition:opacity .15s,transform .15s}
+    .usl-foot [data-hint]:hover::after,
+    .usl-foot [data-hint]:focus-visible::after,
+    .usl-foot .fcopy-link.is-done::after{opacity:1;transform:translate(0,-50%)}
+    .usl-foot .fcopy-link.is-done::after{content:"Скопировано";
+      background:var(--brand);color:var(--on-brand)}
+  }
+  @media (prefers-reduced-motion:reduce){.usl-foot [data-hint],
+    .usl-foot [data-hint]::after{transition:none}}
+
+  /* Адрес ведёт на карту. Стрелки «наружу» нет: подсказку даёт [data-hint],
+     как у телефона и почты. align-self — потому что .fcontact__body это flex-колонка:
+     её дети блокифицируются, ссылка растягивалась на всю ширину, и подсказка
+     (left:100%) улетала за правый край колонки вместо того, чтобы встать у текста. */
+  .usl-foot .fcontacts a.fmap{align-self:flex-start}
+  .usl-foot .fnote{margin:0;font-size:var(--t-small);line-height:var(--t-small-lh)}
+
+  /* Мессенджеры — тот же канал связи, что телефон и почта, поэтому и строка та же.
+     Глифы монохромные (fill:currentColor), те же контуры, что у кнопок мессенджеров в шапке:
+     растровый max.png в плитку не годится и цвет не наследует. */
+
+  /* ПОДПИСКА + СОЦСЕТИ — отдельная зона: цель «следить за нами», а не «связаться». */
+  /* дайджест и соцсети живут в верхней полосе; своей зоны у них больше нет */
+  .usl-foot .fsub h5{margin-bottom:var(--sp-8)}
+  .usl-foot .fsub-note{margin:0 0 var(--sp-16);font-size:var(--t-small);line-height:var(--t-small-lh);max-width:420px}
+  /* Кнопка внутри поля — тот же приём, что у поиска в шапке (.search): контейнер
+     держит рамку и фокус, input внутри прозрачный и без своей рамки, кнопка .mk-btn--sm.
+     420 < ширины колонки: между кнопкой и соседней колонкой остаётся воздух. */
+  .usl-foot .fsub-form{display:flex;align-items:center;max-width:420px;height:48px;
+    padding:0 var(--sp-6) 0 var(--sp-16);background:transparent;
+    border:1px solid var(--border-on-dark);border-radius:var(--radius-pill);
+    transition:border-color .15s}
+  .usl-foot .fsub-form:focus-within{border-color:var(--brand)}
+  .usl-foot .fsub-form input{flex:1;min-width:0;height:100%;padding:0;
+    background:transparent;border:none;outline:none;
+    color:var(--text-on-dark);font-family:var(--font-body);font-size:var(--t-small)}
+  .usl-foot .fsub-form input::placeholder{color:var(--text-on-dark-2)}
+  /* .usl-foot a{display:block} до кнопки не достаёт (она button), но flex-shrink нужен явно */
+  .usl-foot .fsub-form .mk-btn{flex-shrink:0}
+  /* Согласие на рассылку — чекбокс, а не «нажимая кнопку»: дайджест с акциями это реклама,
+     а рекламная рассылка требует предварительного согласия, которое надо уметь доказать
+     (ч.1 ст.18 ФЗ «О рекламе»). Тот же паттерн, что в модалке заявки, но на тёмном. */
+  .usl-foot .fsub-check{display:flex;gap:var(--sp-8);align-items:flex-start;cursor:pointer;
+    margin:var(--sp-12) 0 0;max-width:420px;
+    font-size:var(--t-caption);line-height:var(--t-caption-lh)}
+  .usl-foot .fsub-check input{margin-top:1px}   /* размер/вид — от .mk-check--sm */
+  .usl-foot .fsub-check a{display:inline;padding:0;text-decoration:underline;text-underline-offset:2px}
+  .usl-foot .fsoc{display:flex;flex-direction:column;gap:var(--sp-2)}
+  .usl-foot .fsoc a{padding:var(--sp-4) 0}
+
+  .usl-foot .fbot-bleed{border-top:1px solid var(--border-on-dark)}
+  /* Бренд встаёт под контакты (436 — та же колонка, что во втором уровне).
+     Дальше сетка своя: реквизитам нужна ширина под адрес, документам её хватает и в 356. */
+  /* Колонки по сетке: 5 + 4 + 3. Было 436/356/336 — сумма верная, колонки нет; последняя
+     начиналась на x=972. */
+  .usl-foot .fbot{display:grid;grid-template-columns:476fr 376fr 276fr;
+    gap:var(--sp-32) var(--sp-24);align-items:start;padding:var(--sp-32) 0 var(--sp-40)}
+  .usl-foot .fbot-brand .fabout{margin:0;max-width:300px}
+  .usl-foot .fcopy-line{margin:var(--sp-8) 0 var(--sp-20);color:var(--text-tertiary);
+    font-size:var(--t-caption);line-height:var(--t-caption-lh)}
+  /* документы столбиком — как соцсети над ними */
+  .usl-foot .flegal{display:flex;flex-direction:column;gap:var(--sp-2)}
+  .usl-foot .flegal a{padding:var(--sp-4) 0}
+  /* реквизиты — справочные строки, не ссылки: кегль как у подписей, цвет приглушён */
+  .usl-foot .freq{margin:0;color:var(--text-on-dark-2);
+    font-size:var(--t-caption);line-height:var(--t-caption-lh);padding:var(--sp-4) 0}
+  @media (prefers-reduced-motion:reduce){.usl-foot a,.usl-foot .fsub-form{transition:none}}
+
+  /* Последним правилом футера: .usl-foot a{display:block}, .flogo{display:block} —
+     той же специфичности, что и селектор ниже.
+     При равной специфичности решает порядок, поэтому [hidden] должен идти после них. */
+  .usl-foot [hidden]{display:none}
+
+  /* Виджет SmartWidgets: нужен только как источник данных (window.swapp_data).
+     Его собственный CSS перебивает атрибут [hidden] (.sw-app получает display:flex,
+     474px высотой) и рисует внизу страницы чужой блок отзывов — гасим жёстко.
+     Данные при этом приходят: JS виджета отрабатывает независимо от видимости. */
+  .sw-app{display:none!important}
+
+  /* ЛИПКИЙ CTA. База скрыта; включается и на мобилке (@media ниже — полоса снизу),
+     и на десктопе (правило прямо здесь — плавающая кнопка справа-снизу). Правило стоит
+     ЗДЕСЬ, а не рядом с мобильными: при равной специфичности выигрывает записанное ПОЗЖЕ. */
+  /* КУКИ-БАННЕР — полоса внизу. z-index 95: выше липкой полосы (90), ниже модалок (100), чтобы
+     форма заявки могла перекрыть баннер, а не наоборот. Пока баннер не решён, липкую полосу не
+     показываем вовсе — иначе два слоя в одном углу (скрипт полосы это учитывает). */
+  /* Полоса — во всю ширину экрана, СОДЕРЖИМОЕ — по контейнеру страницы (.wrap): иначе текст
+     липнет к левому краю монитора, а кнопки к правому, и баннер живёт по своей сетке. */
+  .cookie{position:fixed;left:0;right:0;bottom:0;z-index:95;
+    background:var(--surface-card);border-top:1px solid var(--border);
+    box-shadow:0 -4px 16px rgba(0,0,0,.06);
+    padding-block:var(--sp-16) calc(var(--sp-16) + env(safe-area-inset-bottom))}
+  .cookie .wrap{display:flex;align-items:center;gap:var(--sp-16)}
+  .cookie[hidden]{display:none}
+  .cookie-tx{margin:0;max-width:820px;color:var(--text-secondary);
+    font-size:var(--t-small);line-height:var(--t-small-lh)}
+  .cookie-tx a{color:var(--text-primary);text-decoration:underline;text-underline-offset:2px}
+  .cookie-btns{display:flex;gap:var(--sp-10);margin-left:auto;flex-shrink:0}
+
+  .usl-stickycta{display:none}
+  /* Каналы: монохром на нейтральной плашке. Тач-цель 44 — минимум платформы, у нас он держится
+     по всему макету. Фирменных цветов мессенджеров нет намеренно (см. комментарий у разметки). */
+  .usl-stickycta .scta-ic{width:44px;height:44px;flex:0 0 44px;display:inline-flex;
+    align-items:center;justify-content:center;border-radius:var(--radius-md);
+    background:var(--surface-card);border:1px solid var(--border);color:var(--text-primary);
+    transition:background .15s,border-color .15s}
+  .usl-stickycta .scta-ic svg{width:20px;height:20px;display:block}
+  @media (hover:hover){.usl-stickycta .scta-ic:hover{background:var(--surface-subtle);border-color:var(--text-primary)}}
+  .usl-stickycta .scta-ic:active{background:var(--surface-subtle)}
+  @media (prefers-reduced-motion:reduce){.usl-stickycta .scta-ic{transition:none}}
+  /* ДЕСКТОП: при скролле шапка сворачивается и главной CTA не остаётся — плавающая кнопка
+     подхватывает. Показывается тем же условием, что мобильная (нет CTA на экране + проскроллили). */
+  @media(min-width:1024px){
+    .usl-stickycta{display:block;position:fixed;right:28px;bottom:28px;left:auto;z-index:90;
+      opacity:0;transform:translateY(16px);pointer-events:none;
+      transition:opacity .22s ease,transform .22s ease}
+    .usl-stickycta.show{opacity:1;transform:translateY(0);pointer-events:auto}
+    .usl-stickycta{display:flex;flex-direction:column;align-items:flex-end;gap:var(--sp-10)}
+    .usl-stickycta .mk-btn{width:auto;padding:14px 26px;
+      box-shadow:0 10px 30px rgba(20,15,0,.18),0 2px 8px rgba(20,15,0,.08)}
+    /* каналы столбиком НАД кнопкой: угол один, и порядок сверху вниз повторяет приоритет —
+       быстрый канал выше, главное действие последним, ближе к большому пальцу */
+    .usl-stickycta .scta-ways{display:flex;flex-direction:column;gap:var(--sp-8)}
+    @media (prefers-reduced-motion:reduce){.usl-stickycta{transition:opacity .01s;transform:none}}
+  }
+
+  @media(max-width:1023px){
+    /* Мобильная типошкала уехала в tokens.css (@media там же): она нужна всему сайту, а не одной
+       странице. Здесь жил только --t-lead — с него всё и началось. */
+    .usl-hero .hero-grid,.usl-adv .adv-grid,.usl-price .price-grid{grid-template-columns:1fr}
+    /* ЦЕНЫ. Была «рамка в рамке»: скруглённая карточка, а внутри скруглённые плашки (рамок ни
+       одной — замер border 0, так читались два вложенных радиуса).
+       Решение: бежевой становится ВСЯ секция (--surface-subtle — по токену это «фон СЕКЦИИ»),
+       а внутри ОДНА белая карточка: заголовок + строки цен, разделённые линиями. Вложенность
+       снята не отменой контейнера, а отменой радиусов внутри него — слоёв два вместо трёх,
+       и заголовок оказывается внутри своей карточки, а не висит над плашками. */
+    .usl-price{background:var(--surface-subtle)}
+    .usl-price .ptable{background:none;border-radius:0;margin-inline:0;padding:0;gap:var(--sp-12)}
+    /* строки вместо плашек: заливку и радиус снимаем, границу групп держит разделитель.
+       Первой строке border-top не нужен — её от заголовка отделяет уже gap списка.
+       Линии идут ОТ КРАЯ ДО КРАЯ экрана — как border-top секций и разделители статбара: строка
+       уезжает в отрицательные поля, а её собственный padding возвращает текст на сетку 16px.
+       align-self:stretch + width:auto обязательны: при width:100% отрицательные поля просто
+       сдвинули бы строку влево, не расширив её. */
+    .usl-price .mk-pricelist{flex-direction:column;gap:0}
+    .usl-price .mk-pcard{flex:0 0 auto;align-self:stretch;width:auto;background:none;border-radius:0;
+      margin-inline:calc(var(--container-pad) * -1);padding:var(--sp-12) var(--container-pad)}
+    .usl-price .mk-pcard + .mk-pcard{border-top:1px solid var(--border)}
+    /* цена — к правому краю строки: слева название и срок в столбик, справа цена по центру пары.
+       В ките карточка вертикальная (имя/срок/цена стопкой), тут строка прайс-листа: две колонки,
+       правая по содержимому. */
+    .usl-price .mk-pcard{display:grid;grid-template-columns:1fr auto;column-gap:var(--sp-12)}
+    /* Строка читается двумя колонками по строкам: слева «что / когда», справа «сколько за заказ /
+       почём за штуку». Поэтому цена и её расшифровка встают на те же строки, что имя и срок. */
+    .usl-price .mk-pcard__name,.usl-price .mk-pcard__term{grid-column:1}
+    .usl-price .mk-pcard__val{grid-column:2;grid-row:1;text-align:right;margin-top:0}
+    .usl-price .mk-pcard__unit{grid-column:2;grid-row:2;text-align:right}
+    /* Плашка срока приезжает из кита, но её вертикальные margin'ы там держат ритм ВЕРТИКАЛЬНОЙ
+       карточки (6/16). Здесь строка двухколоночная, и они разъехали бы ряды сетки — гасим.
+       justify-self вместо align-self: в гриде растяжение по горизонтали лечится им. */
+    .usl-price .mk-pcard__term{justify-self:start;margin:var(--sp-4) 0 0}
+
+    /* ── ЛИПКИЙ CTA ──────────────────────────────────────────────────────────
+       Показывается ТОЛЬКО когда на экране нет ни одной настоящей кнопки заявки.
+       Это главное правило: иначе рядом окажутся две одинаковые жёлтые кнопки,
+       и липкая начнёт спорить с кнопкой блока вместо того, чтобы подстраховывать.
+       z-index 90 — НИЖЕ модалки (100), drawer (1001) и шапки (1002): бар обязан
+       уходить под них, а не перекрывать.
+       Закрытое состояние — transform, а не display:none: он не вызывает
+       пересчёт раскладки и не дёргает страницу при каждом показе.
+       padding-bottom с env() — иначе на айфонах кнопка лезет под системную
+       полосу жеста, и промах по ней уводит из браузера. */
+    .usl-stickycta{display:block;position:fixed;left:0;right:0;bottom:0;z-index:90;
+      background:var(--surface-card);border-top:1px solid var(--border);
+      padding:var(--sp-10) var(--container-pad)
+              calc(var(--sp-10) + env(safe-area-inset-bottom));
+      box-shadow:0 -4px 16px rgba(0,0,0,.06);
+      transform:translateY(110%);transition:transform .22s ease;
+      will-change:transform}
+    .usl-stickycta.show{transform:translateY(0)}
+    /* На узком кнопки в строку с текстом не встают: столбик, кнопки поровну по ширине */
+    .cookie{padding-block:var(--sp-16) calc(var(--sp-12) + env(safe-area-inset-bottom))}
+    .cookie .wrap{flex-direction:column;align-items:stretch;gap:var(--sp-12)}
+    .cookie-btns{margin-left:0}
+    .cookie-btns .mk-btn{flex:1;min-width:0}
+
+    .usl-stickycta{display:flex;align-items:center;gap:var(--sp-10)}
+    .usl-stickycta .scta-ways{display:flex;gap:var(--sp-8);flex:0 0 auto}
+    .usl-stickycta .mk-btn{flex:1;min-width:0;width:auto}
+    @media (prefers-reduced-motion:reduce){.usl-stickycta{transition:none}}
+    /* КАЛЬКУЛЯТОР без тёмной плашки: просто группа внутри бежевой секции, после кнопки.
+       Отступы по правилу «внешние > внутренних»: внутри группы 12 (заголовок/подпись/кнопка),
+       между группами 32 — граница групп держится расстоянием, раз её больше не держит фон.
+       ДС: .mk-card--dark и .mk-btn--soft-inverse привязаны к ТЁМНОЙ поверхности, и без фона оба
+       неверны, но подменить класс на брейкпоинте CSS не умеет — поэтому переопределяем на светлые
+       эквиваленты: карточка → без заливки и с обычным цветом текста, кнопка → ghost (наш стандарт
+       вторичной). Три строки ghost продублированы из кита осознанно, альтернатива — второй набор
+       классов в разметке под мобилку. */
+    .usl-price .price-grid{gap:var(--sp-32)}
+    .usl-price .calc{background:none;border-radius:0;margin-inline:0;padding:0;
+      color:var(--text-primary)}
+    .usl-price .calc .calc-sub{color:var(--text-secondary)}
+    /* фона нет — кружок возвращается к светлой поверхности, как у «Готовых материалов»:
+       на мобилке оба блока становятся одним и тем же (шапка с кружком + строки/кнопка) */
+    .usl-price .calc .fh-ic{background:var(--surface-on-light);color:var(--text-secondary)}
+    .usl-price .calc .mk-btn--soft-inverse{background:var(--surface-card);
+      border-color:var(--border);color:var(--text-primary)}
+    /* СТАТБАР 4-в-ряд → сетка 2×2: в четверть экрана цифра не влезает, а подпись рассыпается
+       в лесенку из 4–5 слов по одному. Кит без брейкпоинтов (все его @media — про
+       reduced-motion), поэтому мобильная раскладка живёт здесь.
+       Разделители перекладываем под сетку: у кита они горизонтальные (item+item = border-left),
+       во второй ряд нужен ещё и верхний. */
+    /* ряд = .wrap, а он даёт поля по 16px → линия между рядами обрывалась, не доходя до края,
+       хотя рамки самой секции идут от края до края. Пускаем ряд во всю ширину, а поля
+       переносим на ячейки: текст остаётся на той же сетке, линии доходят до края экрана. */
+    .usl-statbar .mk-statbar__row{width:100%;margin-inline:0;grid-template-columns:1fr 1fr}
+    .usl-statbar .mk-statbar__item{padding:var(--sp-20) var(--container-pad)}
+    .usl-statbar .mk-statbar__item:first-child{padding-left:var(--container-pad)}
+    .usl-statbar .mk-statbar__item:last-child{padding-right:var(--container-pad)}
+    .usl-statbar .mk-statbar__item + .mk-statbar__item{border-left:0}
+    .usl-statbar .mk-statbar__item:nth-child(even){border-left:1px solid var(--border)}
+    .usl-statbar .mk-statbar__item:nth-child(n+3){border-top:1px solid var(--border)}
+    /* 40px десктопной цифры в полуколонке ломает «ОТ 2 ДНЕЙ» на две строки и перекрикивает h1 (34px) */
+    /* Цифра статбара набрана ступенью --t-h1 (кит), а на мобилке это 34 — в половину экрана
+       вместе с подписью не встаёт. Берём соседнюю ступень --t-h2 (24/28) вместо прежних 26/30:
+       26 в шкале нет, разница на глаз в 2px, зато число теперь ездит вместе с ДС. */
+    .usl-statbar .mk-statbar__value{font-size:var(--t-h2);line-height:var(--t-h2-lh)}
+    /* «Виды» — лента. Карточка в 80% контейнера: соседняя подглядывает, и горизонтальная
+       прокрутка считывается сама, без стрелок и подписей.
+       Разметку не трогаем (на десктопе это сетка 3×1, а классы кита брейкпоинта не знают) —
+       повторяем механику .mk-scroller__track из кита: те же --item-w, flex:0 0 и snap.
+       Режем по ЭКРАНУ, а не по контейнеру: поля уезжают в padding самой ленты, поэтому первая
+       карточка стоит на сетке страницы, а лента уходит за край. */
+    .usl-vidy .vidy-grid{--item-w:80%;
+      display:flex;gap:var(--gap-card);overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+      scrollbar-width:none;-ms-overflow-style:none;
+      margin-inline:calc(var(--container-pad) * -1);
+      padding-inline:var(--container-pad);scroll-padding-left:var(--container-pad)}
+    .usl-vidy .vidy-grid::-webkit-scrollbar{display:none}
+    .usl-vidy .vidy-grid > *{flex:0 0 var(--item-w);scroll-snap-align:start}
+    /* хвост: padding-inline-end у флекс-скроллера игнорируется, последняя карточка липла бы к краю */
+    .usl-vidy .vidy-grid::after{content:"";flex:0 0 1px}
+    /* Лента отзывов — как «Виды» и «Портфолио»: карточка 80% и обрезка ПО ЭКРАНУ, а не по
+       контейнеру. Было 2 в кадре по 173px: в такую ширину отзыв не читается, а лента жила по
+       своим правилам — единственная на странице клипалась контейнером. */
+    /* ПАДДИНГИ НА МОБИЛКЕ (лестница из ДС §4): крупная карточка — 16, то есть РОВНО поле
+       контейнера. Тогда текст внутри карточки стоит на той же сетке, что текст вне её, и полосы
+       во всю ширину экрана не спорят с карточками. Десктопные 24 на 390 съедали бы 13% ширины. */
+    .usl-rev .mk-review,.usl-faq .faq-form{padding:var(--container-pad)}
+    .usl-adv .mk-tile{padding:var(--container-pad)}
+    /* тело плитки — ступень ниже (12): плитка мельче карточки, ей 16 много */
+    .usl-prod .mk-mcard__body,.usl-vidy .mk-mcard__body,.usl-art .mk-mcard__body{padding:var(--sp-12)}
+    .usl-rev .revs{--item-w:80%}
+    .usl-rev .mk-scroller__track{margin-inline:calc(var(--container-pad) * -1);
+      padding-inline:var(--container-pad);scroll-padding-left:var(--container-pad)}
+    .usl-rev .mk-scroller__track::after{content:"";flex:0 0 1px}   /* padding-inline-end во флекс-ленте игнорируется */
+    /* Подпись автора — к низу карточки. Карточка это флекс-колонка, текст обрезан на 5 строках,
+       а карточки в ленте равной высоты: без прижима автор и кнопка «Показать полностью» повисали
+       посреди пустоты. Теперь текст сверху, автор снизу, кнопка — сразу под своим текстом. */
+    .usl-rev .mk-review__author{margin-top:auto;gap:var(--sp-10)}
+    /* Блок автора вдвое компактнее: 46 → 34. Имя было 16/24 — леадинг ПРОЗЫ на однострочном
+       имени; отсюда и мнимый зазор до даты (сам gap 2px, видимые ~9 дают полулеадинги двух
+       строк). Ступень ниже + плотный леадинг + gap:0. Аватар 32: он опознавательный знак, а не
+       фото-контент, и при 40 перевешивал две строки текста рядом. */
+    .usl-rev .mk-review__avatar{width:32px;height:32px}
+    .usl-rev .mk-review__who{gap:0}
+    .usl-rev .mk-review__name{font-size:var(--t-small);line-height:18px}
+    .usl-rev .mk-review__role{font-size:var(--t-caption);line-height:var(--t-caption-lh)}
+    /* ОТЗЫВЫ. Косяк №1: текст скроллился ВНУТРИ карточки (max-height + overflow:auto). На десктопе
+       это работает, на тач-экране даёт третью ось прокрутки — палец над отзывом листает текст, а
+       страница стоит. Убираем скролл; текст остаётся обрезан на 5 строках, но получает честный
+       выход — кнопку «Показать полностью» (ставит JS только тем, кто не влез).
+       Снять ограничение совсем нельзя: один отзыв в 27 строк растянул бы ВСЕ карточки ленты по
+       себе — 728px против 293 (замер). */
+    .usl-rev .mk-review__text{position:relative;overflow:hidden;max-height:calc(5 * var(--t-small-lh))}
+    /* Маску .has-more гасим: её ставит скрипт десктопного скролла, а на мобилке она растворяла
+       хвост последней строки ВМЕСТЕ с «…ещё». Признак продолжения тут даёт само многоточие. */
+    .usl-rev .mk-review__text.has-more{-webkit-mask-image:none;mask-image:none}
+    .usl-rev .mk-review__text.is-open{max-height:none}
+    /* «…ещё» ИНЛАЙНОМ — в конце пятой строки, поверх её хвоста, с растяжкой фона карточки под
+       собой. Обрыв текста и продолжение оказываются в одной точке: кнопка ничего не «висит»
+       посреди карточки, потому что она вообще не отдельный элемент композиции, а часть текста.
+       Паттерн привычный по соцсетям. Маску-растворение при этом не даём: она съела бы и ссылку,
+       а роль признака «есть продолжение» берёт на себя многоточие. */
+    .usl-rev .rev-more{position:absolute;right:0;bottom:0;
+      padding:0 0 0 var(--sp-28);border:0;cursor:pointer;
+      background:linear-gradient(90deg,transparent,var(--surface-card) var(--sp-20));
+      font-family:var(--font-body);font-size:var(--t-small);line-height:var(--t-small-lh);
+      color:var(--text-secondary);-webkit-tap-highlight-color:transparent}
+    .usl-rev .rev-more:active{color:var(--text-primary)}
+    /* Раскрытый: ссылка возвращается в поток ПОД текст.
+       display:block + width:max-content обязательны: inline-flex садился в одну строку с хвостом
+       текста и раздувал её строчный бокс до min-height (44) — последняя строка отъезжала вниз.
+       Блок такой строки не создаёт, а тач-цель набирается полями: 12 + 20 + 12 = 44.
+       Подчёркивания нет: свёрнутая «…ещё» не подчёркнута, и это тот же самый элемент —
+       две подачи у одной кнопки читаются как две разные. */
+    .usl-rev .mk-review__text.is-open .rev-more{position:static;background:none;
+      display:block;width:max-content;padding:var(--sp-12) 0}
+    /* ШАПКА: «Отзывы · 4,9» одной строкой, «607 отзывов…» — под ними.
+       display:contents у .rev-head растворяет её как контейнер, и её дети (оценка, подпись,
+       кнопка) становятся прямыми элементами .sec-head — тогда заголовок и оценка встают в одну
+       строку без правки разметки. Точка-разделитель — псевдоэлементом у оценки: это ТИПОГРАФИКА
+       строки, а не отдельная сущность, в разметке ей делать нечего.
+       Строку «607 отзывов…» роняем вниз через width:100% — во флексе это честный перенос. */
+    .usl-rev .sec-head{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:var(--sp-8)}
+    .usl-rev .rev-head{display:contents}
+    .usl-rev .rev-score::before{content:"·";margin-right:var(--sp-8);color:var(--text-tertiary)}
+    .usl-rev .rev-of{width:100%;margin-top:var(--sp-4)}
+    /* На узком кнопке в строку с подписью не встать: роняем на свою строку (width:100% + ширина
+       по контенту), прижимать её вправо не к чему — рядом ничего нет. */
+    /* На узком абсолют не нужен: группа встаёт своей строкой под подписью */
+    .usl-rev .rev-actions{position:static;width:100%;margin-top:var(--sp-12);
+      align-items:center;gap:var(--sp-12)}
+    /* Косяк №3: ссылка-источник («Яндекс Карты») давала цель 16px по высоте. */
+    .usl-rev .mk-review__source{min-height:32px;padding-block:var(--sp-8)}
+    /* .usl-art .art-grid — см. второй брейкпоинт в <style id="port-after">: здесь правило
+       бесполезно, его перебивает .usl-art .art-grid из более позднего блока */
+    /* ГДЕ ПРИМЕНЯЕТСЯ — 3 в ряд (решение Omar). Подписи набраны как плитки технологий
+       («Сочетается»): дефолтный .mk-mcard__title = Roboto 600, модификатор --label снят.
+       Текст прижат к низу, как на десктопе: прижим даёт justify-content:flex-end из десктопного
+       правила, а запас в две строки — min-height (без него прижимать не к чему, и короткие
+       подписи всплывают вверх). */
+    .usl-prod .pcards{grid-template-columns:1fr 1fr}
+    /* Свёрнутый вид: 12 плиток на телефоне — это 6 рядов и 1223px, почти полтора экрана на одном
+       блоке. Показываем первые 6, остальное по кнопке (решение 19.08, CMS_FIELDS §2.9).
+       Кнопку раскрывает JS и только когда плиток больше шести — в прототипе их ровно 6,
+       поэтому вживую состояние видно по адресу `usluga.html?limits=prod12` (демо-скрипт в
+       начале <script>). */
+    .usl-prod .pcards.is-clamped > :nth-child(n+7){display:none}
+    .usl-prod .prod-more{width:100%;margin-top:var(--gap-card)}
+    /* flex:1 — тело забирает весь остаток высоты плитки. Без него в рядах, где у соседа подпись
+       в три строки, плитка растягивалась до высоты ряда, а тело оставалось по контенту: текст
+       висел выше низа (замер: отступ 28 против 10). Прижим держится на паре flex:1 + flex-end. */
+    .usl-prod .mk-mcard__body{flex:1;min-height:calc(2 * 20px + 2 * var(--sp-12))}
+    /* Кегль НЕ понижаем: при 2 в ряд плитка 173, бокс подписи 149 — родные 16/20 влезают в две
+       строки у всех шести (замер). Понижение до 14 было костылём под плитку 111 при 3 в ряд.
+       Переносы оставляем: hyphens:auto (от lang="ru") страхует длинные слова вроде
+       «Многостраничная», если редактор вернёт такое имя. Обрезки нет и clamp не нужен —
+       он бы всё равно не сработал на флекс-элементе (флекс блокифицирует display). */
+    .usl-prod .mk-mcard__title{-webkit-hyphens:auto;hyphens:auto}
+    /* «Сочетается»: 3 в ряд оставались и на мобилке — плитка 103px на 390. Дело не только в
+       зазоре: три колонки при поле 16 физически не дают плитке ширины. Два в ряд, как у
+       «Где применяется» — единый ритм плиточных сеток на мобилке. */
+    /* 1 в ряд. .mk-tilelink горизонтальна по конструкции: кадр слева, текст справа, стрелка у
+       края — при 173px её сжимало поперёк собственной логики (кадр 140 из 173, тексту оставалось
+       чуть), и «Ламинация soft-touch» ломалась в две строки. Во всю ширину плитка встаёт в родную
+       форму. Ленту не берём: их шесть, это ссылки для просмотра всех, а не витрина, и лента на
+       странице была бы четвёртой. */
+    .usl-combo .combo-grid{grid-template-columns:1fr}
+    .usl-adv .tiles{grid-template-columns:1fr}
+    /* ПРЕИМУЩЕСТВА. Сетка 2×2 проверена рендером и отвергнута: мера падает до 20 знаков (норма
+       35–50), текст разваливается в лесенку и плитка отрастает ровно на столько, на сколько
+       сузилась — той же высоты, но нечитаемая. Карусель короче, но прячет 3 плитки из 4 за
+       свайпом, а преимущества должны сканироваться. Поэтому просто компактнее:
+       иконка уезжает в строку с заголовком, текст остаётся во всю ширину (мера 47). */
+    .usl-adv .tiles{gap:var(--sp-12)}
+    .usl-adv .mk-tile{display:grid;grid-template-columns:auto 1fr;gap:var(--sp-8) var(--sp-10);align-items:center}
+    .usl-adv .mk-tile__title{grid-column:2}
+    .usl-adv .mk-tile__text{grid-column:1/-1}
+    /* 300px жёсткой высоты у плейсхолдера 4:3 — на мобилке лишние 30px и растянутая пропорция.
+       width:100% + align-self:start обязательны: у .adv-grid стоит align-items:stretch, и Safari
+       на растянутом элементе выводит ШИРИНУ из высоты (Chrome — наоборот, высоту из ширины),
+       отчего коробка схлопывалась по горизонтали и справа зияла пустота. Явная ширина убирает
+       развилку: высота однозначно считается от неё. */
+    .usl-adv .adv-media{min-height:0;aspect-ratio:4/3;width:100%;align-self:start}
+    /* ТРЕБОВАНИЯ — та же болезнь и то же лекарство, что в «Ценах»: белая секция → СЕРАЯ карточка
+       → внутри БЕЛЫЕ плашки (чек-лист и файлы). Три слоя, рамка в рамке.
+       Секция становится бежевой (--surface-subtle — по токену «фон СЕКЦИИ»), карточки теряют
+       заливку и радиус, а плашки внутри разворачиваются в строки с разделителями во всю ширину
+       экрана. Слоёв один вместо трёх. */
+    .usl-req{background:var(--surface-subtle)}
+    .usl-req .req-grid{grid-template-columns:1fr;gap:var(--sp-32)}   /* внешние > внутренних (12/14) */
+    .usl-req .req-main,.usl-req .files{background:none;border-radius:0;padding:0}
+    /* чек-лист: плашки → строки. Разделители от края до края экрана — тот же приём, что у цен,
+       статбара и подшапки: строка уезжает в отрицательные поля, свой padding возвращает текст
+       на сетку 16. Первой строке верхняя линия не нужна: её отделяет заголовок. */
+    .usl-req .mk-reqlist{gap:0}
+    .usl-req .mk-reqlist__item{background:none;border:0;border-radius:0;
+      margin-inline:calc(var(--container-pad) * -1);padding:var(--sp-12) var(--container-pad)}
+    .usl-req .mk-reqlist__item + .mk-reqlist__item{border-top:1px solid var(--border)}
+    /* Линии между группами тут нет и не нужно: группу замыкает жёлтая кнопка во всю ширину —
+       ровно как в «Ценах», где калькулятор отделён от цен ею же. Линия понадобилась, только пока
+       после кнопки висела мелкая пунктирная ссылка; ссылка ушла выше CTA — граница снова читается
+       сама. Порядок вместо декорации.
+       top:auto — от десктопной липкости у .files остался top:calc(--stack-top + 16)=123px, и
+       position:static его игнорирует, а любое другое значение оживило бы (ловили: −123px). */
+    .usl-req .files{position:static}
+    /* файлы — те же строки: заливку и рамку снимаем, кружок-иконка справа остаётся как есть */
+    .usl-req .files .flist{gap:0}
+    .usl-req .mk-filerow{background:none;border:0;border-radius:0;
+      margin-inline:calc(var(--container-pad) * -1);padding:var(--sp-12) var(--container-pad)}
+    .usl-req .mk-filerow + .mk-filerow{border-top:1px solid var(--border)}
+    /* :active красил фон плашки — плашки нет, отклик даёт кружок-иконка (он и так на :active) */
+    .usl-req .mk-filerow:active{background:none}
+    .usl-faq .faq-grid{grid-template-columns:1fr}
+    /* Форма вопроса на мобилке — во ВТОРОМ брейкпоинте (<style id="port-after">): правила .cbm-*
+       стоят в этом <style> ПОЗЖЕ данного @media и перебивают его порядком при равной
+       специфичности (замер: фон и высоты полей молча не применялись). */
+    /* 3 в кадре = ролик 106px шириной: подпись ломается в лесенку, а превью не разглядеть.
+       2 в кадре — как у отзывов и фото ниже, единый ритм лент на мобилке. */
+    /* 2.2 ролика в кадре: два целых и краешек третьего — прокрутка считывается без стрелок.
+       Дробь по конвенции файла: зазоров на один меньше числа карточек (2.2 → 1.2 гэпа).
+       Даёт ролик 152px и сливер третьего ~30px. Фото — по-прежнему 2 в кадре: у них кадр 4:3,
+       и та же дробь ужала бы их сильнее, чем нужно (на десктопе у видео и фото тоже разное число). */
+    .usl-port .port-grid--video{--item-w:calc((100% - 1.2 * var(--gap-card)) / 2.2)}
+    /* фото — по принципу «Видов»: карточка в 80% контейнера, соседняя подглядывает.
+       Кадр 4:3 против вертикального 9:16 у роликов, поэтому две в ряд делали их мелкими;
+       у видео своя дробь (2.2) — там кадр узкий и в ту же ширину влезает больше. */
+    .usl-port .port-grid--photo{--item-w:80%}
+    /* Лента режется ЭКРАНОМ, а не контейнером: поля уезжают внутрь трека, поэтому первая
+       карточка стоит на сетке страницы, а на свайпе соседние уходят за край, а не пропадают
+       за 16px до него. Тот же приём, что у «Видов», крошек и подшапки.
+       Обе вкладки (видео и фото) — это один компонент в двух состояниях: чинить только видео
+       значило бы оставить фото с прежней обрезкой. */
+    .usl-port .mk-scroller__track{margin-inline:calc(var(--container-pad) * -1);
+      padding-inline:var(--container-pad);scroll-padding-left:var(--container-pad)}
+    /* хвост: padding-inline-end у флекс-скроллера игнорируется, последняя карточка липла бы к краю */
+    .usl-port .mk-scroller__track::after{content:"";flex:0 0 1px}
+    /* Стрелки — мышиный аффорданс: они и появляются-то по hover, которого на тач-экране нет.
+       Здесь их роль играет свайп плюс подглядывающая соседняя карточка. Гасим у ВСЕХ лент
+       (портфолио, отзывы), а не только у видео: компонент один. Прокрутка самого трека не
+       страдает — он остаётся фокусируемым. */
+    .usl .mk-scroller__nav{display:none}
+    /* ГЕРОЙ. Картинка в разметке идёт ПОСЛЕ всего левого блока, поэтому уезжала под буллеты
+       и кнопки — не видна без скролла и оторвана от заголовка. display:contents распускает
+       .hero-left в тот же поток, что и .hero-media → порядок переставляется через order,
+       разметку и десктоп не трогаем. */
+    /* padding-top:0 — крошки сами держат свою полосу (свои поля 10 сверху и 10 снизу до линии).
+       Прежние 8px «на дыхание» ставились, когда под шапкой сразу шли крошки; теперь там контакт-ряд
+       со своей линией, и эти 8 вклинивались МЕЖДУ линией и полосой крошек: сверху выходило 18,
+       снизу 10 — текст заваливался вниз на 7px (замер по пикселям, не на глаз). */
+    .usl-hero{padding-top:0!important;padding-bottom:var(--sp-40)!important}
+    .usl-hero .hero-grid{display:flex;flex-direction:column;align-items:stretch}   /* базовый align-items:start в колонке сжимал бы всё по контенту */
+    .usl-hero .hero-left{display:contents}
+    .usl-hero .eyebrow{order:1}
+    .usl-hero h1{order:2}   /* кегль даёт мобильная ступень --t-h1 из tokens.css (34/38) */
+    .usl-hero .lead{order:3}
+    /* картинка ПОСЛЕ лида: заголовок и лид дешёвые по высоте и отвечают «что это»,
+       картинка идёт подтверждением к ним; связку «буллеты + CTA» не разрываем.
+       Отступ снизу не нужен — у .hero-bullets свой margin-top:20 */
+    /* Кадр 3:2 вместо десктопных 4:3: при 4:3 он занимал 274px из 390-й ширины, и главный CTA
+       уходил за первый экран на 92px (замер). 3:2 отдаёт 55px — кадр остаётся доказательством
+       («вот как ложится фольга»), но перестаёт выталкивать кнопку. */
+    /* align-self:start обязателен: .hero-grid — флекс со stretch, он тянет кадр по высоте и
+       перебивает aspect-ratio (замер: правило 3/2 применено, а по факту 1.31 — растянут).
+       Те же грабли, что ловили в «Преимуществах»: при stretch пропорция не работает. */
+    /* min-height:0 + flex:none обязательны: .hero-grid на мобилке — флекс-КОЛОНКА, там основная
+       ось вертикальная, и высота элемента берётся из flex-basis:auto, то есть из КОНТЕНТА
+       (картинка 1356×1017 → 356px), а aspect-ratio молча игнорируется (замер: правило 3/2 стоит,
+       height вычислен 356 = 1.31). Те же грабли ловили в «Преимуществах». */
+    .usl-hero .hero-media{order:4;margin-top:var(--sp-20);aspect-ratio:3/2;
+      align-self:start;width:100%;min-height:0;flex:none;height:auto}
+    /* CTA (5) ВЫШЕ буллетов (6): порядок «заголовок → лид → кадр → кнопка → буллеты».
+       Замер: при кнопке под буллетами она уходила за первый экран (837 при экране ~780) —
+       главное действие страницы человек не видел, пока не пролистает. Буллеты это подробности,
+       им место после призыва. */
+    .usl-hero .hero-bullets{order:6}
+    /* CTA во всю ширину: крупная цель для пальца и однозначный якорь конверсии
+       (тот же приём, что у кнопки в «Требованиях к макету») */
+    .usl-hero .hero-cta{order:5;flex-direction:column;gap:var(--sp-10);margin-top:var(--sp-24)}
+    .usl-hero .hero-cta .mk-btn{width:100%}
+    /* h2 был 32px против 34px у h1 — заголовок секции кричал наравне с заголовком страницы.
+       Правило .usl h2 в цель не попадало: база написана как .usl h2:not([class]), а :not([class])
+       добавляет специфичность (0,2,1 против 0,1,1) — оверрайд молча проигрывал.
+       Отдельной мобильной шкалы в токенах нет, поэтому мобильный h2 = ступень h3 (24/28). */
+    /* Заголовку секции нельзя упираться в правый край: у дисплейного кегля своя мера, короче
+       текстовой (классическая вилка — 20–30 знаков).
+       Мера задана в ch, а не в процентах и не «кратно колонкам»: колонки — это про раскладку
+       блоков, а ширина заголовка — про длину строки, и меряется в знаках. Плюс ch едет вместе
+       с кеглем и не растёт с экраном: на 430 заголовок не растянется, а получит воздух справа.
+       Замер на 390 (1ch = 11.3px): «Рассчитайте стоимость тиснения» = 30.8ch (упирался в край),
+       следующий по длине «С чем сочетается тиснение» = 24.7ch. Порог 27ch разводит их чисто.
+       text-wrap:balance — чтобы перенос делил строки поровну, а не ронял одно слово вниз. */
+    /* Кегль тут больше не задаём: ступени --t-h2/--t-h3 сами стали мобильными в tokens.css.
+       Раньше здесь h2 «одалживал» ступень h3, а h3 — ступень h4; лестница держалась на двух
+       правилах в прототипе, и любой новый заголовок мимо них приезжал десктопным. */
+    .usl h2:not([class]){max-width:27ch;text-wrap:balance}
+    /* фигура рассчитана на свою колонку; в одну колонку она превращается в баннер — убираем */
+    .usl-final .cta-box{grid-template-columns:1fr}
+    .usl-final .cta-fig{display:none}
+    /* главный CTA на мобилке — во всю ширину: одна кнопка-цель во всех блоках (герой, цены, финал) */
+    .usl-final .cta-box .mk-btn,.usl-price .ptable .mk-btn--primary,
+    .usl-price .calc .mk-btn{width:100%}
+    .usl-foot .ftop,.usl-foot .fbot{grid-template-columns:1fr}
+    /* ФУТЕР, колонки ссылок (схема Omar):
+         Каталог │ Услуги
+                 │ Материалы
+                 │ Готовые решения
+         Информация │ Компания        ← друг напротив друга, по верху
+       Было 2×2: Материалы попадали под Каталог, а «Информация + Компания» шли одной длинной
+       колонкой справа. Каталог растянут на два ряда — иначе «Материалы» ушли бы под него.
+       «Информация» и «Компания» лежат в ОДНОМ div, поэтому делим его многоколонкой, а не сеткой:
+       break-before:column у второго заголовка гонит «Компанию» в правую колонку. Разметку не
+       трогаем — она общая с десктопом. */
+    .usl-foot .flinks{grid-template-columns:1fr 1fr;align-items:start}
+    .usl-foot .flinks > div:nth-child(1){grid-column:1;grid-row:1 / span 2}
+    .usl-foot .flinks > div:nth-child(2){grid-column:2;grid-row:1}
+    .usl-foot .flinks > div:nth-child(3){grid-column:2;grid-row:2}
+    .usl-foot .flinks > div:nth-child(4){grid-column:1 / -1;grid-row:3;
+      columns:2;column-gap:var(--sp-24)}
+    .usl-foot .flinks > div:nth-child(4) h5:nth-of-type(2){break-before:column;margin-top:0}
+  }
+
+  /* ===== ОСНОВНАЯ ШАПКА ===== */
+  header{background:var(--surface-page);border-bottom:1px solid var(--border);position:relative;z-index:40}
+  .hbar{display:flex;align-items:center;gap:20px;height:60px}
+
+  .logo{display:flex;align-items:center;flex-shrink:0}
+  .logo img{height:26px;width:auto;display:block}
+
+  .search{flex:1;display:flex;align-items:center;height:42px;border:1px solid var(--border-strong);border-radius:var(--radius-pill);padding:0 5px 0 16px;transition:border-color .15s;background:var(--surface-card)}
+  .search:focus-within{border-color:var(--text-primary)}
+  .search .si{color:var(--text-secondary);flex-shrink:0;margin-right:8px}
+  .search input{flex:1;border:none;outline:none;font-size:var(--t-small);line-height:var(--t-small-lh);background:transparent;color:var(--text-primary)}
+  .search input::placeholder{color:var(--text-secondary)}
+  /* .s-go = .mk-btn--dark --sm */
+  .search .s-go{flex-shrink:0}
+
+  /* ===== ПОИСК: кнопка очистки + дропдаун подсказок (состояния) ===== */
+  .search{position:relative}
+  .search .s-clear{display:none;width:28px;height:28px;align-items:center;justify-content:center;border:none;background:none;color:var(--text-tertiary);cursor:pointer;border-radius:var(--radius-inside);flex-shrink:0;margin-right:2px;transition:.12s}
+  .search.has-val .s-clear{display:flex}
+  .search .s-clear:hover{background:var(--surface-subtle);color:var(--text-primary)}
+  body.search-open header{z-index:60}/* поднять шапку над навбаром, чтобы блок поиска был сверху */
+  /* активное состояние: поле + дропдаун = ЕДИНЫЙ приподнятый блок (поле «утоплено» в верх панели),
+     одна рамка + одна тень отделяют весь блок от шапки */
+  .search-drop{position:absolute;top:-1px;left:-1px;right:-1px;background:var(--surface-card);border:1px solid var(--border-strong);border-radius:21px 21px var(--radius-outside) var(--radius-outside);box-shadow:0 16px 40px -8px rgba(0,0,0,.18),0 4px 12px rgba(0,0,0,.05);padding:47px 8px 9px;z-index:1;display:none;max-height:min(80vh,620px);overflow:hidden}
+  /* тонкий разделитель строки поиска от подсказок внутри блока */
+  .search-drop::before{content:"";position:absolute;top:45px;left:0;right:0;height:1px;background:var(--border)}
+  .search.s-open{border-color:transparent;background:transparent;z-index:61}
+  .search.s-open > :not(.search-drop){position:relative;z-index:2}/* контролы поля поверх панели */
+  .search.s-open .search-drop{display:block}
+  .search-drop .sd-pane{display:none}
+  .search-drop[data-state="empty"] .sd-empty{display:block}
+  .search-drop[data-state="results"] .sd-results{display:block}
+  .search-drop[data-state="none"] .sd-none{display:block}
+  .sd-h{font-size:var(--t-label);line-height:var(--t-label-lh);text-transform:uppercase;letter-spacing:var(--t-label-ls);color:var(--text-secondary);font-weight:600;padding:9px 10px 7px}
+  .sd-chips{display:flex;flex-wrap:wrap;gap:var(--sp-8);padding:0 8px 6px}
+  .sd-chip{font-family:var(--font-body);font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-primary);background:transparent;border:1px solid var(--border-strong);border-radius:var(--radius-md);padding:var(--sp-6) var(--sp-14);cursor:pointer;transition:.15s;white-space:nowrap}
+  .sd-chip:hover{background:var(--surface-subtle);border-color:var(--text-primary);color:var(--text-primary)}
+  .sd-chip:focus-visible{outline:2px solid var(--brand-dark);outline-offset:2px}
+  /* список подсказок прокручивается, футер «Все результаты» остаётся закреплённым ниже */
+  .sd-list{list-style:none;max-height:min(46vh,316px);overflow-y:auto;overscroll-behavior:contain}
+  .sd-list::-webkit-scrollbar{width:9px}
+  .sd-list::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:var(--radius-pill);border:2px solid var(--surface-card)}
+  .sd-list::-webkit-scrollbar-thumb:hover{background:var(--text-tertiary)}
+  .sd-row{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:var(--radius-md);cursor:pointer;transition:background .12s}
+  .sd-row:hover,.sd-row.sel{background:var(--surface-subtle)}
+  .sd-row .sd-tx{flex:1;min-width:0;font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sd-row .sd-tx mark{background:var(--brand-soft);color:var(--text-primary);border-radius:var(--radius-inside);padding:0 1px}
+  .sd-row .sd-tag{font-size:var(--t-label);line-height:var(--t-label-lh);letter-spacing:var(--t-label-ls);color:var(--text-secondary);background:transparent;border:1px solid var(--border-strong);border-radius:var(--radius-inside);padding:3px 8px;flex-shrink:0;white-space:nowrap}
+  /* Тип различается ЦВЕТОМ ТЕКСТА, рамка у всех одна (серая) — единый вид.
+     Коммерческие типы (продукция/услуга/материал/страница) нейтральны: базовый .sd-tag уже такой.
+     Цвет получают только раздел каталога и контент (статья/портфолио/новость). */
+  .sd-tag.t-sec{color:var(--tag-section)}
+  .sd-tag.t-art{color:var(--tag-article)}
+  .sd-tag.t-port{color:var(--tag-portfolio)}
+  .sd-tag.t-news{color:var(--tag-news)}
+  .sd-row .arr-ico{width:14px;height:14px;color:var(--text-secondary);flex-shrink:0;transition:transform .15s,color .15s}
+  .sd-row:hover .arr-ico{color:var(--text-secondary);transform:translateX(2px)}
+  .sd-all{display:flex;align-items:center;gap:9px;margin:5px calc(-1 * var(--sp-8)) 0;padding:11px var(--sp-20) 6px;border-top:1px solid var(--border);font-size:var(--t-small);line-height:var(--t-small-lh);font-weight:600;color:var(--text-primary);cursor:pointer}
+  .sd-all b{font-weight:700}
+  .sd-all .arr-ico{width:14px;height:14px;margin-left:auto;transition:transform .15s}
+  .sd-all:hover .arr-ico{transform:translateX(2px)}
+  .sd-none{padding:24px 18px;text-align:center}
+  .sd-none-t{font-size:var(--t-body);line-height:var(--t-body-lh);font-weight:700;color:var(--text-primary);margin-bottom:6px}
+  .sd-none-s{font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-secondary)}
+
+  /* телефон в шапке — выделенный (решение со встречи) */
+  .hphone{display:flex;align-items:center;gap:10px;flex-shrink:0;margin:0 4px;padding:5px 10px}
+  .hphone .ph-txt{display:flex;flex-direction:column;align-items:flex-start;gap:0}
+  .hphone .num{font-size:var(--t-body);line-height:var(--t-body-lh);font-weight:500;color:var(--text-primary);white-space:nowrap;letter-spacing:normal}
+  .hphone .num .pre{font-weight:500;color:var(--text-primary)}
+  .hphone .num .l4{color:var(--text-primary);font-weight:800}
+  .hphone .psub{display:flex;align-items:center;gap:8px}
+  .hphone .day{font-size:var(--t-label);line-height:var(--t-label-lh);color:var(--text-secondary);white-space:nowrap}
+  /* Телефон копируется на десктопе (с ПК не звонят); на тач остаётся обычный tel:.
+     Подсказка/подтверждение — НАД номером, выровнены по его левому краю. Вверх тултип заходит
+     в полосу топбара (z50) и в навбар (z46), поэтому на время наведения/подтверждения поднимаем
+     шапку над обоими (header z40 → 60) — тем же приёмом, что при search-open. */
+  @media (hover:hover){
+    /* пунктир — постоянный аффорданс «копируется» (как у почты в топбаре), темнеет на hover */
+    .hphone .num{position:relative;cursor:pointer;text-decoration:underline dashed;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--text-tertiary)}
+    .hphone .num:hover{text-decoration-color:var(--text-primary)}
+    .hphone .num::after{content:"Нажмите, чтобы скопировать";position:absolute;top:calc(100% + 7px);left:0;z-index:60;
+      background:var(--surface-dark);color:var(--text-on-dark);font-size:11.5px;font-weight:600;line-height:1.3;
+      padding:5px 9px;border-radius:var(--radius-inside);white-space:nowrap;box-shadow:var(--shadow);
+      opacity:0;pointer-events:none;transform:translateY(-3px);transition:opacity .15s,transform .15s}
+    .hphone .num:hover::after{opacity:1;transform:translateY(0)}
+    .hphone .num.is-done::after{content:"Скопировано";background:var(--brand);color:var(--on-brand);opacity:1;transform:translateY(0)}
+    header:has(.hphone .num:hover),header:has(.hphone .num.is-done){z-index:60}
+  }
+
+  /* единый стиль кнопок шапки */
+  .hactions{display:flex;align-items:center;gap:2px;flex-shrink:0}
+  .hactions .sep{width:1px;height:30px;background:var(--border);margin:0 8px}
+  /* и <button>, и <a>: сбрасываем кнопочные умолчания, шрифт наследуем */
+  .hbtn{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text-primary);cursor:pointer;font-family:inherit;font-size:var(--t-label);line-height:var(--t-label-lh);font-weight:400;position:relative;padding:5px 8px;border:none;background:none;border-radius:var(--radius-md);transition:background .15s,color .15s;min-width:56px}
+  .hbtn:hover{background:var(--surface-subtle);color:var(--text-primary)}
+  .hbtn:focus-visible{outline:2px solid var(--brand-dark);outline-offset:2px}
+  /* Единое фокус-кольцо ДС для интерактивов шапки, поиска и мегаменю,
+     у которых своего кольца не было. */
+  .quick a:focus-visible,.hphone:focus-visible,.s-clear:focus-visible,
+  .sd-chip:focus-visible,.sd-row:focus-visible,
+  .rail .ri:focus-visible,
+  .svc-pane .phead a:focus-visible,.pane .phead a:focus-visible,
+  .group h4:focus-visible,.group li a:focus-visible,
+  .promo .promo-order:focus-visible{outline:2px solid var(--brand-dark);outline-offset:2px;border-radius:var(--radius-inside)}
+  .hbtn .ci{width:22px;height:22px;display:flex;align-items:center;justify-content:center}
+  .hbtn .badge{position:absolute;top:2px;right:10px;background:var(--brand);color:var(--on-brand);font-size:9px;font-weight:800;min-width:15px;height:15px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;padding:0 4px}
+  /* акцентный кружок с самолётиком */
+  .hbtn .accent-ic{width:22px;height:22px;border-radius:var(--radius-inside);background:var(--brand);display:flex;align-items:center;justify-content:center}
+
+  /* ===== ПОЛОСА НАВИГАЦИИ ===== */
+  .navbar{background:var(--surface-page);border-bottom:1px solid var(--border);position:relative;z-index:46}
+  .nav{display:flex;align-items:center;gap:6px;height:44px;position:relative;z-index:2}
+  /* .catbtn = .mk-btn--dark --md; своё — только бургер-иконка */
+  .catbtn{user-select:none;flex-shrink:0}
+  .catbtn .ic{display:flex;flex-direction:column;gap:3px;transition:.2s}
+  .catbtn .ic i{width:14px;height:1.5px;background:var(--surface-card);border-radius:2px;transition:.2s}
+  .catbtn.active .ic i:nth-child(1){transform:translateY(4.5px) rotate(45deg)}
+  .catbtn.active .ic i:nth-child(2){opacity:0}
+  .catbtn.active .ic i:nth-child(3){transform:translateY(-4.5px) rotate(-45deg)}
+
+  .quick{display:flex;align-items:center;gap:0;flex:1;overflow:hidden;padding-left:4px}
+  .quick a{padding:0 var(--sp-12);height:44px;display:flex;align-items:center;color:var(--text-secondary);font-size:var(--t-small);font-weight:500;white-space:nowrap;border-bottom:2px solid transparent}
+  .quick a:hover{color:var(--text-primary)}
+  .quick a.active{color:var(--text-primary);font-weight:600;border-bottom-color:var(--brand)}
+
+  /* светлая кнопка расчёта + бейдж выгоды поверх */
+  /* .calcbtn = .mk-btn--ghost --md; своё — только иконка */
+  .calcbtn{flex-shrink:0}
+  .calcbtn svg{color:var(--brand-hover)}
+
+  /* ===== МЕГАМЕНЮ ===== */
+  .overlay{position:fixed;inset:0;background:rgba(17,17,17,.35);opacity:0;visibility:hidden;transition:.2s;z-index:30}
+  .overlay.show{opacity:1;visibility:visible}
+
+  /* ── Модалка «Заказать звонок» ── */
+  .cbm-back{position:fixed;inset:0;background:rgba(17,17,17,.42);opacity:0;visibility:hidden;transition:opacity .18s,visibility .18s;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+  .cbm-back.show{opacity:1;visibility:visible}
+  .cbm{position:relative;width:100%;max-width:384px;background:var(--surface-card);border-radius:var(--radius-outside);box-shadow:var(--shadow-lg);padding:28px 26px 22px;transform:translateY(8px) scale(.985);transition:transform .2s}
+  .cbm-back.show .cbm{transform:none}
+  .cbm-x{position:absolute;top:14px;right:14px;width:30px;height:30px;border:none;background:var(--surface-subtle);border-radius:var(--radius-md);color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.12s}
+  .cbm-x:hover{background:var(--border);color:var(--text-primary)}
+  /* Ступень --t-h3 и гарнитура заголовков: было 20px Roboto 700 с трекингом −.2px — кегля 20 в
+     шкале нет, отрицательный трекинг ДС не знает вовсе, а заголовки у нас AttractiveCond КАПС.
+     Правило одно на все модалки (звонок, заявка, вопрос) — класс общий. */
+  .cbm-title{font-family:var(--font-head);font-size:var(--t-h3);line-height:var(--t-h3-lh);
+    letter-spacing:var(--t-h3-ls);text-transform:uppercase;font-weight:700;color:var(--text-primary)}
+  /* Было 13/16 — для вводного абзаца это кегль подписи, да ещё с тесным леадингом:
+     текст читался как служебная сноска. 14/20 — ступень основного мелкого текста. */
+  /* Услуга в заголовке вторым планом: кегль, шрифт и капс те же, отличается только цвет.
+     Одного цвета достаточно — глагол остаётся главным, а строка не распадается на два
+     разных набора. Переносить РАЗРЕШЕНО: с nowrap длинные названия («широкоформатную
+     печать баннеров и рекламных конструкций») вылезали за край шторки. */
+  .cbm-title-svc{color:var(--text-secondary)}
+  .cbm-sub{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-secondary);margin-top:var(--sp-8)}
+  .cbm form{margin-top:18px;display:flex;flex-direction:column;gap:13px}
+  .cbm-field{display:flex;flex-direction:column;gap:6px}
+  /* Было 12.5px — такого кегля нет ни в шкале, ни в природе. Ступень --t-small (14/20), а не
+     --t-label: label — ступень КАПСА (теги, eyebrow), а лейбл поля набран строчными, и 12 для него
+     мелко. Пара «лейбл 14 / поле 16» — обычная для форм: подпись тише ввода, но читается. */
+  .cbm-lbl{font-size:var(--t-small);line-height:var(--t-small-lh);font-weight:600;color:var(--text-primary)}
+  .cbm-lbl i{color:var(--danger);font-style:normal}
+  .cbm-lbl em{color:var(--text-tertiary);font-weight:500;font-style:normal}
+  .cbm input[type=tel],.cbm input.cbm-tf,.faq-form input[type=tel],.faq-form input.cbm-tf{height:46px;border:1px solid var(--border-strong);border-radius:var(--radius-md);padding:0 14px;font-family:inherit;font-size:var(--t-ui);color:var(--text-primary);outline:none;transition:border-color .15s,box-shadow .15s;width:100%}
+  .cbm input[type=tel]:focus,.cbm input.cbm-tf:focus,.faq-form input[type=tel]:focus,.faq-form input.cbm-tf:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  .cbm input::placeholder,.faq-form input::placeholder{color:var(--text-tertiary)}
+  .cbm-row{display:flex;gap:11px}
+  .cbm-row .cbm-field{flex:1;min-width:0}
+  .cbm-ta{border:1px solid var(--border-strong);border-radius:var(--radius-md);padding:11px 14px;font-family:inherit;font-size:var(--t-ui);color:var(--text-primary);outline:none;transition:border-color .15s,box-shadow .15s;width:100%;resize:vertical;min-height:76px;line-height:1.4}
+  .cbm-ta:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  .cbm-ta::placeholder{color:var(--text-tertiary)}
+  /* селектор способа связи */
+  .cbm-sel{position:relative}
+  .cbm-sel select{appearance:none;-webkit-appearance:none;cursor:pointer;width:100%;height:46px;border:1px solid var(--border-strong);border-radius:var(--radius-md);padding:0 36px 0 14px;font-family:inherit;font-size:var(--t-ui);color:var(--text-primary);background:var(--surface-card);outline:none;transition:border-color .15s,box-shadow .15s}
+  .cbm-sel select:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  .cbm-sel select:invalid{color:var(--text-tertiary)}
+  .cbm-sel::after{content:"";position:absolute;right:15px;top:calc(50% - 6px);width:8px;height:8px;transform:rotate(45deg);border-right:2px solid var(--text-secondary);border-bottom:2px solid var(--text-secondary);pointer-events:none}
+  /* загрузка файлов */
+  .cbm-file{position:relative;display:flex;align-items:center;gap:8px;height:46px;border:1px dashed var(--border-strong);border-radius:var(--radius-md);padding:0 14px;cursor:pointer;color:var(--text-secondary);font-size:14px;transition:border-color .15s,background .15s}
+  .cbm-file:hover{border-color:var(--text-tertiary);background:var(--surface-subtle)}
+  .cbm-file input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .cbm-file svg{flex-shrink:0;color:var(--text-secondary)}
+  .cbm-file-btn{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .cbm-file-hint{font-size:var(--t-micro);color:var(--text-tertiary);line-height:var(--t-micro-lh);margin-top:-4px}
+  /* Список выбранных файлов. Существует потому, что накопление ведём сами: человек должен
+     видеть, что именно прикреплено, и мочь убрать лишнее. */
+  .cbm-files{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--sp-4)}
+  .cbm-files li{display:flex;align-items:center;gap:var(--sp-8);
+    background:var(--surface-on-light);border-radius:var(--radius-inside);padding:var(--sp-6) var(--sp-6) var(--sp-6) var(--sp-10)}
+  .cbm-f-name{flex:1 1 auto;min-width:0;font-size:var(--t-caption);line-height:var(--t-caption-lh);
+    color:var(--text-primary);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .cbm-f-size{flex:0 0 auto;font-size:var(--t-micro);line-height:var(--t-micro-lh);color:var(--text-tertiary)}
+  /* Кнопка 28px визуально, но ::after добирает область нажатия до 44 — по чек-листу приёмки
+     тач-цели не меньше 44, а плашка файла такой высоты быть не должна. */
+  .cbm-f-x{position:relative;flex:0 0 auto;width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+    border:none;background:none;border-radius:var(--radius-inside);color:var(--text-secondary);cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:background .15s,color .15s}
+  .cbm-f-x::after{content:"";position:absolute;inset:-8px}
+  @media (hover:hover){.cbm-f-x:hover{background:var(--surface-on-light-2);color:var(--text-primary)}}
+  .cbm-f-x:active{background:var(--surface-on-light-2);color:var(--text-primary)}
+  #reqBack .cbm,#revBack .cbm{max-width:440px;max-height:calc(100vh - 40px);overflow-y:auto}
+  /* Подсветка была только у input — select и textarea оставались нетронутыми,
+     и ошибка в «Способе связи» никак не показывалась. */
+  .cbm-field.invalid input,.cbm-field.invalid select,.cbm-field.invalid textarea{border-color:var(--danger)}
+  .cbm-field.invalid input:focus,.cbm-field.invalid select:focus,.cbm-field.invalid textarea:focus{box-shadow:0 0 0 3px rgba(224,72,58,.12)}
+  .cbm-err{display:none;font-size:var(--t-micro);line-height:var(--t-micro-lh);color:var(--danger)}
+  .cbm-field.invalid .cbm-err{display:block}
+  .cbm-hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+  /* Строка согласия. Было: текст --t-label (12) с line-height 1.45 и чекбокс --mk-check--sm (18),
+     заведённый как раз «потому что 12px набор» — костыль под костылём. Но --t-label это ступень
+     КАПСА, а согласие набрано строчными: ступень --t-caption (13/16).
+     Тач-цель — весь лейбл, а он давал 34px против 44 (Apple): min-height + поля добирают до нормы.
+     Чекбокс вернулся к базовым 22 — мелкий вариант тут больше не нужен. */
+  .cbm-check{display:flex;gap:var(--sp-10);align-items:flex-start;cursor:pointer;
+    font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-secondary);
+    min-height:44px;padding-block:var(--sp-6)}
+  .cbm-check input{margin-top:1px}
+  /* Согласие — тоже обязательное поле, и без него заявка не уйдёт. Раньше оно
+     никак не выделялось, и человек искал ошибку в текстовых полях. */
+  .cbm-check.invalid{color:var(--danger)}
+  .cbm-check.invalid .mk-check{border-color:var(--danger)}
+  .cbm-check a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
+  .cbm-check a:hover{color:var(--text-primary)}
+  .cbm-check em{color:var(--text-tertiary);font-style:normal}
+
+  /* ── ЛАЙТБОКС ВИДЕО (портфолио) ────────────────────────────────────────────────
+     Отдельный компонент, а не .cbm: у форм карточка светлая, с полями и подвалом, а на
+     телефоне приходит шторкой снизу. Вертикальному ролику нужен тёмный фон и вся высота
+     экрана — от .cbm пришлось бы отбирать почти всё, что его и составляет.
+     Общее с модалками — ПОВЕДЕНИЕ (Esc, клик по фону, фокус-ловушка, возврат фокуса,
+     заблокированный скролл страницы), оно повторено в setupVideoLightbox.
+     Фон плотнее, чем у форм (.42 → .88): под формой страницу видно намеренно — человек
+     помнит, откуда пришёл; под видео она мешает, кадр должен остаться единственным. */
+  .vlb-back{position:fixed;inset:0;background:rgba(11,11,11,.88);opacity:0;visibility:hidden;
+    transition:opacity .18s,visibility .18s;z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+  .vlb-back.show{opacity:1;visibility:visible}
+  .vlb{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:var(--sp-12);
+    transform:translateY(8px) scale(.985);transition:transform .2s}
+  .vlb-back.show .vlb{transform:none}
+  /* Кадр считается ОТ ВЫСОТЫ окна, а не от ширины: ролик вертикальный и упирается он в
+     высоту. Ширину даёт пропорция, поэтому по бокам всегда остаётся тёмное поле, а не
+     обрезанный кадр. svh, а не vh: с vh на телефоне низ уезжает под панель браузера.
+     Чёрная подложка — пока грузится плеер: на сером мигало бы белым. */
+  .vlb-frame{position:relative;height:min(78svh,860px);aspect-ratio:9/16;background:#000;
+    border-radius:var(--radius-outside);overflow:hidden;box-shadow:var(--shadow-lg)}
+  .vlb-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+  /* Подпись под кадром: тег и заголовок те же, что на карточке, — иначе, открыв ролик,
+     человек теряет, на что он кликнул. Счётчик отвечает на «а сколько их всего». */
+  .vlb-cap{display:flex;align-items:center;gap:var(--sp-12);color:var(--text-on-dark)}
+  .vlb-cap-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+  .vlb-tag{font-size:var(--t-label);line-height:var(--t-label-lh);letter-spacing:var(--t-label-ls);
+    text-transform:uppercase;font-weight:500;color:var(--brand)}
+  .vlb-title{font-size:var(--t-ui);font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .vlb-count{order:2;margin-left:auto;flex:0 0 auto;font-size:var(--t-caption);color:var(--text-on-dark-2);font-variant-numeric:tabular-nums}
+  /* Крестик над кадром, а не поверх него: у встроенного плеера ВК свои элементы в верхних
+     углах, и наш крестик сел бы прямо на них. */
+  .vlb-x{position:absolute;top:-42px;right:0;width:32px;height:32px;border:none;background:none;
+    color:var(--text-on-dark);cursor:pointer;display:flex;align-items:center;justify-content:center;
+    border-radius:var(--radius-md);transition:background .12s}
+  .vlb-x:hover{background:rgba(255,255,255,.14)}
+  /* Стрелки — китовые (.mk-scroller__nav), но там они проявляются по hover ленты; здесь
+     ленты нет, поэтому видимы всегда. Ставим их СНАРУЖИ кадра: поверх кадра они попали бы
+     в область плеера, а тапы внутри iframe нам не принадлежат. */
+  .vlb .mk-scroller__nav{opacity:1;top:calc(min(78svh,860px) / 2)}
+  .vlb .mk-scroller__nav--prev{left:-64px}
+  .vlb .mk-scroller__nav--next{right:-64px}
+  .vlb .mk-scroller__nav:disabled{opacity:.25!important;pointer-events:none}
+  @media (prefers-reduced-motion:reduce){.vlb{transition:none}}
+
+  /* ── АВТОРИЗАЦИЯ ПО SMS (надстройка над .cbm; .cbm-done* уже есть выше) ── */
+  .auth-step[hidden]{display:none}
+  .cbm-title .phone{display:block;color:var(--text-secondary);margin-top:3px}
+  .auth-code{display:flex;gap:10px;margin-top:18px}
+  .auth-cell{flex:1;min-width:0;height:60px;text-align:center;font-family:var(--font-head);font-weight:700;font-size:26px;color:var(--text-primary);border:1px solid var(--border-strong);border-radius:var(--radius-md);background:var(--surface-card);outline:none;transition:border-color .15s,box-shadow .15s}
+  .auth-cell:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+  .auth-cell.filled{border-color:var(--text-tertiary)}
+  .auth-code.invalid .auth-cell{border-color:var(--danger);color:var(--danger)}
+  .auth-code.invalid .auth-cell:focus{box-shadow:0 0 0 3px rgba(224,72,58,.12)}
+  @keyframes authShake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+  .auth-code.shake{animation:authShake .4s}
+  @media(prefers-reduced-motion:reduce){.auth-code.shake{animation:none}}
+  .auth-code-err{margin-top:9px}
+  .auth-code-err.show{display:block}
+  .auth-resend{margin-top:14px;min-height:20px;font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-tertiary)}
+  .auth-resend .mk-btn--link{font-size:var(--t-small)}
+  .auth-sent{color:var(--brand-text);font-weight:600}
+  .auth-step[data-step="2"] .mk-btn--primary{margin-top:20px}
+  /* спиннер на кнопке (у форм usluga своего не было) */
+  .mk-btn.is-loading{color:transparent!important;pointer-events:none;position:relative}
+  .mk-btn.is-loading::after{content:"";position:absolute;width:18px;height:18px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;color:var(--on-brand);animation:authSpin .6s linear infinite}
+  @keyframes authSpin{to{transform:rotate(360deg)}}
+  /* ── ШАПКА: вошедшее состояние (инициалы фирм. шрифтом / имя) + меню ЛК ── */
+  .huser{position:relative;display:flex}
+  /* инициалы — просто буквы AttractiveCond (без кружка), вместо иконки */
+  .u-av{display:none;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;
+    color:var(--text-primary);text-transform:uppercase;line-height:1}
+  .hbtn > .u-av{height:22px;font-size:16px}
+  .huser.has-name .hbtn > .ci{display:none}
+  .huser.has-name .hbtn > .u-av{display:flex}
+  /* мобилка: в шапке ВСЕГДА дефолт-иконка (без инициалов), независимо от входа */
+  @media(max-width:1023px){
+    .hactions .huser.has-name .hbtn > .ci{display:flex}
+    .hactions .huser.has-name .hbtn > .u-av{display:none}
+  }
+  /* выпадашка над нижним баром (тот же приём, что body.search-open header) */
+  header:has(.umenu.show){z-index:60}
+  .umenu{position:absolute;right:0;top:calc(100% + 8px);min-width:248px;background:var(--surface-card);
+    border:1px solid var(--border);border-radius:var(--radius-outside);box-shadow:var(--shadow-lg);padding:8px;z-index:120;display:none}
+  .umenu.show{display:block}
+  .umenu__head{padding:6px 10px 10px}
+  .umenu__id{display:flex;flex-direction:column;min-width:0}
+  .umenu__id b{font-size:var(--t-ui);font-weight:600;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .umenu__id span{font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-tertiary)}
+  .umenu__sep{height:1px;background:var(--border);margin:6px 4px}
+  .umenu__item{display:flex;width:100%;align-items:center;gap:11px;padding:10px;border:none;background:none;
+    border-radius:var(--radius-md);cursor:pointer;font:inherit;font-size:var(--t-small);color:var(--text-primary);text-align:left}
+  .umenu__item:hover{background:var(--surface-subtle)}
+  .umenu__item svg{width:18px;height:18px;color:var(--text-secondary);flex-shrink:0}
+  /* мобильная шторка: активный шаг = скролл-слой [data-role] (как у родных форм);
+     нижний отступ + safe-area — чтобы кнопка не липла к краю экрана */
+  @media(max-width:1023px){ #authBack .cbm > [data-role]{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--sp-20) + env(safe-area-inset-bottom,0px))} }
+  /* .cbm-submit = .mk-btn--primary; своё — растяжка по ширине формы */
+  .cbm-submit{width:100%;margin-top:3px}
+  /* ОШИБКА ОТПРАВКИ — четвёртое состояние формы (было три: пусто / ошибка полей / успех).
+     Не экран-заглушка, а плашка НАД кнопкой: экран увёл бы человека от формы, а с ним и
+     заполненные поля. Здесь данные остаются на месте, повтор — одно нажатие.
+     Запасной канал в тексте обязателен: если сервер лежит, вторая попытка тоже не пройдёт,
+     и телефон — единственное, что человеку осталось. */
+  .cbm-alert{display:flex;gap:var(--sp-10);align-items:flex-start;
+    background:#fdecea;border:1px solid #f5c6c0;border-radius:var(--radius-md);
+    padding:var(--sp-12) var(--sp-14);margin-bottom:var(--sp-12);
+    font-size:var(--t-caption);line-height:1.45;color:var(--text-primary)}
+  .cbm-alert[hidden]{display:none}
+  .cbm-alert svg{width:18px;height:18px;flex-shrink:0;color:var(--danger);margin-top:1px}
+  .cbm-alert a{color:var(--text-primary);font-weight:600;white-space:nowrap;
+    border-bottom:1px solid var(--border-strong)}
+  /* Пока запрос в пути: кнопка занята и не принимает второй клик — иначе на медленной сети
+     человек жмёт трижды и создаёт три заявки. */
+  .cbm-submit[data-busy]{pointer-events:none}
+  /* Подвал формы. Раньше кнопка и примечание были прямыми детьми form и разделялись её
+     gap:13px; теперь они внутри обёртки, и расстояние надо задать здесь — иначе слипаются. */
+  .cbm-foot{display:flex;flex-direction:column;gap:var(--sp-10)}
+  /* Было 10.5px хардкодом — мимо шкалы ДС. Сначала перевёл на --t-micro (11), но 11px для
+     примечания, которое НАДО прочитать, всё ещё мелко: --t-micro — кегль для служебных
+     подписей, а не для текста. Ставим --t-caption и цвет secondary вместо tertiary. */
+  .cbm-fine{font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-secondary);text-align:center}
+  .cbm-done{text-align:center;padding:8px 4px 4px}
+  /* Иконка 40, а не 56: она подтверждает, а не солирует. При тексте 13–15px пятно 56px
+     перевешивало и заголовок, и саму суть сообщения. Глиф уменьшен пропорционально. */
+  .cbm-done-ic{width:40px;height:40px;border-radius:var(--radius-md);background:var(--brand);color:var(--text-primary);display:flex;align-items:center;justify-content:center;margin:0 auto var(--sp-12)}
+  .cbm-done-ic svg{width:22px;height:22px}
+  /* Обещание — обычным начертанием: это предложение, а не ярлык. Полужирный тут спорил
+     с заголовком и со значениями в списке ниже, где выделение действительно нужно. */
+  .cbm-done-lead{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-secondary);
+    margin-top:var(--sp-6)}
+  /* Что мы поняли — строками, как в квитанции. Выключка влево: пары «подпись — значение»
+     сканируются взглядом, центрированный сплошной текст нет. */
+  .cbm-done-list{margin:var(--sp-16) 0 var(--sp-12);text-align:left;
+    background:var(--surface-on-light);border-radius:var(--radius-md);padding:var(--sp-4) var(--sp-12)}
+  .cbm-done-list > div{display:flex;align-items:baseline;gap:var(--sp-12);
+    padding:var(--sp-8) 0}
+  .cbm-done-list > div + div{border-top:1px solid var(--border)}
+  .cbm-done-list dt{flex:0 0 auto;font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-secondary)}
+  .cbm-done-list dd{margin:0;flex:1 1 auto;min-width:0;text-align:right;
+    font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-primary);font-weight:600;
+    overflow-wrap:anywhere}
+  .cbm-done .cbm-fine{margin-bottom:var(--sp-16)}
+  .cbm-done .cbm-sub{margin:6px 0 20px}
+  .cbm-done .cbm-submit{width:100%;margin-top:0}
+
+  /* border-top НЕТ: над меню всегда стоит либо .navbar с border-bottom, либо (при
+     body.scrolled, когда .nav скрыт) сам header с border-bottom. Своя линия давала две
+     соседние по 1px — знакомая «толстая граница». */
+  .mega{position:absolute;left:0;right:0;top:calc(100% + 1px);z-index:45;display:none;background:var(--surface-card);border-bottom:1px solid var(--border);box-shadow:0 16px 30px -8px rgba(0,0,0,.12)}
+  .mega.open{display:block}
+  .mega-inner{width:min(100% - var(--container-pad) * 2, var(--container));margin-inline:auto}
+  .mega-box{border-left:1px solid var(--border);border-right:1px solid var(--border)}
+
+
+  /* панели табов */
+  .mtab{display:none}
+  .mtab.show{display:block}
+
+  .mega-card{display:grid;grid-template-columns:280px 1fr 240px;min-height:460px}
+
+  /* общий контейнер для Услуг/Материалов (без рельсы и промо) */
+  .svc-pane{padding:18px 4px 28px}
+  .svc-pane .phead{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+  .svc-pane .phead h3{font-family:var(--font-head);font-size:var(--t-h4);line-height:var(--t-h4-lh);font-weight:700;text-transform:uppercase;letter-spacing:var(--t-h4-ls)}
+  .svc-pane .phead a{font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--brand-text);font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:color .12s}
+  .svc-pane .phead a:hover{color:var(--text-primary)}
+  .svc-pane .phead a .arr-ico{width:13px;height:13px}
+  .svc-pane .phead a:hover .arr-ico{transform:translateX(2px)}
+  .cols-flow--4{column-count:4}
+
+
+  /* левая колонка — рельса разделов */
+  .rail{border-right:1px solid var(--border);padding:8px 0;overflow-y:auto;max-height:540px}
+  .rail .ri{display:flex;align-items:center;gap:12px;padding:9px 14px;min-height:40px;cursor:pointer;font-size:var(--t-small);font-weight:400;line-height:var(--t-small-lh);letter-spacing:normal;position:relative;color:var(--text-primary);transition:background .12s}
+  .rail .ri .em{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--text-tertiary);flex-shrink:0;transition:color .12s}
+  .rail .ri .em [stroke]{stroke-width:1.7}/* единая толщина обводки иконок рельсы */
+  .rail .ri:hover{background:var(--surface-subtle)}
+  .rail .ri:hover .em{color:var(--text-secondary)}
+  .rail .ri.active{background:var(--brand-soft);color:var(--text-primary);font-weight:500}
+  .rail .ri.active::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--brand)}
+  .rail .ri.active .em{color:var(--text-primary)}
+  .rail .ri .arr{margin-left:auto;display:flex;align-items:center;color:var(--text-primary);opacity:0;transform:translateX(-4px);transition:opacity .15s,transform .15s,color .15s;flex-shrink:0}
+  .rail .ri:hover .arr{opacity:.45;transform:translateX(0);color:var(--text-secondary)}
+  .rail .ri.active .arr{opacity:1;transform:translateX(0);color:var(--text-primary)}
+  .rail .sep{height:1px;background:var(--border);margin:6px 0}
+  .rail .lbl{padding:8px 14px 4px;font-size:var(--t-label);line-height:var(--t-label-lh);text-transform:uppercase;letter-spacing:var(--t-label-ls);color:var(--text-secondary);font-weight:600}
+
+  /* центр — контент раздела */
+  .pane{padding:18px 26px 22px;overflow-y:auto;max-height:540px;border-right:1px solid var(--border)}
+  /* заголовок раздела: линию тянем на всю ширину центральной колонки (вровень с бордюрами рельсы/промо) */
+  .pane .phead{display:flex;align-items:center;justify-content:space-between;margin:0 -26px 18px;padding:0 26px 12px;border-bottom:1px solid var(--border)}
+  .pane .phead h3{font-family:var(--font-head);font-size:var(--t-h4);line-height:var(--t-h4-lh);font-weight:700;text-transform:uppercase;letter-spacing:var(--t-h4-ls)}
+  .pane .phead a{font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--brand-text);font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:color .12s}
+  .pane .phead a:hover{color:var(--text-primary)}
+  .pane .phead a .arr-ico{width:13px;height:13px}
+  .pane .phead a:hover .arr-ico{transform:translateX(2px)}
+  .panel{display:none}
+  .panel.show{display:block}
+
+  .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:0 28px}
+  .col{display:flex;flex-direction:column}
+  .cols-flow{column-count:3;column-gap:28px}
+  .cols-flow .group{break-inside:avoid}
+
+  .group{margin-bottom:20px}
+  /* подкатегория = кликабельный заголовок-раздел (страница) */
+  .group h4{display:inline-block;font-size:var(--t-label);line-height:var(--t-label-lh);font-weight:700;text-transform:uppercase;letter-spacing:var(--t-label-ls);margin-bottom:9px;color:var(--text-primary);cursor:pointer;transition:color .12s}
+  .group h4 .nw{white-space:nowrap}/* последнее слово + стрелка не разрываются */
+  .group h4 .ha{display:inline-block;width:12px;height:12px;background:var(--text-secondary);-webkit-mask:var(--arr) center/contain no-repeat;mask:var(--arr) center/contain no-repeat;opacity:0;margin-left:5px;vertical-align:-1px;transition:opacity .15s,transform .15s}
+  .group h4:hover .ha{opacity:1;transform:translateX(2px)}
+  .group ul{list-style:none}
+  .group li{padding:3.5px 0}
+  /* товар = конечная страница, легче заголовка. inline — чтобы бейдж/иконка липли к последнему слову при переносе.
+     Плашку-на-весь-пункт пробовали (block): у двухстрочного она цельная, НО в column-count раскладке
+     любой hover пересчитывает колонки и весь контент дёргается (замер: сдвиг 7/8 пунктов, и без
+     отрицательных полей тоже). Неизбежно для многоколоночника — оставляем подчёркивание. */
+  .group li a{color:var(--text-secondary);font-size:var(--t-small);line-height:var(--t-small-lh);transition:color .12s;display:inline}
+  .group li a:hover{color:var(--text-primary);text-decoration:underline;text-underline-offset:2px}
+  /* ссылка «показать весь список группы» — ФИКСИРОВАННАЯ строка «Показать все», не из CMS */
+  .group li .more{color:var(--brand-text);font-size:var(--t-caption);line-height:var(--t-caption-lh);font-weight:600}
+  .group li .more:hover{color:var(--text-primary)}
+  .group li .more .arr-ico{width:12px;height:12px;margin-left:5px;vertical-align:-2px}
+  .group li .more:hover .arr-ico{transform:translateX(2px)}
+  /* ХИТ / Новое — компонент .mk-badge (--inline / --dark) из кита */
+  /* внешняя ссылка-строка внизу раздела (каталог сувениров) */
+  /* внешняя ссылка на mdmgifts — последний пункт группы с тонким разделителем и иконкой «внешняя ссылка» */
+  .group li.ext-sep{margin-top:7px;padding-top:8px;border-top:1px solid var(--border)}
+  .group .extli{color:var(--brand-text);font-weight:600}
+  .group .extli .arr-ico{width:12px;height:12px;margin-left:5px;vertical-align:-2px;transition:transform .15s}
+  .group .extli:hover{color:var(--text-primary);text-decoration:none}
+  .group .extli:hover .arr-ico{transform:translateX(2px)}
+
+
+  /* ===== ПРОМО — переключаемый компонент (единая дизайн-система) ===== */
+  .promo{position:relative;background:linear-gradient(160deg,var(--brand-soft) 0%,var(--brand-soft-2) 100%);overflow:hidden}
+  /* тело варианта — по умолчанию скрыто, активное показывается */
+  .promo-body{display:none;flex-direction:column;height:100%;padding:22px}
+  .promo[data-variant="offer"]   .promo-body[data-for="offer"],
+  .promo[data-variant="image"]   .promo-body[data-for="image"],
+  .promo[data-variant="content"] .promo-body[data-for="content"],
+  .promo[data-variant="hybrid"]  .promo-body[data-for="hybrid"]{display:flex}
+
+  /* --- АТОМ: бейдж — компонент .mk-badge (--lg / --soft); локально только раскладка в колонке --- */
+  .promo .mk-badge{align-self:flex-start}
+
+  /* --- АТОМ: заголовок + текст --- */
+  .promo h4{font-size:var(--t-h4);line-height:var(--t-h4-lh);font-weight:700;margin:14px 0 9px;color:var(--text-primary)}
+  .promo p{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--brand-text);margin:0}
+
+  /* --- АТОМ: цена --- */
+  .promo .price{display:flex;align-items:baseline;gap:10px;margin:14px 0 0}
+  .promo .price b{font-size:var(--t-h3);line-height:var(--t-h3-lh);font-weight:700;color:var(--text-primary)}
+  .promo .price s{font-size:var(--t-small);color:var(--text-tertiary)}
+
+  /* --- АТОМ: кнопка — компонент .mk-btn (--dark тёмная / --inverse белая); локально только раскладка --- */
+  .promo .promo-order{margin-top:14px;width:100%}
+  .promo .promo-order .arr-ico{transition:transform .15s}
+  .promo .promo-order:hover .arr-ico{transform:translateX(2px)}
+
+  /* --- АТОМ: визуал (мокап/обложка), единый градиент --- */
+  .promo-visual{flex:1;display:flex;align-items:center;justify-content:center;min-height:90px;margin:8px 0 4px}
+  .promo-visual svg{max-width:200px}
+
+  /* A. OFFER — мокап заполняет центр, цена+кнопка прижаты вниз (через flex:1 на visual) */
+
+  /* B. BANNER — изображение-обложка сверху, кнопка снизу (та же кнопка-атом) */
+  .promo-banner{text-decoration:none}
+  .promo-banner .promo-cover{flex:1}
+
+  /* C. CONTENT — обложка сверху, текст, кнопка прижата вниз */
+  .promo-cover{margin:-22px -22px 16px;min-height:140px;display:flex;align-items:center;justify-content:center;background:radial-gradient(120% 100% at 50% 35%,var(--brand-soft) 0%,var(--brand-soft-2) 100%)}
+  .promo-body[data-for="content"] .promo-order{margin-top:auto}
+
+  /* D. HYBRID — тёмный фон, бейдж сверху, текст+кнопка снизу */
+  .promo-hybrid{text-decoration:none;background:linear-gradient(160deg,var(--surface-dark) 0%,var(--surface-dark-2) 100%)}
+  .promo-hybrid::before{content:"";position:absolute;inset:0;background:radial-gradient(80% 60% at 80% 10%,rgba(255,193,0,.35) 0%,transparent 60%);pointer-events:none}
+  .promo-hybrid .mk-badge{position:relative}
+  .promo-hybrid .hybrid-text{position:relative;margin-top:auto}
+  .promo-hybrid h4{color:var(--text-on-dark)}
+  .promo-hybrid p{color:var(--text-on-dark-2)}
+  .promo-hybrid .promo-order{position:relative}
+
+
+  /* ===== ФИКС-ШАПКА + УМЕНЬШЕНИЕ ПРИ СКРОЛЛЕ (демо; механику доработаем) ===== */
+  .site-head{position:sticky;top:0;z-index:50}
+  .topbar{transition:max-height .25s ease,opacity .2s ease;max-height:80px}
+  body.scrolled .topbar{max-height:0;opacity:0;overflow:hidden}
+
+  /* компактная «Каталог» в основной шапке (видна только при скролле) */
+  /* .hcat = .mk-btn--dark --md, показывается только на мобиле */
+  .hcat{display:none;user-select:none;flex-shrink:0}
+  .hcat .ic{display:flex;flex-direction:column;gap:3px}
+  .hcat .ic i{width:14px;height:1.5px;background:var(--surface-card);border-radius:2px;transition:.2s}
+  .hcat.active .ic i:nth-child(1){transform:translateY(4.5px) rotate(45deg)}
+  .hcat.active .ic i:nth-child(2){opacity:0}
+  .hcat.active .ic i:nth-child(3){transform:translateY(-4.5px) rotate(-45deg)}
+  /* компактный «Калькулятор» — после разделителя, перед «Войти»; виден только при скролле.
+     Иконка в общем стиле .hbtn (контурный глиф), без своей заливки. */
+  .hcalc{display:none}
+
+  /* плавное пропорциональное уменьшение элементов */
+  .hbar{transition:height .2s ease}
+  .logo img,.search,.search .s-go,.hphone,.hphone .num,.hbtn,.hbtn .ci{transition:all .2s ease}
+  body.scrolled .hbar{height:54px;gap:12px}
+  body.scrolled .logo img{height:22px}
+  body.scrolled .search{height:36px;min-width:280px}
+  body.scrolled .search .s-go{height:28px;padding:0 14px;font-size:12.5px}
+  body.scrolled .search input{font-size:var(--t-caption)}
+  body.scrolled .hphone{padding:3px 8px;gap:8px}
+  body.scrolled .hphone .num{font-size:14.5px}
+  body.scrolled .hbtn{min-width:50px;font-size:11.5px;padding:4px 6px}
+  body.scrolled .hbtn .ci{width:20px;height:20px}
+  body.scrolled .hcat{display:flex}
+  body.scrolled .hcalc{display:flex}
+  /* скрыть 3-ю линию шапки, оставив навбар как опору для выпадающего каталога */
+  body.scrolled .navbar{border-bottom:none}
+  /* Смещения абсолютного блока считаются от padding-box, поэтому top:100% ставит меню ПОВЕРХ
+     границы навбара и съедает её. +1px возвращает линию. При body.scrolled границы у навбара
+     нет (её рисует сам header), и сдвиг не нужен — иначе появится белая щель. */
+  body.scrolled .mega{top:100%}
+  body.scrolled .navbar .nav{display:none}
+
+  /* ═══ ФОРМА ПОЛЕЙ: скругление (--radius-md 8px) — как у кнопок ═══
+     Кнопки и сегмент свою форму получают из кита (там же и объяснение выбора);
+     ниже — только поля и плашки самой страницы, которых в ките нет. */
+  .search{border-radius:var(--radius-md)}
+  .search-drop{border-radius:var(--radius-md) var(--radius-md) var(--radius-outside) var(--radius-outside)}
+  .usl-foot .fsub-form{border-radius:var(--radius-md)}
+  /* кнопка ВНУТРИ поля: концентрический радиус = радиус поля − зазор, не пилюля-в-пилюле */
+  .search .s-go,.usl-foot .fsub-form .mk-btn{border-radius:var(--radius-inside)}
+
+  /* ═══ ТАЧ-ЗОНЫ страницы: добор до 44px ═══
+     Тот же приём, что в ките (см. kit.css, «Тач-зона»): невидимая подложка расширяет площадь
+     нажатия, сам элемент не меняется. Здесь — контролы, которых в ките нет.
+     Каждый проверен на отсутствие интерактивного соседа ближе 44px по вертикали:
+     крошки и иконки контакт-бара стоят в строку, у контактов футера зазоры 27–40. */
+  @media (hover:none){
+    /* .rev-more здесь НЕТ намеренно: свёрнутая «…ещё» уже position:absolute, и relative бы её
+       сорвал с места. Позиционированный элемент и так служит containing block для своего ::after.
+       Раскрытая «…ещё» зону добирает полями (12+20+12=44) — ей подложка не нужна вовсе. */
+    .logo,.m-contactbar .mcb-ic,
+    .usl-foot .fcontact a,.usl-foot .flogo{position:relative}
+    .logo::after,.m-contactbar .mcb-ic::after,
+    .usl-rev .rev-more::after,.usl-foot .fcontact a::after,.usl-foot .flogo::after{
+      content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:max(100%,44px);height:44px}
+    /* КРОШКИ — исключение, и вот почему. Прямо над ними стоит контакт-бар, где строка с телефоном
+       сама держит 44px тач-цели. Зона крошек в 44 налезла бы на неё и начала воровать нажатия у
+       звонка — то есть у самого дорогого действия страницы. Поэтому здесь нижняя граница WCAG AA
+       (24), а не рекомендация Apple: 24 > нынешних 16, и соседа не задевает.
+       inline-block обязателен: у строчного бокса подложка не считает 100% ширины. */
+    .usl .crumbs a{position:relative;display:inline-block}
+    .usl .crumbs a::after{content:"";position:absolute;top:50%;left:50%;
+      transform:translate(-50%,-50%);width:100%;height:24px}
+  }
+
+/* ══════════════════════════════════════════════════════════════════════════════════════
+   БЫВШИЙ <style id="port-after"> — правки редизайна, запечённые 17.07.
+   Всё, что ниже, писалось с расчётом идти ПОСЛЕ правил выше.
+   ══════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ═══ Правки редизайна (запечены 17.07) ═══
+   Раньше этот слой включался классом body.v-after — тумблером сравнения «до/после». Тумблер снят:
+   вариант «после» победил и стал единственным, разметка варианта «до» удалена. Класс на <body> был
+   миной для переноса: в теме WordPress его взяться неоткуда, а от него зависели 60 самых
+   специфичных правил файла — страница поехала бы молча. */
+
+  /* ГЕРОЙ — левую часть выше */
+  .usl-hero .hero-left{padding-top:20px}
+
+  /* СТАТЬИ — 5 в ряд + время/стрелка (meta-обёртка глобальна; в «До» стрелка и 5-я карточка скрыты) */
+  .usl-art .art-card__meta{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-12);margin-top:auto;padding-top:var(--sp-12);line-height:var(--t-small-lh)}
+  .usl-art .art-card__time{margin-top:0;padding-top:0;white-space:nowrap}
+  .usl-art .art-card .mk-arr{color:var(--text-tertiary);transition:transform .15s}
+  .usl-art .art-card:hover .mk-arr{transform:translateX(2px);color:var(--text-primary)}
+  @media (prefers-reduced-motion:reduce){.usl-art .art-card .mk-arr{transition:none}.usl-art .art-card:hover .mk-arr{transform:none}}
+  /* ВИДЫ — с четвёртой карточки сетка превращается в ленту со стрелками (решение 19.08,
+     CMS_FIELDS §2.4). До трёх — обычные три колонки, стрелок нет вовсе: листать нечего.
+     Карточка остаётся шириной в треть, ровно три в кадре; четвёртая краем не выглядывает —
+     что список продолжается, показывают стрелки.
+     Только десктоп: на мобилке лента есть всегда (карточка 80%, свайп), её правила — в первом
+     брейкпоинте. Класс .mk-scroller__track на сетке стоит ради китового JS ([data-scroller]),
+     а его display:flex перебит правилом .usl-vidy .vidy-grid (0,2,0 против 0,1,0). */
+  /* База — стрелок нет: их не должно быть ни при трёх карточках, ни на мобилке (там свайп).
+     Правило вне медиа намеренно, иначе на телефоне кнопки вылезли бы в шапку. */
+  .usl-vidy .vidy-nav{display:none;gap:var(--sp-8)}
+  @media (min-width:1024px){
+    .usl-vidy .vidy-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-16)}
+    .usl-vidy:has(.vidy-grid > :nth-child(4)) .vidy-nav{display:flex}
+    /* кит держит стрелки по краям ленты (absolute) и проявляет их на hover — в шапке они стоят
+       в потоке и видны всегда */
+    .usl-vidy .vidy-nav .mk-scroller__nav{position:static;transform:none;opacity:1}
+    /* Кит прячет неактивную стрелку целиком (opacity:0) — там она висит поверх ленты и мозолит
+       глаза. В шапке прятать нельзя: пара кнопок схлопнулась бы в одну, съехавшую вбок.
+       Поэтому на краях ленты стрелка ПРИГЛУШЕНА, а не исчезает. */
+    .usl-vidy .vidy-nav .mk-scroller__nav:disabled{opacity:.35!important}
+    .usl-vidy .vidy-grid:has(> :nth-child(4)){
+      --item-w:calc((100% - 2 * var(--gap-card)) / 3);
+      display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+      scrollbar-width:none;-ms-overflow-style:none}
+    .usl-vidy .vidy-grid:has(> :nth-child(4))::-webkit-scrollbar{display:none}
+    .usl-vidy .vidy-grid:has(> :nth-child(4)) > *{flex:0 0 var(--item-w);scroll-snap-align:start}
+    @media (prefers-reduced-motion:reduce){.usl-vidy .vidy-grid{scroll-behavior:auto}}
+  }
+
+  .usl-art .art-grid{grid-template-columns:repeat(5,1fr)}
+  /* Неполный ряд статей: колонок ровно столько, сколько карточек, — ряд заполняется целиком
+     (решение 19.08, CMS_FIELDS §2.12). Одна статья не выводится вовсе, шесть и больше не бывает:
+     блок отдаёт 5 свежих. Только десктоп: на мобилке колонка одна при любом количестве, поэтому
+     правила и живут в @media(min-width:1024px) — иначе :has перебил бы мобильное правило
+     специфичностью (0,3,0 против 0,2,0). */
+  @media (min-width:1024px){
+    .usl-art .art-grid:has(> :nth-child(2):last-child){grid-template-columns:repeat(2,1fr)}
+    .usl-art .art-grid:has(> :nth-child(3):last-child){grid-template-columns:repeat(3,1fr)}
+    .usl-art .art-grid:has(> :nth-child(4):last-child){grid-template-columns:repeat(4,1fr)}
+  }
+
+  /* КАЛЬКУЛЯТОР = .mk-btn--ghost --md как в ките (белая плашка + рамка); своё — только иконка */
+  .calcbtn .calc-ic{display:inline-flex;flex-shrink:0}
+  .calcbtn .calc-ic svg{width:20px;height:20px;color:currentColor}
+
+  /* ПОРТФОЛИО — переключатель как ЧАСТЬ ЗАГОЛОВКА: дисплейный кегль h2, активный помечен
+     бренд-подчёркиванием. Контрола нет вовсе — ни плашки, ни рамки, ни заливки, поэтому
+     неоткуда взяться и «элементу дашборда» (рамка + вложенная залитая кнопка).
+     Компонент китовый (.mk-tabs/.mk-tab), его же язык: 2px подчёркивание брендом у активного —
+     ровно как у .usl-subnav a.active. Здесь только подъём кегля до заголовочного. */
+  /* выравниваем по БАЗОВОЙ ЛИНИИ, а не по центру коробок: у h2 сверху margin 8 (он для заголовка
+     под надзаголовком, здесь лишний), у таба снизу padding 4 под подчёркивание — при align-items:center
+     коробки разной высоты разводили текст на 8px. Заодно гасим тот margin. */
+  .usl-port .port-head{justify-content:flex-start;align-items:baseline;gap:var(--sp-24);flex-wrap:wrap}
+  .usl-port .port-head h2{margin-top:0}
+  .usl-port .port-tabs{border-bottom:none;gap:var(--sp-16)}
+  .usl-port .port-tabs .mk-tab{font-family:var(--font-head);font-weight:700;text-transform:uppercase;
+    font-size:var(--t-h2);line-height:var(--t-h2-lh);letter-spacing:var(--t-h2-ls);
+    color:var(--text-tertiary);padding:0 0 4px}
+  /* вес одинаков в обоих состояниях: кит переключает 400→600, но у дисплейного кегля скачок
+     веса дёргал бы соседние табы при переключении */
+  .usl-port .port-tabs .mk-tab.is-active{color:var(--text-primary);font-weight:700;border-bottom-color:var(--brand)}
+  .usl-port .port-tabs .mk-tab:hover{color:var(--text-secondary)}
+  .usl-port .port-tabs .mk-tab.is-active:hover{color:var(--text-primary)}
+
+  /* ЧАВО — форма как тёплая карточка (не терялась), аккордеоны из «коробок» в тихий список
+     с разделителями (карточный вариант кита — «для коротких/одиночных», а не для списка из 5) */
+  .faq-form{background:var(--surface-subtle);border-color:transparent}
+  /* Вид аккордеона (тёплый фон без обводки, маркер в кружке) переехал в кит целиком — это и есть
+     канон .mk-acc--card, а не местная правка. */
+  /* disabled CTA на тёплой подложке: gray сливается с subtle → плотнее (gray-2) */
+  .faq-form .cbm-submit:disabled{background:var(--surface-gray-2)}
+
+  /* МЕГАМЕНЮ C2 (scoped body) */
+
+/* ПЕСОЧНИЦА C2: линии → фланг-панели. Рельса и промо становятся скруглёнными панелями
+   («скобки» слева/справа), центр — белая «деталь» выбора между ними. Master-detail
+   держится на: (1) структуре скобок, (2) бренд-эхе активный пункт ↔ тик у заголовка центра.
+   Наложено поверх usluga.html через inject — оригинал не изменён. */
+  .mega-box{border:0}
+  .mega-card{grid-template-columns:280px 1fr 240px;height:540px;padding:14px 0}
+
+  /* РЕЛЬСА — нейтральная панель-навигация (левый фланг). Раньше «висела» на белом.
+     surface-subtle неотличим от белого (проверено, конц. B), gray-2 был тяжеловат →
+     завели токен --surface-panel (тёплый off-white). Панель со скруглением = контейнер. */
+  .rail{border:0;border-radius:var(--radius-outside);background:var(--surface-panel);padding:8px 4px;margin:0 8px 0 0;height:100%;max-height:none;scrollbar-gutter:stable}
+  .rail .lbl{padding:8px 10px 4px}
+  .rail .ri{padding:9px 10px;border-radius:var(--radius-md);white-space:nowrap;gap:9px}/* одна строка + чуть плотнее иконка↔текст (было 12) */
+  /* Двухстадийный отклик под задержку намерения (140мс): быстрый hover — тональный серый
+     (сразу, «навёл»), а committed — белый .active ниже («переключилось»). Раньше оба были
+     белыми, и в долю секунды до переключения казалось, что ничего не происходит.
+     :not(.active) — чтобы у уже выбранного раздела серый не перебивал белый. */
+  .rail .ri:hover:not(.active){background:var(--surface-on-light)}
+  /* активный/выбранный (он же — состояние наведения): белая карточка + бренд-бар слева.
+     Светло-жёлтая заливка на тёплой панели читалась «грязно» → ушли от неё. */
+  .rail .ri.active{background:var(--surface-card);border-radius:var(--radius-md);box-shadow:0 1px 4px rgba(20,15,0,.06)}
+  /* бренд-акцент активного = вертикальный аналог таб-подчёркивания ДС (.usl-subnav a.active): 2px, заподлицо, инсет по радиусу карточки (radius-md 8px) */
+  .rail .ri.active::before{display:block;content:"";position:absolute;left:0;top:8px;bottom:8px;width:2px;background:var(--brand)}
+  .rail .sep{margin:6px 10px}
+
+  /* ЦЕНТР — «деталь». Подчёркивание заголовка убрано (усиливало несвязанность);
+     бренд-тик у заголовка эхом связывает с активным пунктом рельсы.
+     Мягкий фейд сверху и снизу вместо резкого «невидимого» белого обреза скролла.
+     Паддинг центра (18/22px) держит заголовок чётким в покое — фейд его не задевает. */
+  .pane{border-right:0;height:100%;max-height:none;scrollbar-gutter:stable;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 16px,#000 calc(100% - 16px),transparent);mask-image:linear-gradient(to bottom,transparent 0,#000 16px,#000 calc(100% - 16px),transparent)}
+  .pane .phead{border-bottom:0;margin:0 0 16px;padding:0;justify-content:flex-start;gap:9px;width:fit-content;cursor:pointer}
+  .pane .phead h3{display:inline-flex;align-items:center}
+  .pane .phead h3::before{display:none}/* бренд-тик убран — акцент у заголовка теперь даёт кружок-стрелка */
+  /* «Все услуги раздела» → контурный кружок-стрелка у заголовка (текст скрыт font-size:0).
+     Паттерн ДС = ghost-кнопка (.mk-btn--ghost): белый фон + 1px var(--border), на hover
+     бордер и контент → --text-primary. Иконочный размер, вторичный вид (просто обводка).
+     align-self:center + сдвиг −1px — оптическое выравнивание с прописным заголовком. */
+  /* мягкая тональная заливка без обводки — токен --surface-on-light (не кнопка: у кружка есть
+     своя форма и стрелка, ему контур не нужен). */
+  .pane .phead a{font-size:0;flex:0 0 auto;align-self:center;margin-top:-1px;position:relative;width:22px;height:22px;border-radius:var(--radius-inside);background:var(--surface-on-light);color:var(--text-secondary);display:inline-block;transition:background .15s,color .15s}
+  /* ОБЩИЙ hover на весь заголовок (текст+плашка = один элемент): плашка мягко темнеет (ДС soft-hover), стрелка темнеет. Без слайда. */
+  .pane .phead:hover a{background:var(--surface-on-light-2);color:var(--text-primary)}
+  /* стрелку центрируем абсолютно: скрытый текст (font-size:0) остаётся флекс-элементом и сдвигал её вправо */
+  .pane .phead a .arr-ico{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:11px;height:11px;display:block;transition:none}
+  /* без анимации: гасим унаследованный слайд .arr-ico{translateX(2px)} на hover — стрелка статична по центру */
+  .pane .phead a:hover .arr-ico{transform:translate(-50%,-50%)}
+
+  /* подразделы (.group h4): общий hover в серый — весь заголовок (текст+стрелка) сереет вместе.
+     currentColor держит стрелку в цвет текста; оригинальную плавную анимацию появления (fade+лёгкий слайд) НЕ трогаем. */
+  .pane .group h4 .ha{background:currentColor}
+  .pane .group h4:hover{color:var(--text-secondary)}
+
+  /* «Показать все» → текст как у ссылок списка + справа КРУЖОК С ЗАЛИВКОЙ (бренд-жёлтый) со стрелкой.
+     Бренд-акцент (по просьбе маркетолога) живёт в кружке, текст нейтральный. */
+  .pane .group li .more{display:inline-flex;align-items:center;gap:8px;margin-top:0;padding:0;background:none;border-radius:0;font-size:var(--t-small);line-height:var(--t-small-lh);font-weight:400;color:var(--text-secondary);white-space:nowrap;transition:color .12s}
+  /* без подчёркивания: ховер живёт в кружке+стрелке (кружок темнеет, стрелка едет вправо) */
+  .pane .group li .more:hover{color:var(--text-primary);text-decoration:none}
+  /* кружок — как у заголовка раздела: серая soft-заливка (--surface-on-light) + приглушённая стрелка; на hover темнеет (общий hover) */
+  .pane .group li .more .arr-ico{width:20px;height:20px;margin:0;border-radius:var(--radius-inside);background:var(--surface-on-light);-webkit-mask:none;mask:none;position:relative;flex:0 0 auto;vertical-align:0;transition:background .15s}
+  .pane .group li .more .arr-ico::before{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:10px;height:10px;background:var(--text-secondary);-webkit-mask:var(--arr) center/contain no-repeat;mask:var(--arr) center/contain no-repeat;transition:background .15s,transform .15s}
+  /* кружок стоит на месте (transform:none гасит унаследованный слайд), только темнеет; едет — стрелка внутри */
+  .pane .group li .more:hover .arr-ico{transform:none;background:var(--surface-on-light-2)}
+  .pane .group li .more:hover .arr-ico::before{background:var(--text-primary);transform:translate(-50%,-50%) translateX(2px)}
+
+  /* ВНЕШНЯЯ ССЫЛКА mdmgifts (.extli) → тот же вид, что «Показать все» (нейтральный текст + кружок),
+     но стрелка ДИАГОНАЛЬНАЯ «в угол» (↗) — маркер ухода на внешний домен. Тот же стиль линии (1.7). */
+  :root{--arr-ne:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 11.5 11.5 4.5M6 4.5h5.5V10'/%3E%3C/svg%3E")}
+  /* строчный поток (НЕ inline-flex): длинный текст переносится на 2 строки, кружок липнет к последнему слову */
+  .pane .group li .extli{display:inline;margin:0;padding:0;background:none;font-size:var(--t-small);line-height:var(--t-small-lh);font-weight:400;color:var(--text-secondary);transition:color .12s}
+  .pane .group li .extli:hover{color:var(--text-primary);text-decoration:none}
+  .pane .group li .extli .arr-ico{display:inline-flex;width:20px;height:20px;margin:0 0 0 6px;border-radius:var(--radius-inside);background:var(--surface-on-light);-webkit-mask:none;mask:none;position:relative;vertical-align:middle;transition:background .15s}
+  .pane .group li .extli .arr-ico::before{content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:11px;height:11px;background:var(--text-secondary);-webkit-mask:var(--arr-ne) center/contain no-repeat;mask:var(--arr-ne) center/contain no-repeat;transition:background .15s,transform .15s}
+  /* кружок статичен, темнеет; стрелка едет в угол (вправо-вверх) */
+  .pane .group li .extli:hover .arr-ico{transform:none;background:var(--surface-on-light-2)}
+  .pane .group li .extli:hover .arr-ico::before{background:var(--text-primary);transform:translate(-50%,-50%) translate(1.5px,-1.5px)}
+
+  /* ХОВЕР УСЛУГ по ДС: вместо плоского подчёркивания — мягкая скруглённая подсветка строки
+     (тот же язык тональной заливки, что у рельсы/кружков: --surface-on-light). Весь список
+     читается как интерактивное меню. inline + box-decoration-break:clone — переносы и бейджи ХИТ
+     не ломаются; padding гасится отрицательным margin, вертикальный не двигает строку. */
+  /* только конечные услуги; .more (Показать все) и .extli (внешняя) — со своим видом, плашку не даём */
+  .pane .group li a:not(.more):not(.extli){border-radius:6px;transition:color .12s,background .12s}
+  .pane .group li a:not(.more):not(.extli):hover{color:var(--text-primary);text-decoration:none;background:var(--surface-on-light);padding:2px 7px;margin:0 -7px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+
+  /* ПРОМО — акцент-панель (правый фланг). Короче рельсы/центра и прижата к верху:
+     промо-CTA не обязан тянуться на всю высоту master-detail (иначе «вытянут» и пустует). */
+  .promo{margin:0 0 0 8px;border:1px solid var(--brand-soft-2);border-radius:var(--radius-outside);align-self:start;height:470px}
+
+  /* ============================================================
+     МОБИЛЬНАЯ ШАПКА + КАТАЛОГ-DRAWER (drill-down, ≤900px).
+     Переиспользуем #mega: .rail = уровень 0, #pane/.panel = уровень 1.
+     ============================================================ */
+  .m-dhead,.m-back,.m-dsearch,.m-root,.rail .ri-desc,.hactions .m-search,.m-contactbar{display:none}   /* по умолчанию (десктоп) скрыты; .ri-desc — только мобильная подсказка */
+  @keyframes mDrawerFade{from{opacity:0}to{opacity:1}}
+
+  @media(max-width:1023px){
+    /* clip вместо hidden: клипует так же, но НЕ создаёт скролл-контейнер — а hidden его создавал
+       и ломал position:sticky у подшапки (замер: top=-188 вместо 58, уезжала вместе со страницей).
+       hidden оставлен первым как фолбэк для браузеров без clip (Safari <16). */
+    html,body{overflow-x:hidden;overflow-x:clip;max-width:100%}
+    /* rubber-band: при оттяжке iOS тащит и fixed-шапку, сверху лезет полотно холста → гасим сам баунс страницы */
+    html{overscroll-behavior-y:none;background:var(--surface-page)}
+    /* iOS зумит страницу при фокусе на поле со шрифтом <16px. Это ограничение платформы, а не
+       предпочтение, поэтому !important: у большинства полей есть свой font-size в более
+       специфичном селекторе (.search input 14px, .cbm-sel select 15px, #email 14px…), и правило
+       без !important молча проигрывало — замер показал 7 полей из 10 в диапазоне 14–15px. */
+    /* 16px здесь — КОНСТАНТА ПЛАТФОРМЫ, а не ступень шкалы: ниже 16 iOS зумит страницу при
+       фокусе поля. Именно поэтому число, а не var(--t-body): если ступень body однажды уедет
+       на 15, зум обязан не вернуться. */
+    input,select,textarea{font-size:16px!important}
+    body.nav-open{overflow:hidden}
+    html:has(body.nav-open){overflow:hidden}   /* прокрутка часто на html — лочим и его, иначе фон скроллится за меню */
+
+    /* топбар (утилитарные ссылки) уезжает за экран — прячем */
+    .topbar{display:none}
+    /* навбар: прячем десктопный ряд, #mega внутри оставляем */
+    .navbar{border:none;background:none}
+    .navbar .nav{display:none}
+    /* шапка зафиксирована (не sticky: html/body overflow-x:hidden ломает sticky на iOS) — меню открывается ПОД ней */
+    /* КРОШКИ: полный путь в одну строку не влезает, скролл на мобилке не находят. Схлопываем
+       середину пути в «…» — остаются корень, родитель и текущая страница. Путь целиком остаётся
+       в разметке (для SEO и десктопа), середина только скрыта. */
+    .usl .crumbs{gap:var(--sp-6);flex-wrap:nowrap;overflow:hidden;
+      margin:0 calc(var(--container-pad) * -1) var(--sp-18);
+      padding:var(--sp-10) var(--container-pad);border-bottom:1px solid var(--border)}
+    .usl .crumbs>*{flex-shrink:0;white-space:nowrap}
+    .usl .crumbs a:nth-of-type(n+2):not(:last-of-type){display:none}   /* середина пути */
+    /* Схлопнутая середина пути: «/» этого разделителя превращается в «… /».
+       font-size:0 гасит СВОЙ текст («/»), а «…» и «/» рисуют псевдоэлементы своим кеглем.
+       display:inline-flex + align-items:center обязательны: без них у элемента с нулевым кеглем
+       своя базовая линия, высота выходила 20 против 16 у соседей, и разделитель прыгал на 2px
+       вверх (замер: 129..149 против 131..147). Флекс считает высоту по псевдоэлементам.
+       width:0 тут НЕЛЬЗЯ (пробовал): обрезает и псевдоэлементы — многоточие исчезает совсем. */
+    .usl .crumbs span:nth-of-type(2){font-size:0;display:inline-flex;align-items:center;
+      line-height:var(--t-caption-lh)}
+    .usl .crumbs span:nth-of-type(2)::before{content:"…";font-size:var(--t-caption);line-height:var(--t-caption-lh)}
+    .usl .crumbs span:nth-of-type(2)::after{content:"/";font-size:var(--t-caption);line-height:var(--t-caption-lh);margin-left:var(--sp-6)}
+    .usl .crumbs span:nth-of-type(n+3):not(:last-of-type){display:none}  /* «/» скрытой середины */
+    .usl .crumbs b{flex-shrink:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+
+    /* шапка зафиксирована (не sticky: html/body overflow-x:hidden ломает sticky на iOS) — меню открывается ПОД ней.
+       Номер и CTA временно убраны из шапки — живут в меню (согласуем с маркетологом). */
+    header{position:fixed;top:0;left:0;right:0;z-index:1002}
+    body{padding-top:58px}   /* компенсация fixed-шапки */
+    /* Отступ смотрел не в ту сторону: над навбаром 0, под ним до заголовка 88 — он читался как
+       подпись к блоку сверху, а не как навигация по тому, что снизу. Разворачиваем: воздух над
+       навбаром, сокращённый отступ под ним.
+       Фон плотный — в базовом правиле выше, для обеих сторон. */
+    .usl-subnav{top:58px;margin-top:var(--sp-24)}
+    .usl-subnav + section{padding-top:var(--sp-32)}
+    /* лента режется по .wrap (поля 16px), поэтому пункты обрывались, не доходя до края экрана,
+       и было неясно, что строка вообще прокручивается. Скроллер во всю ширину, поля переезжают
+       внутрь ленты: первый пункт остаётся на сетке страницы, последний уходит за край экрана.
+       Хвостовой отступ — через ::after (padding-inline-end у флекс-скроллера игнорируется). */
+    .usl-subnav .wrap{width:100%;margin-inline:0;padding-left:var(--container-pad);gap:var(--sp-20);
+      height:48px;scroll-padding-left:var(--container-pad);-webkit-overflow-scrolling:touch}
+    .usl-subnav .wrap::after{content:"";flex:0 0 var(--container-pad)}
+    .usl-subnav .wrap::-webkit-scrollbar{display:none}
+    .usl-subnav .wrap{scrollbar-width:none}
+
+    /* --- HBAR: logo слева · [поиск · войти · корзина · меню] справа --- */
+    .hbar,body.scrolled .hbar{gap:var(--sp-4);height:58px}   /* компакт-шапка при скролле — только десктоп, на мобилке ничего не меняется */
+    .logo{order:1;margin-right:auto}
+    .logo img{height:22px}
+    /* поле поиска убрано из шапки — оно внутри drawer (каталога) */
+    .search{display:none}
+    /* телефон живёт в call-bar (2-й уровень) — из hbar убираем */
+    .hphone{display:none}
+    /* правый блок иконок: поиск + войти + корзина (все — плоские иконки одного размера) */
+    .hactions{order:2;gap:var(--sp-4)}
+    .hactions>*{display:none!important}
+    .hactions>.m-search,.hactions>.m-keep{display:flex!important}
+    /* ЕДИНЫЙ СТИЛЬ иконок-кнопок шапки: поиск · войти · корзина · бургер —
+       44×44, плоские, глиф строго по центру (font-size:0 + flex-center вместо text-indent),
+       общий тёплый ховер (в т.ч. у бургера) */
+    /* 44×44 — минимум тач-цели (было 40 при зазоре 2: корзина кончалась на 332, бургер начинался
+       на 334, промах по бургеру уводил в корзину). Зазор 4, а не рекомендованные 8: порог норматива
+       — на РАЗМЕР цели, зазор лишь рекомендация, а при 8 кластер иконок визуально разъезжался.
+       Центры соседних целей разнесены на 48px, цели не слипаются. */
+    .hbar .hcat,body.scrolled .hbar .hcat,.hactions .hbtn,body.scrolled .hactions .hbtn{
+      width:44px;min-width:44px;height:44px;min-height:44px;padding:0;gap:0;
+      display:flex;align-items:center;justify-content:center;font-size:0;line-height:0;
+      background:none;border:none;border-radius:var(--radius-md);
+      position:relative;flex-shrink:0;color:var(--text-primary);cursor:pointer;transition:background .15s}
+    .hbar .hcat{order:3}
+    .hbar .hcat:hover,.hactions .hbtn:hover{background:var(--surface-on-light)}
+    .hbar .hcat:active,.hactions .hbtn:active{background:var(--surface-on-light)}
+    /* лупа: осознанное состояние «поиск открыт» (тональная плашка по ДС), а не залипший hover */
+    .hactions .m-search.active{background:var(--surface-on-light)}
+    /* бургер: тонкие ровные полосы под вес соседних глифов (не тяжелее) */
+    .hbar .hcat .ic{position:static;margin:0;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center}
+    .hbar .hcat .ic i{width:18px;height:2px;border-radius:2px;background:var(--text-primary)}
+    /* крестик: полосы 1.5px, gap 3.5 → центры на ±5px */
+    .hbar .hcat.active .ic i:nth-child(1){transform:translateY(6px) rotate(45deg)}
+    .hbar .hcat.active .ic i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+    .hactions .hbtn .ci,body.scrolled .hactions .hbtn .ci{position:static;margin:0;width:auto;height:auto;display:flex;align-items:center;justify-content:center}
+    .hactions .hbtn .ci svg{width:22px;height:22px}
+    .hactions .hbtn .badge{font-size:9px;line-height:1;right:1px;top:1px}
+
+    /* --- CALL-BAR (2-й уровень): телефон крупно (приоритет заказчика) --- */
+
+    /* --- #MEGA → выпадающее меню ПОД шапкой (шапка липкая, остаётся видимой) --- */
+    /* закрытый = display:none (fixed+transform давал оверфлоу и раздувал ICB). top=высота hbar */
+    #mega{position:fixed;top:58px;left:0;right:0;bottom:0;height:calc(100dvh - 58px);height:calc(100lvh - 58px);z-index:1001;background:var(--surface-page);
+      width:100%;max-width:none;box-shadow:none;border:none;display:none;transform:none}   /* lvh: тянем фон дравера ПОД тулбар Safari (иначе там белая полоса и список «обрезан»); контент поднят запасом 96px */
+    #mega.open{display:block;animation:mDrawerFade .18s ease}
+    #mega .m-dhead .m-dh-x{display:none}   /* закрывает бургер-крестик в шапке, отдельный × не нужен */
+    /* #mega-префикс: перебивает .mega-card/.pane (иначе остаётся десктоп-грид 280/1fr/240 и .pane 1400px → оверфлоу страницы) */
+    #mega .mega-inner,#mega .mega-box,#mega .mega-card{display:block;padding:0;margin:0;max-width:none;width:auto;background:none;border:none;box-shadow:none;min-height:0}
+    /* сплошная flex-цепочка высот: #mega(фикс, top:58→bottom:0) → inner 100% → box → card, иначе абсолютные уровни коллапсят карточку в 0 */
+    #mega .mega-inner{height:100%;display:flex;flex-direction:column}
+    #mega .mega-box{flex:1;min-height:0;display:flex;flex-direction:column}
+    #mega .mega-card{flex:1;min-height:0;position:relative;overflow:hidden;display:flex;flex-direction:column;grid-template-columns:none}
+    #mega .promo{display:none}   /* десктопный промо-фланг на мобиле убираем */
+
+    /* шапка drawer: назад (появляется при drill) + заголовок уровня */
+    #mega .m-dhead{display:none;align-items:center;gap:6px;padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+    #mega.cat-open .m-dhead{display:flex}   /* шапка drawer (назад + «Каталог») — только внутри каталога, в корне не нужна */
+    #mega .m-dhead .m-dh-back{display:none;height:26px;margin-left:-2px;padding:0 4px 0 0;flex-shrink:0;align-items:center;gap:8px;background:none;border:none;color:var(--text-secondary);cursor:pointer}
+    #mega .m-dhead .m-dh-back svg{width:26px;height:26px;padding:6px;border-radius:var(--radius-md);background:var(--surface-on-light);box-sizing:border-box;transition:background .15s}
+    #mega .m-dhead .m-dh-back:active svg{background:var(--surface-on-light-2)}
+    #mega .m-dhead .m-dh-back .m-dh-bl{font-size:var(--t-small);font-weight:500}   /* куда вернёт «назад»: родительский экран */
+    #mega.cat-open .m-dhead .m-dh-back{display:flex}
+    #mega .m-dhead .m-dh-t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--t-body);font-weight:600;color:var(--text-primary)}   /* текущий экран (тот же body-шрифт, что и список) */
+    #mega .m-dhead .m-dh-x{margin-left:auto;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:none;border:none;color:var(--text-secondary)}
+    #mega .m-dhead .m-dh-x svg{width:22px;height:22px}
+    /* корень мобильного меню: Каталог › + ссылки топбара (уровень 0) */
+    #mega .m-root{display:flex;flex-direction:column;position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:calc(env(safe-area-inset-bottom) + 96px);background:var(--surface-page);z-index:1}   /* +96px — запас, чтобы низ списка выкручивался выше нижнего тулбара Safari */
+    /* «Каталог» — текст как у остальных пунктов; отличает только иконка в кружке + шеврон */
+    /* «Каталог» — как строка категории (та же плашка-квадрат + заголовок), только плашка жёлтая = главный вход */
+    #mega .m-root .mr-cat{display:flex;align-items:center;gap:14px;width:100%;padding:12px 16px;min-height:60px;border:none;border-bottom:1px solid var(--border);background:none;font-size:var(--t-ui);font-weight:500;color:var(--text-primary);cursor:pointer;text-align:left}
+    #mega .m-root .mr-cat:active{background:var(--surface-subtle)}
+    #mega .m-root .mr-cat .mr-cat-ic{width:34px;height:34px;flex-shrink:0;border-radius:var(--radius-md);background:var(--brand);color:var(--on-brand);display:flex;align-items:center;justify-content:center}
+    #mega .m-root .mr-cat .mr-cat-ic svg{width:18px;height:18px}
+    #mega .m-root .mr-cat .mr-cat-tx{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+    #mega .m-root .mr-cat .mr-cat-t{font-size:var(--t-ui);font-weight:600;line-height:1.25;color:var(--text-primary)}   /* главный вход — жирнее вторичных ссылок */
+    #mega .m-root .mr-cat .mr-cat-d{font-size:12.5px;line-height:1.3;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #mega .m-root .mr-cat .mr-arr{margin-left:auto;color:var(--text-tertiary);display:flex}
+    /* калькулятор — та же анатомия строки, но тональная плашка (инструмент, не главный вход) и стрелка → (переход на страницу) */
+    /* Стили .mr-contacts удалены вместе с блоком (17.07): контакты в drawer дублировали call-bar
+       шапки. Заодно ушёл хардкод 12.5px — кегля, которого в шкале нет. */
+    #mega .m-root .mr-calc{display:flex;align-items:center;gap:14px;width:100%;padding:12px 16px;min-height:60px;border:none;border-bottom:1px solid var(--border);background:none;color:var(--text-primary);cursor:pointer;text-align:left}
+    #mega .m-root .mr-calc:active{background:var(--surface-subtle)}
+    #mega .m-root .mr-calc .mr-calc-ic{width:34px;height:34px;flex-shrink:0;border-radius:var(--radius-md);background:var(--surface-on-light);color:var(--text-secondary);display:flex;align-items:center;justify-content:center}
+    #mega .m-root .mr-calc .mr-calc-ic svg{width:18px;height:18px}
+    #mega .m-root .mr-calc .mr-cat-tx{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+    #mega .m-root .mr-calc .mr-cat-t{display:flex;align-items:center;gap:8px;font-size:var(--t-ui);font-weight:500;line-height:1.25;color:var(--text-primary)}
+    #mega .m-root .mr-calc .mr-cat-d{font-size:12.5px;line-height:1.3;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #mega .m-root .mr-calc .mr-go{margin-left:auto;flex-shrink:0;width:14px;height:14px;background:var(--text-tertiary);-webkit-mask:var(--arr) center/contain no-repeat;mask:var(--arr) center/contain no-repeat}
+    #mega .m-root .mr-links{display:flex;flex-direction:column}
+    #mega .m-root .mr-links a{display:block;padding:13px 16px;min-height:46px;font-size:var(--t-ui);color:var(--text-primary);border-bottom:1px solid var(--border)}
+
+    /* КОНТАКТЫ: строки с иконками — иконка отличает их от навигационных ссылок */
+    /* заявка — тот же вход, что калькулятор (бежевая плашка); жёлтый в меню ровно один — у Каталога.
+       Акцент CTA держит жирный заголовок, а не цвет плашки. */
+    #mega .m-root .mr-req .mr-cat-t{font-weight:600}
+    #mega .m-root .mr-links a:active{background:var(--surface-subtle)}
+    /* поиск в корне drawer — общий поиск по сайту, над «Каталог»; на всю ширину, без рамки (бар заподлицо + нижний разделитель) */
+    #mega .m-root .m-dsearch{display:flex;align-items:center;gap:10px;flex-shrink:0;margin:0;padding:0 16px;height:52px;background:var(--surface-subtle);border:none;border-bottom:1px solid var(--border);border-radius:0}
+    #mega .m-dsearch svg{width:19px;height:19px;color:var(--text-secondary);flex-shrink:0}
+    /* ── КОНТАКТ-РЯД под шапкой (мобилка) ───────────────────────────────────
+       До 17.07 телефона на мобилке не было НИГДЕ, кроме футера на 11 305-м пикселе: в шапке он
+       скрыт, а из меню контакты убраны как дубль. Для типографии это удар по деньгам — половина
+       заказов начинается со звонка.
+       Ряд НЕ липкий: липкая часть уже 107px (шапка 59 + подшапка 49) = четверть экрана. */
+    .m-contactbar{display:flex;align-items:center;gap:var(--sp-12);
+      padding:var(--sp-4) var(--container-pad);border-bottom:1px solid var(--border);
+      background:var(--surface-page)}
+    /* тач-цель 44 держит сам блок-ссылка, поэтому у ряда поля всего 4: высота идёт от контента,
+       а не от воздуха — ряд вспомогательный и не должен есть экран */
+    .m-contactbar .mcb-tx{display:flex;flex-direction:column;gap:0;min-height:44px;
+      justify-content:center;text-decoration:none;-webkit-tap-highlight-color:transparent}
+    .m-contactbar .mcb-tx:active{opacity:.6}
+    /* номер: последние 4 жирным — как в десктопной шапке (.num .pre/.l4), тот же приём и те же веса */
+    /* номер --t-ui (15), а не --t-h4 (16): ряд вспомогательный, он не должен спорить с шапкой */
+    .m-contactbar .mcb-num{font-family:var(--font-body);font-size:var(--t-ui);line-height:19px;
+      color:var(--text-primary)}
+    .m-contactbar .mcb-num .pre{font-weight:500}
+    .m-contactbar .mcb-num .l4{font-weight:800}
+    /* время работы — ПОД номером: это подпись к нему, а не сосед */
+    /* время работы — ступенью ниже (--t-micro 11): это сноска к номеру, а не второй по важности текст */
+    .m-contactbar .mcb-when{font-size:var(--t-micro);line-height:var(--t-micro-lh);
+      color:var(--text-tertiary);white-space:nowrap}
+    .m-contactbar .mcb-ics{display:flex;align-items:center;gap:var(--sp-8);margin-left:auto}
+    /* иконки в ЗАЛИТОМ контейнере — как контактные в футере (.fcontact__ic): 32×32, радиус 8,
+       тональная заливка. Тут светлая сторона, потому --surface-on-light вместо --surface-on-dark.
+       Тач-цель добирается полями до 44, сам контейнер остаётся 32 — как в футере. */
+    .m-contactbar .mcb-ic{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;
+      border-radius:var(--radius-md);background:var(--surface-on-light);color:var(--text-primary);
+      -webkit-tap-highlight-color:transparent;transition:background .15s,color .15s}
+    /* Иконки взяты из футера ЦЕЛИКОМ — те же svg (.usl-foot .fcontact__ic) и те же размеры:
+       контейнер 32, глиф 16. Единственное отличие — сторона: футер тёмный, ряд светлый, поэтому
+       --surface-on-dark → --surface-on-light. Больше ничего не трогаем.
+       Глиф — primary, а не secondary: на тёмной подложке футера серый глиф контрастен, а на светлой
+       плашке серое-на-сером читается как disabled. Цветными (брендовыми) их не делаем — это сломало
+       бы единый нейтральный стиль иконок; поднимаем только контраст.
+       (До этого я тащил svg из drawer — другой набор, оттого почта и была огромной.) */
+    .m-contactbar .mcb-ic svg{width:16px;height:16px;display:block}
+    @media (hover:hover){.m-contactbar .mcb-ic:hover{background:var(--surface-on-light-2);color:var(--text-primary)}}
+    .m-contactbar .mcb-ic:active{background:var(--surface-on-light-2);color:var(--text-primary)}
+
+    /* ── ПОИСК НА МОБИЛКЕ ────────────────────────────────────────────────────
+       Выдача появляется ТОЛЬКО по фокусу или вводу. Раньше «Популярные запросы» висели под полем
+       всегда и отжимали «Каталог» вниз: человек открыл меню, чтобы пойти в каталог, а ему
+       подсовывают чипы. Меню — главное, поиск — по требованию.
+       Вся десктопная отделка снята: у .search-drop position:absolute, рамка, радиус 21px, тень и
+       padding:47px — это плавающая КАРТОЧКА над полем. В drawer поверхность плоская и во всю
+       ширину, карточке тут делать нечего (клон её и притащил — так выглядят «скругления мимо»). */
+    #mega .m-drop{display:none;position:static;background:none;border:0;border-radius:0;
+      box-shadow:none;padding:0;max-height:none;overflow-y:auto;overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch;flex:1;min-height:0}
+    #mega .m-drop::before{display:none}   /* разделитель под полем — от десктопной карточки */
+    #mega .m-root.m-searching .m-drop{display:block}
+    /* пока ищем — экран отдан выдаче: меню не должно спорить с ней за высоту */
+    #mega .m-root.m-searching > *:not(.m-dsearch):not(.m-drop){display:none}
+    #mega .m-drop .sd-pane{display:none}
+    #mega .m-drop[data-state="empty"] .sd-empty,
+    #mega .m-drop[data-state="results"] .sd-results,
+    #mega .m-drop[data-state="none"] .sd-none{display:block}
+
+    /* строки выдачи — во всю ширину экрана с разделителями: тот же приём, что у цен, требований и
+       файлов. Тач-цель 48 (норма 44). Тег типа оставлен: он говорит, куда ведёт строка. */
+    #mega .m-drop .sd-list{max-height:none;overflow:visible;padding:0}
+    #mega .m-drop .sd-row{gap:var(--sp-12);min-height:48px;padding:var(--sp-12) var(--sp-16);
+      border-radius:0;-webkit-tap-highlight-color:transparent}
+    #mega .m-drop .sd-row + .sd-row{border-top:1px solid var(--border)}
+    #mega .m-drop .sd-row:hover{background:none}
+    #mega .m-drop .sd-row:active{background:var(--surface-subtle)}
+    #mega .m-drop .sd-row .sd-tx{font-size:var(--t-ui);line-height:var(--t-ui-lh)}
+    /* «Все результаты» — уход на страницу, потому со стрелкой (правило ДС) */
+    /* margin:0 — у десктопной версии он отрицательный (карточка с padding:8px по бокам), в drawer
+       из-за него строка выпадала из ряда; gap:0 — «Все результаты по «визит»» это ОДНА фраза, а
+       флекс-gap раздвигал её на куски вокруг <b> */
+    #mega .m-drop .sd-all{display:flex;align-items:center;gap:0;margin:0;min-height:52px;
+      padding:var(--sp-14) var(--sp-16);border-top:1px solid var(--border);
+      font-size:var(--t-ui);line-height:var(--t-ui-lh);font-weight:500;color:var(--text-primary);
+      text-decoration:none;-webkit-tap-highlight-color:transparent}
+    #mega .m-drop .sd-all:active{background:var(--surface-subtle)}
+    #mega .m-drop .sd-all .mk-arr{margin-left:auto;color:var(--text-tertiary)}
+    /* популярные запросы — только когда поле в фокусе и пустое */
+    #mega .m-drop .sd-h{padding:var(--sp-16) var(--sp-16) var(--sp-8)}
+    #mega .m-drop .sd-chips{padding:0 var(--sp-16) var(--sp-16);gap:var(--sp-8)}
+    #mega .m-drop .sd-chip{min-height:40px;-webkit-tap-highlight-color:transparent}
+    #mega .m-drop .sd-none{padding:var(--sp-24) var(--sp-16)}
+    /* крестик очистки — только когда есть что чистить */
+    #mega .m-dsearch-clear{display:none;width:40px;height:40px;flex-shrink:0;border:0;background:none;
+      color:var(--text-tertiary);cursor:pointer;align-items:center;justify-content:center;
+      -webkit-tap-highlight-color:transparent}
+    #mega .m-dsearch-clear svg{width:18px;height:18px}
+    #mega .m-root.m-has-q .m-dsearch-clear{display:inline-flex}
+    #mega .m-dsearch-clear:active{color:var(--text-primary)}
+    #mega .m-dsearch input{flex:1;min-width:0;border:none;background:none;outline:none;font-size:var(--t-body);color:var(--text-primary)}
+    #mega .m-dsearch input::placeholder{color:var(--text-tertiary)}
+
+    /* рельса = уровень 1 (наезжает поверх корня по «Каталог ›») */
+    #mega .rail{display:block;position:absolute;inset:0;z-index:2;width:auto;overflow-y:auto;overscroll-behavior:contain;padding:0 0 calc(env(safe-area-inset-bottom) + 96px);margin:0;border:none;border-radius:0;
+      background:var(--surface-page);box-shadow:none;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1)}
+    #mega.cat-open .rail{transform:translateX(0)}
+    #mega .rail .lbl{padding:16px 16px 6px;font-size:var(--t-micro);font-weight:700;letter-spacing:var(--t-micro-ls);text-transform:uppercase;color:var(--text-tertiary)}
+    #mega .rail .sep{display:none}
+    #mega .rail-v1{display:block}
+    #mega .rail .ri{display:flex;align-items:center;gap:14px;width:100%;padding:12px 16px;min-height:60px;
+      border:none;border-bottom:1px solid var(--border);border-radius:0;background:none;cursor:pointer}
+    #mega .rail .ri:active{background:var(--surface-subtle)}
+    #mega .rail .ri.active{background:none;box-shadow:none}
+    #mega .rail .ri.active::before,#mega .rail .ri::before{display:none}   /* бренд-акцент активного не нужен на мобиле */
+    /* иконка в тональной плашке (Вариант 2) */
+    #mega .rail .ri .em{width:26px;flex-shrink:0;color:var(--text-secondary);display:flex;align-items:center;justify-content:center}
+    #mega .rail .ri .em svg{width:24px;height:24px}
+    /* заголовок + подсказка-подкатегории (2 строки) */
+    #mega .rail .ri .ri-tx{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+    #mega .rail .ri .ri-title{font-size:var(--t-ui);font-weight:500;line-height:1.25;color:var(--text-primary)}
+    #mega .rail .ri .ri-desc{display:block;font-size:12.5px;line-height:1.3;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    #mega .rail .ri .arr{margin-left:auto;color:var(--text-tertiary);display:flex;transform:none;opacity:1}
+    #mega .rail .ri .arr svg{width:9px;height:14px}
+
+    /* #pane = уровень 2 (наезжает поверх рельсы) */
+    #mega .pane{position:absolute;inset:0;z-index:3;transform:translateX(100%);width:auto;max-height:none;
+      transition:transform .28s cubic-bezier(.4,0,.2,1);border-right:0;-webkit-mask:none;mask:none;
+      background:var(--surface-page);overflow-y:auto;overscroll-behavior:contain;padding:0 0 calc(env(safe-area-inset-bottom) + 96px);display:block}
+    #mega.detail-open .pane{transform:translateX(0)}
+    #mega .m-back{display:none}   /* назад — в общей шапке drawer (m-dh-back) */
+    #mega .pane .panel{display:none;padding:0 0 24px}
+    #mega .pane .panel.show{display:block}
+    /* заголовок раздела — отдельная кликабельная строка (стрелка справа); «Все услуги раздела» — растянутая невидимая ссылка поверх строки */
+    #mega .pane .phead{position:relative;display:flex;align-items:center;margin:0;padding:15px 16px;min-height:56px;border:none;border-bottom:1px solid var(--border);width:auto;cursor:pointer}   /* лесенка: раздел 16 → подраздел 32 → товар 48 (отступ слева) */
+    #mega .pane .phead:active{background:var(--surface-subtle)}
+    #mega .pane .phead h3{display:flex;align-items:center;font-family:var(--font-body);text-transform:none;letter-spacing:0;font-size:var(--t-body);font-weight:600;line-height:1.3;color:var(--text-primary)}   /* иерархия: отступ-лесенка + шкала веса 600/500/400 (размер единый) */
+    #mega .pane .phead a{position:absolute;inset:0;width:auto;height:auto;padding:0;margin:0;font-size:0;background:none;border:none;border-radius:0}
+    #mega .pane .phead a .arr-ico{position:absolute;right:16px;top:50%;left:auto;transform:translateY(-50%);width:15px;height:15px;margin:0;color:var(--text-tertiary)}
+    #mega .pane .cols-flow{display:block;column-count:auto;columns:auto;padding:0}
+    /* панель «Печать полиграфии» — единственная на сетке .cols3/.col: расплющиваем в один столбец (иначе 2 колонки + скругления от десктоп-карточек) */
+    #mega .pane .cols3{display:block;column-count:auto;columns:auto;gap:0;padding:0;margin:0}
+    #mega .pane .cols3 .col{display:block;width:auto;padding:0;margin:0;background:none;border:none;border-radius:0;box-shadow:none}
+    #mega .pane .group{padding:0;margin:0;break-inside:auto}   /* margin-bottom:20px — десктопный, в сплошном листе дыру между группами убираем */
+    #mega .pane .group li{padding:0}   /* базовые 3.5px 0 давали щели между строками → подсветка :active «не доставала» до разделителей */
+    /* подраздел — тоже кликабельная строка со стрелкой, но тише раздела */
+    #mega .pane .group h4{position:relative;display:block;margin:0;padding:14px 40px 14px 32px;min-height:20px;font-family:var(--font-body);font-size:16px;font-weight:500;line-height:1.3;letter-spacing:0;text-transform:none;color:var(--text-primary);border-bottom:1px solid var(--border);cursor:pointer}
+    #mega .pane .group h4:active{background:var(--surface-subtle)}
+    #mega .pane .group h4 .nw{display:inline}
+    #mega .pane .group h4 .ha{display:none}
+    #mega .pane .group h4::after{content:"";position:absolute;right:16px;top:50%;transform:translateY(-50%);width:14px;height:14px;background:var(--text-tertiary);-webkit-mask:var(--arr) center/contain no-repeat;mask:var(--arr) center/contain no-repeat}
+    #mega .pane .group ul{margin:0;column-count:1!important;columns:auto!important;column-gap:normal!important}   /* !important — перебивает инлайн style="column-count:2/3" у POS и «Готовых решений» */
+    #mega .pane .group li a{display:flex;align-items:center;gap:8px;padding:12px 16px 12px 48px;min-height:44px;font-size:var(--t-body);font-weight:400;color:var(--text-primary);border-bottom:1px solid var(--border)}
+    #mega .pane .group li a:active{background:var(--surface-subtle)}
+    /* «Показать все» / внешние — тише основного списка */
+    #mega .pane .group li .more,#mega .pane .group li .extli{color:var(--text-secondary);font-size:var(--t-ui)}
+    #mega .pane .group li .more .arr-ico,#mega .pane .group li .extli .arr-ico{margin:0 0 0 auto}
+
+    /* ТАЧ: гасим десктопные :hover — после тапа они залипают. Главное — у товаров hover давал margin:0 -7px (→ горизонтальный скролл и дёрганье) и сдвиг padding. Взаимодействие оставляем только на :active. */
+    /* нативная вспышка тапа браузера бывает лишь у ссылок/кнопок (потому на h4 «Материал визиток» её нет, а на «Шелкография» есть) — глушим, свой :active уже даёт фидбек */
+    #mega a,#mega button,.hbar .hcat,.hactions .hbtn{-webkit-tap-highlight-color:transparent}
+    #mega .m-root,#mega .rail,#mega .pane{overflow-x:hidden}
+    #mega .rail .ri:hover{background:none}
+    #mega .rail .ri:hover .em{color:var(--text-secondary)}
+    #mega .rail .ri:hover .arr{opacity:1;transform:none;color:var(--text-tertiary)}
+    #mega .m-root .mr-cat:hover,#mega .m-root .mr-links a:hover{background:none}
+    #mega .pane .phead:hover a{background:none}
+    #mega .pane .group h4:hover{color:var(--text-primary)}
+    #mega .pane .group li a:not(.more):not(.extli),
+    #mega .pane .group li a:not(.more):not(.extli):hover{border-radius:0;margin:0;padding:12px 16px 12px 48px;background:none;-webkit-box-decoration-break:slice;box-decoration-break:slice}
+    #mega .pane .group li a:not(.more):not(.extli):active{background:var(--surface-subtle)}   /* той же специфичности, что гашение hover — иначе тап-подсветка листьев пропадает */
+    #mega .pane .group li .more:hover,#mega .pane .group li .extli:hover{background:none}
+    #mega .rail .ri:active{background:var(--surface-subtle)}
+    #mega .pane .group li a:active{background:var(--surface-subtle)}
+
+    /* СТАТЬИ. Мобильное правило обязано жить ЗДЕСЬ: десктопное .usl-art .art-grid
+       (5 колонок) сидит в этом же <style id="port-after"> и бьёт первый брейкпоинт и
+       специфичностью (0,3,0 против 0,2,0), и порядком подключения. Из-за этого на мобилке
+       карточки шли в 5 колонок по ~75px — текст растирало в столбики по 4 буквы. */
+    .usl-art .art-grid{grid-template-columns:1fr}
+
+    /* СЕГМЕНТ видео/фото. Подписи раздували вторичный переключатель до ~190px, и он спорил с
+       заголовком секции. На мобилке возвращаем кит: иконка-квадрат 36×36. Доступность не
+       страдает — у кнопок есть aria-label и title.
+       Префикс и место во ВТОРОМ брейкпоинте обязательны: десктопное правило
+       (0,3,1) сидит в этом же <style id="port-after"> и иначе перебьёт и специфичностью, и порядком. */
+    /* Мобильного правила у табов больше нет: они набраны ступенью --t-h2 (десктопное правило),
+       а та сама становится мобильной в tokens.css — совпадение с заголовком секции держится
+       ступенью, а не парой синхронных правил. */
+    .usl-port .port-head{gap:var(--sp-16)}
+    /* ФОРМА ВОПРОСА. Выглядела как десктопная, ужатая в мини-версию, и по делу:
+       1) «Способ связи» и «Телефон» стояли парой в строку — это раскладка колонки 376px; на 390
+          каждому доставалось ~155px, и «+7 (999) 000-00-00» влезал впритык → в столбик;
+       2) поля 46 против кнопки 48 — два почти одинаковых, но разных размера рядом. Ровняем на 48
+          (он же тач-минимум Apple).
+       Карточку (фон + поля 24) НЕ снимаем: в отличие от .ptable в «Ценах» и .files в
+       «Требованиях», форма — самостоятельный объект среди аккордеонов, и подложка отделяет её
+       от них (решение Omar, 16.07). Плата за это — контент 310 из 390: контейнер 16 + карточка 24. */
+    .faq-form .cbm-row{flex-direction:column;gap:var(--sp-12)}
+    .faq-form input[type=tel],.faq-form input.cbm-tf,.faq-form .cbm-sel select{height:48px}
+
+    /* ── ЧАВО = КНОПКА + НИЖНЯЯ ШТОРКА ────────────────────────────────────
+       Инлайн-форма среди аккордеонов на телефоне — длинная простыня полей.
+       Прячем её в шторку (как заявка/звонок), вызов — кнопкой «Задать вопрос».
+       Одна и та же форма, без дублей id: .faq-form просто становится fixed.
+       Держим её всегда за нижним краем (translateY 100%, visibility:hidden) и
+       выдвигаем по body.faqsheet — смена display не дала бы анимации выезда. */
+    .faq-cta{display:block;background:var(--surface-subtle);border-radius:var(--radius-md);padding:var(--sp-20)}
+    .faq-cta__t{font-weight:700;font-size:var(--t-ui)}
+    .faq-cta__s{color:var(--text-secondary);font-size:var(--t-cap);margin:var(--sp-4) 0 var(--sp-12)}
+    .faq-cta .mk-btn{width:100%}
+
+    .faq-backdrop{display:block;position:fixed;inset:0;background:rgba(17,17,17,.42);
+      opacity:0;visibility:hidden;transition:opacity .18s,visibility .18s;z-index:100}
+    body.faqsheet .faq-backdrop{opacity:1;visibility:visible}
+
+    .faq-form .cbm-x{display:flex;z-index:2}   /* крестик поверх скролла (вид — от .cbm-x) */
+
+    /* Шторка: метрики как у .cbm — радиус, 88dvh, ручка, внутренний скролл, липкий заголовок.
+       Селектор .usl-faq .faq-form (0,2,0) — чтобы перебить мобильное .usl-faq .faq-form{padding}. */
+    .usl-faq .faq-form{position:fixed;left:0;right:0;bottom:0;z-index:101;
+      display:flex;flex-direction:column;width:100%;max-width:none;margin:0;
+      max-height:88dvh;padding:var(--sp-20) 0 0;
+      background:var(--surface-card);border-color:transparent;
+      border-radius:var(--radius-outside) var(--radius-outside) 0 0;
+      overflow:hidden;visibility:hidden;
+      transform:translateY(100%);transition:transform .24s ease,visibility .24s}
+    body.faqsheet .faq-form{visibility:visible;transform:none}
+    .faq-form::before{content:"";position:absolute;top:var(--sp-8);left:50%;transform:translateX(-50%);
+      width:36px;height:4px;border-radius:var(--radius-pill);background:var(--border-strong)}
+    .faq-form > [data-role]{padding-inline:var(--container-pad);
+      flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+    .faq-form > [data-role] > .cbm-title{position:sticky;top:0;z-index:1;background:var(--surface-card);
+      margin-inline:calc(var(--container-pad) * -1);padding:0 44px var(--sp-10) var(--container-pad);
+      border-bottom:1px solid transparent;transition:border-color .15s}
+    .faq-form > [data-role].scrolled > .cbm-title{border-bottom-color:var(--border)}
+    .faq-form > [data-role] > .cbm-title + *{margin-top:0}
+
+    /* ── МОДАЛКА = ШТОРКА СНИЗУ ──────────────────────────────────────────────────
+       Центрированный попап на телефоне не работает: он тянулся во весь экран, кнопка
+       отправки уходила за нижний край, а по бокам оставались полосы оверлея.
+       Шторка приклеена к низу, во всю ширину, и её высота ограничена — прокручивается
+       содержимое, а не окно.
+       max-height, а НЕ фиксированная высота: у формы звонка четыре поля, и жёсткие 70%
+       дали бы ей пустоту в пол-экрана. Короткая форма остаётся короткой.
+       dvh, а не vh: vh на мобильных не учитывает съезжающую панель браузера. */
+    .cbm-back{align-items:flex-end;padding:0}
+    /* Боковые поля сняты с самой шторки и отданы прокручиваемому слою: иначе поле ввода
+       упиралось в границу скролл-контейнера, и кольцо фокуса (box-shadow 3px) обрезалось. */
+    .cbm{max-width:none;width:100%;max-height:88dvh;
+      border-radius:var(--radius-outside) var(--radius-outside) 0 0;
+      padding:var(--sp-20) 0 0;
+      display:flex;flex-direction:column;overflow:hidden;
+      transform:translateY(100%);transition:transform .24s ease}
+    .cbm > [data-role]{padding-inline:var(--container-pad)}
+    /* Крестик выше прокручиваемого слоя — иначе поля проезжают ПОВЕРХ него. */
+    .cbm-x{z-index:2}
+    /* ЛИПКАЯ ШАПКА ШТОРКИ. Ради одной линии под ручкой отдельный блок заводить незачем —
+       линию несёт заголовок, который и так есть. Он прилипает к верху прокручиваемого слоя,
+       уходит в поля отрицательным margin (линия от края до края) и оставляет справа место
+       под крестик, чтобы текст под него не заезжал.
+       Цена — только высота самого заголовка; вводный текст и плашка контекста
+       прокручиваются под ним. Заодно исчезает прежняя неопрятность: крестик больше
+       не висит поверх проезжающих полей, под ним всегда фон шапки. */
+    .cbm > [data-role] > .cbm-title{position:sticky;top:0;z-index:1;
+      background:var(--surface-card);
+      margin-inline:calc(var(--container-pad) * -1);
+      padding:0 44px var(--sp-10) var(--container-pad)}
+    /* Ноль: расстояние до подзаголовка держит нижний padding шапки (10px). Раньше к нему
+       добавлялся ещё и margin, и подзаголовок отъезжал от заголовка на 20px — они
+       переставали читаться как одна группа. */
+    .cbm > [data-role] > .cbm-title + *{margin-top:0}
+    /* Линия появляется ТОЛЬКО при прокрутке. Постоянная линия разрезала заголовок и его
+       же подзаголовок: текст оставался висеть между чужой границей сверху и полями снизу,
+       не принадлежа ничему. В покое линии нет — заголовок и текст читаются одним блоком,
+       а когда под шапку заезжает содержимое, граница появляется и отделяет её.
+       Ширина 1px задана всегда, меняется только цвет — иначе раскладка дёргалась бы. */
+    .cbm > [data-role] > .cbm-title{border-bottom:1px solid transparent;transition:border-color .15s}
+    .cbm > [data-role].scrolled > .cbm-title{border-bottom-color:var(--border)}
+    /* ВНИМАНИЕ: здесь только то, что перебивает десктопное ID-правило #reqBack .cbm.
+       transform в этот селектор класть НЕЛЬЗЯ — вес ID (1,0,1) побьёт правило показа
+       .cbm-back.show .cbm (0,2,0), и шторка останется за нижним краем экрана.
+       Ровно это и случилось при первом заходе, поймано замером. */
+    #reqBack .cbm,#revBack .cbm{max-width:none;max-height:88dvh;overflow:hidden}
+    /* Скроллит внутренний слой, а не сама шторка — поэтому крестик остаётся на месте,
+       а не уезжает вместе с содержимым. min-height:0 обязателен: без него флекс-ребёнок
+       не даёт себя сжать, и overflow не включается. */
+    .cbm > [data-role]{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch}
+    /* Кнопка залипает внизу видимой области шторки. Фон обязателен — под ней проезжает текст.
+       env() — чтобы кнопка не пряталась под системную полосу жеста. */
+    /* Подвал выходит из боковых полей прокручиваемого слоя в отрицательные margin и
+       возвращает их себе padding'ом: фон и линия идут от края до края экрана, а кнопка
+       остаётся на сетке 16px. Тот же приём, что у лент и разделителей секций. */
+    .cbm-foot{position:sticky;bottom:0;background:var(--surface-card);
+      border-top:1px solid var(--border);
+      margin-inline:calc(var(--container-pad) * -1);
+      padding:var(--sp-12) var(--container-pad)
+              calc(var(--sp-12) + env(safe-area-inset-bottom));
+      margin-top:var(--sp-4)}
+    /* Ручка — привычный признак шторки: показывает, что панель пришла снизу. */
+    .cbm::before{content:"";position:absolute;top:var(--sp-8);left:50%;transform:translateX(-50%);
+      width:36px;height:4px;border-radius:var(--radius-pill);background:var(--border-strong)}
+    .cbm-done{padding-bottom:calc(var(--sp-12) + env(safe-area-inset-bottom))}
+    /* Поля в одну колонку. Двухколоночная сетка на 390px давала по 144px на поле —
+       туда не влезала ни подсказка («Как к вам обра»), ни введённое значение.
+       У формы ЧАВО это правило уже было; в модалках его просто не завели. */
+    .cbm .cbm-row{flex-direction:column;gap:var(--sp-12)}
+    /* ПОДПИСИ КАРТОЧЕК. Замер: заголовок 16/24 — это леадинг ПРОЗЫ (1.5), а тут 1–2 строки,
+       от него подпись расползалась; кадр→тег 12 и тег→заголовок 8 почти равны, поэтому подпись
+       не читалась как одна группа. Ставим заголовку 1.25 и разводим отступы вдвое (8 снаружи,
+       4 внутри): группировка держится разницей, а не одинаковыми зазорами.
+       Резать содержимое не стали: тег несёт то, чего нет в заголовке («Визитки» + «Золото на
+       чёрном картоне»), — проблема была в числах, а не в количестве.
+       Леадинг заголовка правлен не здесь, а в ките (.mk-mcard__title): он был лишним и на
+       десктопе, а дубль правила в прототипе разъехался бы с китом при первой же правке. */
+    .usl-port .mk-mcard__body{gap:var(--sp-4);padding-top:var(--sp-8)}
+
+    /* ── ЛАЙТБОКС ВИДЕО НА ТЕЛЕФОНЕ ────────────────────────────────────────────
+       ОСОЗНАННОЕ ИСКЛЮЧЕНИЕ из правила «модалка на телефоне = шторка снизу». Шторка
+       занимает 88dvh и оставляет сверху полосу страницы — у формы это подсказка, что
+       страница на месте, а у вертикального ролика ровно та же полоса отъедает высоту
+       кадра, и он приезжает меньше, чем мог бы. Видео открываем во весь экран.
+       Кадр здесь считается ОТ ШИРИНЫ (наоборот десктопу): узкое место на телефоне —
+       ширина. max-width удерживает высоту в пределах экрана, не ломая пропорцию:
+       ограничивать высотой при width:100% нельзя — кадр растянулся бы. */
+    .vlb-back{padding:0}
+    .vlb{width:100%;height:100dvh;justify-content:center;gap:var(--sp-20);
+      padding:calc(env(safe-area-inset-top,0px) + 52px) var(--container-pad)
+              calc(env(safe-area-inset-bottom,0px) + var(--sp-16))}
+    .vlb-frame{height:auto;width:100%;max-width:calc((100dvh - 148px) * 9 / 16);margin-inline:auto;
+      border-radius:var(--radius-md);box-shadow:none}
+    .vlb-x{top:calc(env(safe-area-inset-top,0px) + var(--sp-12));right:var(--sp-12);width:44px;height:44px}
+    /* Стрелки уезжают в нижнюю строку к подписи. Свайпов здесь нет и быть не может:
+       кадр — чужой iframe, тач-события внутри него до страницы не доходят, жест по
+       плееру мы не увидим. Поэтому переключение только видимыми кнопками. */
+    .vlb .mk-scroller__nav{position:static;transform:none;flex:0 0 auto;width:44px;height:44px}
+    /* Подпись зажата между стрелками и потому по центру; счётчик поднят строкой выше —
+       в строке кнопок ему места нет, а рядом с заголовком он спорил бы с ним за ширину. */
+    .vlb-cap{position:relative;gap:var(--sp-8)}
+    .vlb-cap-txt{flex:1;align-items:center;text-align:center}
+    /* Между двумя кнопками подписи остаётся ~200px — в одну строку не влезает даже
+       редакторский лимит в 24 знака, а многоточие съело бы как раз конец названия
+       («…золото на чёр»). Отдаём две строки, дальше обрезаем. */
+    .vlb-title{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+    .vlb-count{position:absolute;left:0;right:0;bottom:calc(100% + var(--sp-8));margin:0;text-align:center}
+  }
+  /* тач-устройства: hover не существует — гасим, чтобы тап не оставлял «залипшую» подсветку на иконках шапки */
+  @media(max-width:1023px) and (hover:none){
+    .hbar .hcat:hover,.hactions .hbtn:hover{background:none}
+    .hactions .m-search.active{background:var(--surface-on-light)}   /* состояние «открыто» — сильнее гашения hover */
+  }
