@@ -600,11 +600,13 @@
   /* КУКИ-БАННЕР — полоса внизу. z-index 95: выше липкой полосы (90), ниже модалок (100), чтобы
      форма заявки могла перекрыть баннер, а не наоборот. Пока баннер не решён, липкую полосу не
      показываем вовсе — иначе два слоя в одном углу (скрипт полосы это учитывает). */
+  /* Полоса — во всю ширину экрана, СОДЕРЖИМОЕ — по контейнеру страницы (.wrap): иначе текст
+     липнет к левому краю монитора, а кнопки к правому, и баннер живёт по своей сетке. */
   .cookie{position:fixed;left:0;right:0;bottom:0;z-index:95;
-    display:flex;align-items:center;gap:var(--sp-16);
     background:var(--surface-card);border-top:1px solid var(--border);
     box-shadow:0 -4px 16px rgba(0,0,0,.06);
-    padding:var(--sp-16) var(--container-pad) calc(var(--sp-16) + env(safe-area-inset-bottom))}
+    padding-block:var(--sp-16) calc(var(--sp-16) + env(safe-area-inset-bottom))}
+  .cookie .wrap{display:flex;align-items:center;gap:var(--sp-16)}
   .cookie[hidden]{display:none}
   .cookie-tx{margin:0;max-width:820px;color:var(--text-secondary);
     font-size:var(--t-small);line-height:var(--t-small-lh)}
@@ -693,8 +695,8 @@
       will-change:transform}
     .usl-stickycta.show{transform:translateY(0)}
     /* На узком кнопки в строку с текстом не встают: столбик, кнопки поровну по ширине */
-    .cookie{flex-direction:column;align-items:stretch;gap:var(--sp-12);
-      padding:var(--sp-16) var(--container-pad) calc(var(--sp-12) + env(safe-area-inset-bottom))}
+    .cookie{padding-block:var(--sp-16) calc(var(--sp-12) + env(safe-area-inset-bottom))}
+    .cookie .wrap{flex-direction:column;align-items:stretch;gap:var(--sp-12)}
     .cookie-btns{margin-left:0}
     .cookie-btns .mk-btn{flex:1;min-width:0}
 
@@ -4663,6 +4665,7 @@
        РАЗРАБОТЧИКУ: аналитика и реклама (Метрика, пиксели) подключаются ТОЛЬКО после «Принять».
        Сейчас счётчика на прототипе нет, поэтому в коде только запись решения. -->
   <div class="cookie" id="cookieBar" role="dialog" aria-modal="false" aria-labelledby="cookieTx" hidden>
+   <div class="wrap">
     <p class="cookie-tx" id="cookieTx">Мы используем cookie, чтобы сайт работал и чтобы понимать,
       какими разделами пользуются. Часть из них нужна для работы сайта, остальные — для аналитики.
       Подробности — в <a href="#" target="_blank" rel="noopener">политике обработки данных</a>.</p>
@@ -4670,6 +4673,7 @@
       <button type="button" class="mk-btn mk-btn--ghost mk-btn--md" data-cookie="necessary">Только необходимые</button>
       <button type="button" class="mk-btn mk-btn--primary mk-btn--md" data-cookie="all">Принять все</button>
     </div>
+   </div>
   </div>
 
   <!-- ЛИПКАЯ ПОЛОСА = заявка + быстрые каналы. Каналы здесь, а не отдельным плавающим виджетом:
