@@ -297,10 +297,15 @@
      действие. Так же устроена шапка портфолио (заголовок слева, переключатель справа).
      align-self:center — остальные дети выровнены по baseline, а у кнопки с рамкой базовая
      линия текста внутри плашки, и по ней плашка встаёт выше строки. */
-  .usl-rev .rev-badge{display:inline-flex;align-self:center;line-height:0}
+  /* Бейдж уходит вправо, к кнопке: 5,0 нарисована и на нём, и крупно слева — рядом две
+     одинаковые цифры читались как дубль. По краям они не спорят. */
+  /* Низ бейджа совпадает с низом кнопки, при этом кнопка остаётся на своём месте: строку
+     держит бейдж (50px против 32px у кнопки), поэтому поднимаем его на половину разницы. */
+  .usl-rev .rev-badge{display:inline-flex;align-self:flex-end;line-height:0;margin-left:auto;
+    margin-bottom:9px}
   /* натуральные 150×50: ужимали до высоты кнопки — вторая строка бейджа переставала читаться */
   .usl-rev .rev-badge img{display:block}
-  .usl-rev .rev-add{margin-left:auto;align-self:center}
+  .usl-rev .rev-add{align-self:center}
   /* карточки компактнее: 4 строки цитаты вместо 5, padding 24 вместо 28 */
   /* текст отзыва скроллится внутри карточки; max-height ≈ 5 строк, дальше — вертикальный скролл */
   .usl-rev .mk-review__text{font-size:var(--t-small);line-height:var(--t-small-lh);max-height:7.5em;
