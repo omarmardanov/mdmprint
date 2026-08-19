@@ -175,7 +175,16 @@
 
   /* ПРЕИМУЩЕСТВА — плитки и списки из кита (.mk-tile / .mk-list / .mk-ph) */
   .usl-adv .adv-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-24);align-items:stretch}
-  .usl-adv .adv-media{min-height:300px}
+  .usl-adv .adv-media{min-height:300px;overflow:hidden;position:relative}
+  /* Размер диктует КОЛОНКА, а не файл: на десктопе медиа тянется по высоте столбика плиток
+     (align-items:stretch у .adv-grid, нижняя граница — min-height), на мобилке у неё
+     aspect-ratio 4/3. Без этих трёх свойств вертикальный кадр 600×1200 растил секцию с 572 до
+     1446px и вылезал за свою колонку (замер 19.08). Кадр вписывается с обрезкой по центру —
+     как в китовых карточках (.mk-mcard__media img).
+     Картинка ОБЯЗАНА быть absolute: при обычном потоке height:100% упирается в высоту auto у
+     родителя, резолвится в натуральные 1148px — и колонка снова растёт по файлу. Тот же приём,
+     что у .mk-tilelink__media в ките. */
+  .usl-adv .adv-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
   .usl-adv .tiles{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-24)}
 
   /* ВИДЫ */
