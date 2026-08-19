@@ -317,14 +317,18 @@
   .rev-rate{display:inline-flex;flex-direction:row-reverse;justify-content:flex-end;gap:var(--sp-4)}
   .rev-rate input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
   .rev-rate label{font-size:28px;line-height:1.1;color:var(--surface-gray-2);cursor:pointer;
-    padding:0 2px;border-radius:var(--radius-inside);transition:color .12s}
+    padding:0 2px;border-radius:var(--radius-inside);transition:color .12s,transform .12s}
   .rev-rate label:hover,
   .rev-rate label:hover ~ label,
   .rev-rate input:checked ~ label{color:var(--brand)}
+  /* Как на mdmprint.ru: звезда под курсором слегка подрастает и приподнимается. Только та, на
+     которую навели: если поднимать весь ряд, движется половина строки и эффект превращается в шум. */
+  .rev-rate label:hover{transform:translateY(-2px) scale(1.12)}
   .rev-rate input:focus-visible + label{outline:2px solid var(--brand-dark);outline-offset:2px}
   /* Ошибка у оценки: рамку рисовать не на чем (это не поле ввода), поэтому краснеет подпись */
   .cbm-field.invalid .rev-rate label{color:var(--surface-gray-2)}
-  @media (prefers-reduced-motion:reduce){.rev-rate label{transition:none}}
+  @media (prefers-reduced-motion:reduce){.rev-rate label{transition:none}
+    .rev-rate label:hover{transform:none}}
   /* натуральные 150×50: ужимали до высоты кнопки — вторая строка бейджа переставала читаться */
   .usl-rev .rev-badge img{display:block}
 
@@ -1175,7 +1179,7 @@
   .cbm-f-x::after{content:"";position:absolute;inset:-8px}
   @media (hover:hover){.cbm-f-x:hover{background:var(--surface-on-light-2);color:var(--text-primary)}}
   .cbm-f-x:active{background:var(--surface-on-light-2);color:var(--text-primary)}
-  #reqBack .cbm{max-width:440px;max-height:calc(100vh - 40px);overflow-y:auto}
+  #reqBack .cbm,#revBack .cbm{max-width:440px;max-height:calc(100vh - 40px);overflow-y:auto}
   /* Подсветка была только у input — select и textarea оставались нетронутыми,
      и ошибка в «Способе связи» никак не показывалась. */
   .cbm-field.invalid input,.cbm-field.invalid select,.cbm-field.invalid textarea{border-color:var(--danger)}
@@ -2181,7 +2185,7 @@
        transform в этот селектор класть НЕЛЬЗЯ — вес ID (1,0,1) побьёт правило показа
        .cbm-back.show .cbm (0,2,0), и шторка останется за нижним краем экрана.
        Ровно это и случилось при первом заходе, поймано замером. */
-    #reqBack .cbm{max-width:none;max-height:88dvh;overflow:hidden}
+    #reqBack .cbm,#revBack .cbm{max-width:none;max-height:88dvh;overflow:hidden}
     /* Скроллит внутренний слой, а не сама шторка — поэтому крестик остаётся на месте,
        а не уезжает вместе с содержимым. min-height:0 обязателен: без него флекс-ребёнок
        не даёт себя сжать, и overflow не включается. */
@@ -3470,7 +3474,6 @@
                 Если не выходит, напишите на <a href="mailto:info@mdmprint.ru">info@mdmprint.ru</a>.</span>
             </div>
             <button type="submit" class="cbm-submit mk-btn mk-btn--primary" disabled>Отправить отзыв</button>
-            <p class="cbm-note">Публикуем после проверки — обычно в течение рабочего дня.</p>
           </div>
         </form>
       </div>
