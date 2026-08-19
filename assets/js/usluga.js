@@ -378,7 +378,7 @@
        законный ответ на «как к вам обращаться». Полный запрет цифр — переусердствованная
        валидация: отсекает живого человека вместе с мусором. */
     const nameOk = v => /\p{L}/u.test(v||'') && (v||'').trim().length >= 2;
-    const mark = (el, bad) => { const w = el.closest('.cbm-field'); if(w) w.classList.toggle('invalid', !!bad); };
+    const mark = (el, bad) => { const w = el.closest('.mk-field'); if(w) w.classList.toggle('invalid', !!bad); };
     /* Мягкая проверка по уходу из поля: ругаемся только на ЗАПОЛНЕННОЕ и неверное — ругать
        того, кто ещё печатает, незачем. Про пустое скажем по нажатию кнопки. Гасим сразу,
        как исправил. */
@@ -390,11 +390,11 @@
     }
     /* Доводим до первого проблемного поля явно: внутри шторки свой скролл-контейнер, и одного
        focus() мало — поле оставалось за экраном, человек жал кнопку, а внешне ничего.
-       К СТРОКЕ согласия (.cbm-check), а не к квадратику 22×22: иначе по центру экрана окажется
+       К СТРОКЕ согласия (.mk-checkrow), а не к квадратику 22×22: иначе по центру экрана окажется
        чекбокс без текста. block:'center' — чтобы поле не встало под липкую шапку.
        preventScroll — иначе браузер дёрнет свой скачок поверх плавного. */
     function goTo(el){
-      (el.closest('.cbm-check') || el.closest('.cbm-field') || el).scrollIntoView({block:'center', behavior:'smooth'});
+      (el.closest('.mk-checkrow') || el.closest('.mk-field') || el).scrollIntoView({block:'center', behavior:'smooth'});
       if(el.focus) el.focus({preventScroll:true});
     }
     /* Отправка: гасим прошлую ошибку, занимаем кнопку, шлём. Ответ — true/false, чтобы форма
@@ -426,10 +426,10 @@
     /* Телефона может не быть вовсе: в отзыве его не спрашивают. Все обращения к нему ниже
        через проверку — модалка одна на три формы. */
     const phone    = back.querySelector('input[type="tel"]');
-    const pField   = phone && phone.closest('.cbm-field');
+    const pField   = phone && phone.closest('.mk-field');
     const consent  = back.querySelector('input[data-role="consent"]');
     const submit   = back.querySelector('button[type="submit"]');
-    const hp       = form.querySelector('.cbm-hp');
+    const hp       = form.querySelector('.mk-hp');
     const fileInput = form.querySelector('input[type="file"]');
     const fileLabel = form.querySelector('[data-file-label]');
     const fileLabelText = fileLabel ? fileLabel.textContent : '';
@@ -461,10 +461,10 @@
       fileList.textContent = '';
       picked.forEach((f, i) => {
         const li = document.createElement('li');
-        const nm = document.createElement('span'); nm.className = 'cbm-f-name'; nm.textContent = f.name;
-        const sz = document.createElement('span'); sz.className = 'cbm-f-size'; sz.textContent = fmtSize(f.size);
+        const nm = document.createElement('span'); nm.className = 'mk-filelist__name'; nm.textContent = f.name;
+        const sz = document.createElement('span'); sz.className = 'mk-filelist__size'; sz.textContent = fmtSize(f.size);
         const x  = document.createElement('button');
-        x.type = 'button'; x.className = 'cbm-f-x'; x.setAttribute('aria-label', 'Убрать файл ' + f.name);
+        x.type = 'button'; x.className = 'mk-filelist__x'; x.setAttribute('aria-label', 'Убрать файл ' + f.name);
         x.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
         x.addEventListener('click', () => { picked.splice(i, 1); syncInput(); renderFiles(); });
         li.append(nm, sz, x);
@@ -533,7 +533,7 @@
       back.classList.add('show'); back.setAttribute('aria-hidden','false');
       document.body.style.overflow = 'hidden';
       if(typeof closeMega==='function') closeMega();
-      const firstField = phone || form.querySelector('input:not([type=hidden]):not(.cbm-hp), textarea');
+      const firstField = phone || form.querySelector('input:not([type=hidden]):not(.mk-hp), textarea');
       if(firstField) setTimeout(()=>firstField.focus(), 60);
     }
     function closeModal(){
@@ -620,12 +620,12 @@
         // М2: e-mail не required, но если введён с ошибкой — тоже отметить
         const em = form.querySelector('input[type=email]');
         if(em && em.value.trim() && !fk.emailOk(em.value)){ fk.mark(em, true); if(!first) first = em; }
-        if(!consent.checked) consent.closest('.cbm-check')?.classList.add('invalid');
+        if(!consent.checked) consent.closest('.mk-checkrow')?.classList.add('invalid');
         // текстовые поля в порядке, а согласие не отмечено — ведём к нему
         fk.goTo(first || consent);
         return;
       }
-      consent.closest('.cbm-check')?.classList.remove('invalid');
+      consent.closest('.mk-checkrow')?.classList.remove('invalid');
       // на реале: POST на бэкенд { phone: norm(phone.value), + прочие поля формы,
       //   consent:true, page: location.href, ts: Date.now() } + серверная валидация/антиспам/rate-limit
       /* Подтверждение говорит ровно то, что человек выбрал. Раньше стояло «перезвоним»
@@ -677,7 +677,7 @@
     const way      = form.querySelector('#faqWay');
     const consent  = form.querySelector('input[data-role="consent"]');
     const submit   = form.querySelector('button[type="submit"]');
-    const hp       = form.querySelector('.cbm-hp');
+    const hp       = form.querySelector('.mk-hp');
     const contacts = [...form.querySelectorAll('[data-contact]')];
     const phone    = form.querySelector('input[type="tel"]');
 
@@ -723,11 +723,11 @@
         if(!q.value.trim()){ fk.mark(q, true); first = first || q; }
         const inp = activeInput();
         if(!contactValid()){ fk.mark(inp, true); first = first || inp; }
-        if(!consent.checked){ consent.closest('.cbm-check')?.classList.add('invalid'); first = first || consent; }
+        if(!consent.checked){ consent.closest('.mk-checkrow')?.classList.add('invalid'); first = first || consent; }
         if(first) fk.goTo(first);
         return;
       }
-      consent.closest('.cbm-check')?.classList.remove('invalid');
+      consent.closest('.mk-checkrow')?.classList.remove('invalid');
       // на реале: POST { comment, contact_way, contact, name, promo, consent:true, page, ts } + антиспам/rate-limit
       fk.send(form, {page: location.href})
         .then(ok=>{ if(ok){ formWrap.hidden = true; doneWrap.hidden = false; } });

@@ -6,7 +6,7 @@
 <title>UI kit — MDMprint</title>
 <link rel="stylesheet" href="../assets/css/fonts.css?v=20260722a">
 <link rel="stylesheet" href="../assets/css/tokens.css?v=20260817a">
-<link rel="stylesheet" href="../assets/css/kit.css?v=20260819b">
+<link rel="stylesheet" href="../assets/css/kit.css?v=20260819c">
 <!-- Стили ВИТРИНЫ (не кита): сетка примеров, подписи, разделители -->
 <link rel="stylesheet" href="../assets/css/kit-showcase.css?v=20260819a">
 </head>
@@ -36,6 +36,7 @@
     <a href="#chip">Чип</a>
     <a href="#rowlink">Строка-действие</a>
     <a href="#check">Чекбокс</a>
+    <a href="#field">Поля формы</a>
     <a href="#subnav">Подшапка</a>
     <a href="#rate">Оценка звёздами</a>
     <a href="#navbtn">Кнопка панели</a>
@@ -989,6 +990,69 @@
     </div>
   </section>
 
+  <!-- ═══════════ ПОЛЯ ФОРМЫ ═══════════ -->
+  <section id="field">
+    <h2 class="mk-h3">Поля формы</h2>
+    <p class="note">Одинаковы во всех четырёх формах: звонок, заявка, вопрос, отзыв. Раньше у
+      каждой был свой CSS под именами <code>.cbm-*</code> — от «call back modal», хотя к модалке
+      половина отношения не имеет. Поведение (когда показывать ошибку, куда вести фокус) — в JS,
+      описано в <code>CMS_FIELDS §3.4</code>.</p>
+    <div class="row">
+      <div class="k"><b>Поле</b><span><code>.mk-field</code> + <code>__lbl</code> + <code>.mk-input</code></span></div>
+      <div class="v" style="display:block;max-width:360px">
+        <div class="mk-field">
+          <label class="mk-field__lbl" for="kf1">Телефон <i>*</i></label>
+          <input class="mk-input" id="kf1" type="tel" placeholder="+7 (___) ___-__-__">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="k"><b>Ошибка</b><span><code>.mk-field.invalid</code>, текст в <code>__err</code></span></div>
+      <div class="v" style="display:block;max-width:360px">
+        <div class="mk-field invalid">
+          <label class="mk-field__lbl" for="kf2">E-mail <em>— необязательно</em></label>
+          <input class="mk-input" id="kf2" type="email" value="кривая-почта">
+          <span class="mk-field__err">Проверьте адрес: нужен формат name@mail.ru</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="k"><b>Область текста</b><span><code>.mk-textarea</code></span></div>
+      <div class="v" style="display:block;max-width:360px">
+        <textarea class="mk-textarea" rows="2" placeholder="Что нужно напечатать, тираж, сроки"></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="k"><b>Согласие</b><span><code>.mk-checkrow</code></span></div>
+      <div class="v" style="display:block;max-width:420px">
+        <label class="mk-checkrow">
+          <input type="checkbox" class="mk-check">
+          <span>Я даю согласие на обработку <a href="#field">персональных данных</a></span>
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="k"><b>Файлы</b><span><code>.mk-file</code>, список — <code>.mk-filelist</code></span></div>
+      <div class="v" style="display:block;max-width:360px">
+        <label class="mk-file">
+          <input type="file">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M21 11.5l-8.4 8.4a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="mk-file__btn">Прикрепить макет</span>
+        </label>
+        <p class="mk-file__hint">До 10 файлов, PDF · AI · CDR · PSD · JPG · ZIP.</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="k"><b>Не отправилось</b><span><code>.mk-alert</code></span></div>
+      <div class="v" style="display:block;max-width:420px">
+        <div class="mk-alert" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v5M12 16.5v.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span><b>Заявка не ушла.</b> Похоже, пропала связь. Данные сохранены — нажмите ещё раз.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="open">
     <h2 class="mk-h3">Решения 22.07</h2>
     <p class="note">Что было «зафиксировано, но не исправлено» — и чем закончилось.</p>
@@ -1011,9 +1075,12 @@
       <b>Бэклог дизайн-системы — ведёт дизайн, не команда вёрстки.</b> В тикеты это не входит и
       сроки спринта не двигает: пункты попадут в кит по мере готовности, вёрстка получит их уже
       компонентами. Если удобнее сделать по ходу своей задачи — не возбраняется, но тогда
-      напишите, чтобы не разошлись две версии.<br>
-      · <b>Формы</b> — поля, лейблы, ошибки валидации. Три почти одинаковые формы, каждая со своим
-      CSS. Свести в один компонент до переезда на WordPress.
+      напишите, чтобы не разошлись две версии.<br><br>
+      <b>На 19.08 бэклог пуст.</b> Закрыты все четыре пункта: подшапка (<code>.mk-subnav</code>),
+      кнопки шапки (<code>.mk-navbtn</code>), поля форм (<code>.mk-field</code> и соседи) и, из
+      более раннего, оценка звёздами с куки-баннером. Что попадает в кит дальше — решается по
+      правилу из <code>DESIGN_SYSTEM §11.1</code>: элемент нужен больше чем на одной странице или
+      это самостоятельная сущность, а не расположение.
     </div>
   </section>
 

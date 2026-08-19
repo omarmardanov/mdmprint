@@ -60,7 +60,7 @@
      (ловили 16.07: мобильная шкала уехала в токены, страница осталась на десктопной). -->
 <link rel="stylesheet" href="../assets/css/fonts.css?v=20260717l">
 <link rel="stylesheet" href="../assets/css/tokens.css?v=20260817a">
-<link rel="stylesheet" href="../assets/css/kit.css?v=20260819b">
+<link rel="stylesheet" href="../assets/css/kit.css?v=20260819c">
 <!-- Стили страницы: строго после кита — страница переопределяет кит, а не наоборот -->
 <link rel="stylesheet" href="../assets/css/usluga.css?v=20260819a">
 
@@ -1166,33 +1166,33 @@
         <h2 class="cbm-title" id="cbmTitle">Заказать звонок</h2>
         <p class="cbm-sub">Оставьте номер. Перезвоним в рабочее время — ежедневно с 9 до 22.</p>
         <form id="cbmFormEl" novalidate>
-          <div class="cbm-field">
-            <label class="cbm-lbl" for="cbmPhone">Телефон <i>*</i></label>
-            <input type="tel" id="cbmPhone" name="phone" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" required aria-required="true">
-            <span class="cbm-err">Введите корректный номер телефона</span>
+          <div class="mk-field">
+            <label class="mk-field__lbl" for="cbmPhone">Телефон <i>*</i></label>
+            <input type="tel" class="mk-input" id="cbmPhone" name="phone" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" required aria-required="true">
+            <span class="mk-field__err">Введите корректный номер телефона</span>
           </div>
-          <div class="cbm-field">
-            <label class="cbm-lbl" for="cbmName">Имя <em>— необязательно</em></label>
-            <input type="text" class="cbm-tf" id="cbmName" name="name" autocomplete="name" placeholder="Как к вам обращаться">
+          <div class="mk-field">
+            <label class="mk-field__lbl" for="cbmName">Имя <em>— необязательно</em></label>
+            <input type="text" class="mk-input" id="cbmName" name="name" autocomplete="name" placeholder="Как к вам обращаться">
           </div>
           <!-- honeypot: скрытое поле-ловушка для ботов; люди его не видят и не заполняют -->
-          <input type="text" class="cbm-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="cbm-check">
+          <input type="text" class="mk-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label class="mk-checkrow">
             <input type="checkbox" class="mk-check" id="cbmConsent" data-role="consent" required>
             <span>Я даю согласие на обработку <a href="#" target="_blank" rel="noopener">персональных данных</a> и принимаю <a href="#" target="_blank" rel="noopener">политику конфиденциальности</a></span>
           </label>
-          <label class="cbm-check">
+          <label class="mk-checkrow">
             <input type="checkbox" class="mk-check" id="cbmPromo">
             <span>Согласен получать новости и спецпредложения <em>(необязательно)</em></span>
           </label>
-          <div class="cbm-foot">
-            <div class="cbm-alert" data-role="alert" hidden role="alert">
+          <div class="mk-formfoot">
+            <div class="mk-alert" data-role="alert" hidden role="alert">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v5M12 16.5v.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <span><b>Заявка не ушла.</b> Похоже, пропала связь. Данные сохранены — нажмите ещё раз.
                 Если не выходит, позвоните: <a href="tel:+74952561000">+7 (495) 256-10-00</a></span>
             </div>
-            <button type="submit" class="cbm-submit mk-btn mk-btn--primary" id="cbmSubmit" disabled>Жду звонка</button>
-            <p class="cbm-fine">Мы используем номер только для обратного звонка по вашей заявке.</p>
+            <button type="submit" class="mk-submit mk-btn mk-btn--primary" id="cbmSubmit" disabled>Жду звонка</button>
+            <p class="mk-fine">Мы используем номер только для обратного звонка по вашей заявке.</p>
           </div>
         </form>
       </div>
@@ -1204,7 +1204,7 @@
           </div>
           <h2 class="cbm-title">Заявка принята</h2>
           <p class="cbm-sub">Перезвоним на указанный номер в ближайшее время. Спасибо!</p>
-          <button type="button" class="cbm-submit mk-btn mk-btn--primary" data-cbm-close>Хорошо</button>
+          <button type="button" class="mk-submit mk-btn mk-btn--primary" data-cbm-close>Хорошо</button>
         </div>
       </div>
     </div>
@@ -1226,8 +1226,8 @@
         <p class="cbm-sub">Расскажите, как прошёл заказ. Отзыв появится на сайте после проверки.</p>
         <form novalidate>
           <input type="hidden" name="context" value="Тиснение фольгой">
-          <div class="cbm-field">
-            <span class="cbm-lbl" id="revRateLbl">Оценка <i>*</i></span>
+          <div class="mk-field">
+            <span class="mk-field__lbl" id="revRateLbl">Оценка <i>*</i></span>
             <!-- Порядок звёзд в разметке обратный (5 → 1), а ряд развёрнут в CSS: тогда подсветка
                  «до наведённой» делается одним соседним селектором, без скрипта. -->
             <div class="mk-rate" role="radiogroup" aria-labelledby="revRateLbl">
@@ -1237,52 +1237,52 @@
               <input type="radio" name="rating" id="revRate2" value="2"><label for="revRate2" aria-label="2 из 5">★</label>
               <input type="radio" name="rating" id="revRate1" value="1"><label for="revRate1" aria-label="1 из 5">★</label>
             </div>
-            <span class="cbm-err">Поставьте оценку</span>
+            <span class="mk-field__err">Поставьте оценку</span>
           </div>
-          <div class="cbm-row">
-            <div class="cbm-field">
-              <label class="cbm-lbl" for="revName">Имя <i>*</i></label>
-              <input type="text" class="cbm-tf" id="revName" name="name" autocomplete="name" placeholder="Как вас подписать" required aria-required="true">
-              <span class="cbm-err">Укажите имя — минимум две буквы</span>
+          <div class="mk-formrow">
+            <div class="mk-field">
+              <label class="mk-field__lbl" for="revName">Имя <i>*</i></label>
+              <input type="text" class="mk-input" id="revName" name="name" autocomplete="name" placeholder="Как вас подписать" required aria-required="true">
+              <span class="mk-field__err">Укажите имя — минимум две буквы</span>
             </div>
-            <div class="cbm-field">
+            <div class="mk-field">
               <!-- Почта нужна модератору, чтобы ответить или уточнить; на сайте её не публикуем -->
-              <label class="cbm-lbl" for="revEmail">E-mail <em>— необязательно</em></label>
-              <input type="email" class="cbm-tf" id="revEmail" name="email" autocomplete="email" placeholder="you@example.ru">
-              <span class="cbm-err">Проверьте адрес: нужен формат name@mail.ru</span>
+              <label class="mk-field__lbl" for="revEmail">E-mail <em>— необязательно</em></label>
+              <input type="email" class="mk-input" id="revEmail" name="email" autocomplete="email" placeholder="you@example.ru">
+              <span class="mk-field__err">Проверьте адрес: нужен формат name@mail.ru</span>
             </div>
           </div>
-          <div class="cbm-field">
-            <label class="cbm-lbl" for="revText">Отзыв <i>*</i></label>
-            <textarea class="cbm-ta" id="revText" name="review" rows="4" placeholder="Что заказывали, как прошла работа, что понравилось" required aria-required="true"></textarea>
-            <span class="cbm-err">Напишите пару слов о заказе</span>
+          <div class="mk-field">
+            <label class="mk-field__lbl" for="revText">Отзыв <i>*</i></label>
+            <textarea class="mk-textarea" id="revText" name="review" rows="4" placeholder="Что заказывали, как прошла работа, что понравилось" required aria-required="true"></textarea>
+            <span class="mk-field__err">Напишите пару слов о заказе</span>
           </div>
-          <div class="cbm-field">
-            <label class="cbm-lbl">Есть фото работы? Приложите</label>
-            <label class="cbm-file">
+          <div class="mk-field">
+            <label class="mk-field__lbl">Есть фото работы? Приложите</label>
+            <label class="mk-file">
               <input type="file" id="revFiles" name="files" multiple accept=".png,.jpg,.jpeg,.webp,.heic">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M21 11.5l-8.4 8.4a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span class="cbm-file-btn" data-file-label>Прикрепить фото</span>
+              <span class="mk-file__btn" data-file-label>Прикрепить фото</span>
             </label>
           </div>
-          <ul class="cbm-files" data-file-list hidden></ul>
-          <p class="cbm-file-hint">До 10 фото, JPG · PNG · WEBP.</p>
-          <input type="text" class="cbm-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="cbm-check">
+          <ul class="mk-filelist" data-file-list hidden></ul>
+          <p class="mk-file__hint">До 10 фото, JPG · PNG · WEBP.</p>
+          <input type="text" class="mk-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label class="mk-checkrow">
             <input type="checkbox" class="mk-check" data-role="consent" required>
             <span>Я даю согласие на обработку <a href="#" target="_blank" rel="noopener">персональных данных</a> и принимаю <a href="#" target="_blank" rel="noopener">политику конфиденциальности</a></span>
           </label>
-          <label class="cbm-check">
+          <label class="mk-checkrow">
             <input type="checkbox" class="mk-check" name="promo">
             <span>Согласен получать новости и спецпредложения <em>(необязательно)</em></span>
           </label>
-          <div class="cbm-foot">
-            <div class="cbm-alert" data-role="alert" hidden role="alert">
+          <div class="mk-formfoot">
+            <div class="mk-alert" data-role="alert" hidden role="alert">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v5M12 16.5v.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <span><b>Отзыв не ушёл.</b> Похоже, пропала связь. Текст сохранён — нажмите ещё раз.
                 Если не выходит, напишите на <a href="mailto:info@mdmprint.ru">info@mdmprint.ru</a>.</span>
             </div>
-            <button type="submit" class="cbm-submit mk-btn mk-btn--primary" disabled>Отправить отзыв</button>
+            <button type="submit" class="mk-submit mk-btn mk-btn--primary" disabled>Отправить отзыв</button>
           </div>
         </form>
       </div>
@@ -1294,7 +1294,7 @@
           </div>
           <h2 class="cbm-title">Спасибо за отзыв</h2>
           <p class="cbm-sub">Он появится на сайте после проверки — обычно в течение рабочего дня.</p>
-          <button type="button" class="cbm-submit mk-btn mk-btn--primary" data-cbm-close>Понятно</button>
+          <button type="button" class="mk-submit mk-btn mk-btn--primary" data-cbm-close>Понятно</button>
         </div>
       </div>
     </div>
@@ -1323,16 +1323,16 @@
         <p class="cbm-sub">Опишите задачу — рассчитаем стоимость и сроки. Ответим в рабочее время — ежедневно с 9 до 22.</p>
         <form novalidate>
           <input type="hidden" name="context" value="Тиснение фольгой">
-          <div class="cbm-row">
-            <div class="cbm-field">
-              <label class="cbm-lbl" for="reqPhone">Телефон <i>*</i></label>
-              <input type="tel" id="reqPhone" name="phone" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" required aria-required="true">
-              <span class="cbm-err">Введите корректный номер телефона</span>
+          <div class="mk-formrow">
+            <div class="mk-field">
+              <label class="mk-field__lbl" for="reqPhone">Телефон <i>*</i></label>
+              <input type="tel" class="mk-input" id="reqPhone" name="phone" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" required aria-required="true">
+              <span class="mk-field__err">Введите корректный номер телефона</span>
             </div>
-            <div class="cbm-field">
-              <label class="cbm-lbl" for="reqWay">Способ связи <i>*</i></label>
-              <div class="cbm-sel">
-                <select class="cbm-tf" id="reqWay" name="contact_way" required aria-required="true">
+            <div class="mk-field">
+              <label class="mk-field__lbl" for="reqWay">Способ связи <i>*</i></label>
+              <div class="mk-select">
+                <select class="mk-input" id="reqWay" name="contact_way" required aria-required="true">
                   <option value="" disabled selected>Выберите способ</option>
                   <option>Позвонить</option>
                   <option>Telegram</option>
@@ -1340,58 +1340,58 @@
                   <option>E-mail</option>
                 </select>
               </div>
-              <span class="cbm-err">Выберите, как с вами связаться</span>
+              <span class="mk-field__err">Выберите, как с вами связаться</span>
             </div>
           </div>
-          <div class="cbm-row">
-            <div class="cbm-field">
-              <label class="cbm-lbl" for="reqName">Имя <i>*</i></label>
-              <input type="text" class="cbm-tf" id="reqName" name="name" autocomplete="name" placeholder="Как к вам обращаться" required aria-required="true">
-              <span class="cbm-err">Укажите имя — минимум две буквы</span>
+          <div class="mk-formrow">
+            <div class="mk-field">
+              <label class="mk-field__lbl" for="reqName">Имя <i>*</i></label>
+              <input type="text" class="mk-input" id="reqName" name="name" autocomplete="name" placeholder="Как к вам обращаться" required aria-required="true">
+              <span class="mk-field__err">Укажите имя — минимум две буквы</span>
             </div>
-            <div class="cbm-field">
-              <label class="cbm-lbl" for="reqEmail">E-mail <em>— необязательно</em></label>
-              <input type="email" class="cbm-tf" id="reqEmail" name="email" autocomplete="email" placeholder="you@example.ru">
-              <span class="cbm-err">Проверьте адрес — нужен вид name@mail.ru</span>
+            <div class="mk-field">
+              <label class="mk-field__lbl" for="reqEmail">E-mail <em>— необязательно</em></label>
+              <input type="email" class="mk-input" id="reqEmail" name="email" autocomplete="email" placeholder="you@example.ru">
+              <span class="mk-field__err">Проверьте адрес — нужен вид name@mail.ru</span>
             </div>
           </div>
-          <div class="cbm-field">
-            <label class="cbm-lbl" for="reqMsg">Задача <em>— необязательно</em></label>
-            <textarea class="cbm-ta" id="reqMsg" name="message" rows="3" placeholder="Что нужно напечатать, тираж, сроки, пожелания…"></textarea>
+          <div class="mk-field">
+            <label class="mk-field__lbl" for="reqMsg">Задача <em>— необязательно</em></label>
+            <textarea class="mk-textarea" id="reqMsg" name="message" rows="3" placeholder="Что нужно напечатать, тираж, сроки, пожелания…"></textarea>
           </div>
-          <div class="cbm-field">
+          <div class="mk-field">
             <!-- Приглашение вместо ярлыка «Файлы»: формулировка называет выгоду
                  («посчитаем точнее»), а не тип данных. Пометку «необязательно» сняли:
                  вопрос сам по себе не обязывает, а лишние два слова уезжали на вторую строку. -->
-            <label class="cbm-lbl">Есть макет? Приложите — посчитаем точнее</label>
-            <label class="cbm-file">
+            <label class="mk-field__lbl">Есть макет? Приложите — посчитаем точнее</label>
+            <label class="mk-file">
               <input type="file" id="reqFiles" name="files" multiple accept=".pdf,.ai,.cdr,.eps,.psd,.tif,.tiff,.png,.jpg,.jpeg,.zip,.rar">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M21 11.5l-8.4 8.4a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              <span class="cbm-file-btn" data-file-label>Прикрепить макет</span>
+              <span class="mk-file__btn" data-file-label>Прикрепить макет</span>
             </label>
           </div>
-          <ul class="cbm-files" data-file-list hidden></ul>
-          <p class="cbm-file-hint">До 10 файлов, PDF · AI · CDR · PSD · JPG · ZIP. Большие макеты — архивом.</p>
+          <ul class="mk-filelist" data-file-list hidden></ul>
+          <p class="mk-file__hint">До 10 файлов, PDF · AI · CDR · PSD · JPG · ZIP. Большие макеты — архивом.</p>
           <!-- honeypot: скрытое поле-ловушка для ботов -->
-          <input type="text" class="cbm-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="cbm-check">
+          <input type="text" class="mk-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label class="mk-checkrow">
             <input type="checkbox" class="mk-check" data-role="consent" required>
             <span>Я даю согласие на обработку <a href="#" target="_blank" rel="noopener">персональных данных</a> и принимаю <a href="#" target="_blank" rel="noopener">политику конфиденциальности</a></span>
           </label>
-          <label class="cbm-check">
+          <label class="mk-checkrow">
             <input type="checkbox" class="mk-check" name="promo">
             <span>Согласен получать новости и спецпредложения <em>(необязательно)</em></span>
           </label>
-          <!-- .cbm-foot: на мобилке залипает внизу шторки, чтобы кнопка была видна всегда,
+          <!-- .mk-formfoot: на мобилке залипает внизу шторки, чтобы кнопка была видна всегда,
                а поля прокручивались под ней. На десктопе это обычный блок в потоке. -->
-          <div class="cbm-foot">
-            <div class="cbm-alert" data-role="alert" hidden role="alert">
+          <div class="mk-formfoot">
+            <div class="mk-alert" data-role="alert" hidden role="alert">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v5M12 16.5v.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <span><b>Заявка не ушла.</b> Похоже, пропала связь. Данные сохранены — нажмите ещё раз.
                 Если не выходит, позвоните: <a href="tel:+74952561000">+7 (495) 256-10-00</a></span>
             </div>
-            <button type="submit" class="cbm-submit mk-btn mk-btn--primary" disabled>Отправить заявку</button>
-            <p class="cbm-fine">Мы используем контакты только для ответа по вашей заявке.</p>
+            <button type="submit" class="mk-submit mk-btn mk-btn--primary" disabled>Отправить заявку</button>
+            <p class="mk-fine">Мы используем контакты только для ответа по вашей заявке.</p>
           </div>
         </form>
       </div>
@@ -1410,7 +1410,7 @@
             <div><dt>Тема</dt><dd data-done-ctx>Тиснение фольгой</dd></div>
             <div><dt data-done-waylbl>Телефон</dt><dd data-done-contact>ваш номер</dd></div>
           </dl>
-          <button type="button" class="cbm-submit mk-btn mk-btn--primary" data-cbm-close>Хорошо</button>
+          <button type="button" class="mk-submit mk-btn mk-btn--primary" data-cbm-close>Хорошо</button>
         </div>
       </div>
     </div>
@@ -1425,17 +1425,17 @@
         <h2 class="cbm-title" id="authTitle">Вход в личный кабинет</h2>
         <p class="cbm-sub">Введите номер телефона — пришлём код в SMS.</p>
         <form id="phoneForm" novalidate>
-          <div class="cbm-field" id="fPhone">
-            <label class="cbm-lbl" for="iPhone">Телефон <i>*</i></label>
-            <input type="tel" id="iPhone" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__">
-            <span class="cbm-err" id="ePhone">Введите номер полностью</span>
+          <div class="mk-field" id="fPhone">
+            <label class="mk-field__lbl" for="iPhone">Телефон <i>*</i></label>
+            <input type="tel" class="mk-input" id="iPhone" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__">
+            <span class="mk-field__err" id="ePhone">Введите номер полностью</span>
           </div>
-          <label class="cbm-check" id="fConsent">
+          <label class="mk-checkrow" id="fConsent">
             <input type="checkbox" class="mk-check" id="iConsent">
             <span>Соглашаюсь с <a href="#" onclick="return false">политикой обработки персональных данных</a> и получением кода в SMS</span>
           </label>
-          <span class="cbm-err" id="eForm"></span>
-          <button type="submit" class="cbm-submit mk-btn mk-btn--primary" id="btnGetCode">Получить код</button>
+          <span class="mk-field__err" id="eForm"></span>
+          <button type="submit" class="mk-submit mk-btn mk-btn--primary" id="btnGetCode">Получить код</button>
         </form>
       </section>
 
@@ -1448,12 +1448,12 @@
           <input class="auth-cell" inputmode="numeric" maxlength="1" aria-label="Цифра 3">
           <input class="auth-cell" inputmode="numeric" maxlength="1" aria-label="Цифра 4">
         </div>
-        <span class="cbm-err auth-code-err" id="eCode" role="alert" aria-live="assertive">Неверный код</span>
+        <span class="mk-field__err auth-code-err" id="eCode" role="alert" aria-live="assertive">Неверный код</span>
         <div class="auth-resend" id="resendBox" aria-live="polite">
           <span id="timerTx">Отправить код повторно через 1:00</span>
           <button type="button" class="mk-btn mk-btn--link" id="btnResend" hidden>Отправить код повторно</button>
         </div>
-        <button type="button" class="cbm-submit mk-btn mk-btn--primary" id="btnVerify" disabled>Войти</button>
+        <button type="button" class="mk-submit mk-btn mk-btn--primary" id="btnVerify" disabled>Войти</button>
       </section>
 
       <section class="auth-step" data-role="step" data-step="done" hidden>
@@ -1462,7 +1462,7 @@
           <h2 class="cbm-title">Вход выполнен</h2>
           <p class="cbm-done-lead">Профиль и история заказов теперь в личном кабинете</p>
           <dl class="cbm-done-list"><div><dt>Телефон</dt><dd id="doneEcho">+7 (999) 123-45-67</dd></div></dl>
-          <button type="button" class="cbm-submit mk-btn mk-btn--primary" id="btnDone">Хорошо</button>
+          <button type="button" class="mk-submit mk-btn mk-btn--primary" id="btnDone">Хорошо</button>
         </div>
       </section>
     </div>
@@ -1925,17 +1925,17 @@
               <h3 class="cbm-title">Задайте свой вопрос</h3>
               <p class="cbm-sub">Напишите вопрос — ответим в ближайшее время удобным для вас способом.</p>
               <form novalidate>
-                <div class="cbm-field">
-                  <label class="cbm-lbl" for="faqQ">Ваш вопрос <i>*</i></label>
-                  <textarea class="cbm-ta" id="faqQ" name="comment" rows="3" maxlength="2000" placeholder="Опишите, что хотите узнать" required aria-required="true"></textarea>
-                  <span class="cbm-err">Напишите вопрос</span>
+                <div class="mk-field">
+                  <label class="mk-field__lbl" for="faqQ">Ваш вопрос <i>*</i></label>
+                  <textarea class="mk-textarea" id="faqQ" name="comment" rows="3" maxlength="2000" placeholder="Опишите, что хотите узнать" required aria-required="true"></textarea>
+                  <span class="mk-field__err">Напишите вопрос</span>
                 </div>
                 <!-- способ связи + контакт под него в одном ряду; контакт-поле подставляется по способу -->
-                <div class="cbm-row">
-                  <div class="cbm-field">
-                    <label class="cbm-lbl" for="faqWay">Способ связи <i>*</i></label>
-                    <div class="cbm-sel">
-                      <select class="cbm-tf" id="faqWay" name="contact_way">
+                <div class="mk-formrow">
+                  <div class="mk-field">
+                    <label class="mk-field__lbl" for="faqWay">Способ связи <i>*</i></label>
+                    <div class="mk-select">
+                      <select class="mk-input" id="faqWay" name="contact_way">
                         <option>Телефон</option>
                         <option>Telegram</option>
                         <option>MAX</option>
@@ -1943,43 +1943,43 @@
                       </select>
                     </div>
                   </div>
-                  <div class="cbm-field" data-contact="Телефон MAX">
-                    <label class="cbm-lbl" for="faqPhone">Номер телефона <i>*</i></label>
-                    <input type="tel" id="faqPhone" name="phone" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__">
-                    <span class="cbm-err">Введите корректный номер телефона</span>
+                  <div class="mk-field" data-contact="Телефон MAX">
+                    <label class="mk-field__lbl" for="faqPhone">Номер телефона <i>*</i></label>
+                    <input type="tel" class="mk-input" id="faqPhone" name="phone" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__">
+                    <span class="mk-field__err">Введите корректный номер телефона</span>
                   </div>
-                  <div class="cbm-field" data-contact="Email" hidden>
-                    <label class="cbm-lbl" for="faqEmail">E-mail <i>*</i></label>
-                    <input type="email" class="cbm-tf" id="faqEmail" name="email" autocomplete="email" placeholder="example@mail.ru">
-                    <span class="cbm-err">Проверьте адрес — нужен вид name@mail.ru</span>
+                  <div class="mk-field" data-contact="Email" hidden>
+                    <label class="mk-field__lbl" for="faqEmail">E-mail <i>*</i></label>
+                    <input type="email" class="mk-input" id="faqEmail" name="email" autocomplete="email" placeholder="example@mail.ru">
+                    <span class="mk-field__err">Проверьте адрес — нужен вид name@mail.ru</span>
                   </div>
-                  <div class="cbm-field" data-contact="Telegram" hidden>
-                    <label class="cbm-lbl" for="faqTg">Никнейм в Telegram <i>*</i></label>
-                    <input type="text" class="cbm-tf" id="faqTg" name="telegram" placeholder="@username">
+                  <div class="mk-field" data-contact="Telegram" hidden>
+                    <label class="mk-field__lbl" for="faqTg">Никнейм в Telegram <i>*</i></label>
+                    <input type="text" class="mk-input" id="faqTg" name="telegram" placeholder="@username">
                   </div>
                 </div>
-                <div class="cbm-field">
-                  <label class="cbm-lbl" for="faqName">Имя <em>— необязательно</em></label>
-                  <input type="text" class="cbm-tf" id="faqName" name="name" autocomplete="name" placeholder="Как к вам обращаться">
+                <div class="mk-field">
+                  <label class="mk-field__lbl" for="faqName">Имя <em>— необязательно</em></label>
+                  <input type="text" class="mk-input" id="faqName" name="name" autocomplete="name" placeholder="Как к вам обращаться">
                 </div>
                 <!-- honeypot: скрытое поле-ловушка для ботов -->
-                <input type="text" class="cbm-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
-                <label class="cbm-check">
+                <input type="text" class="mk-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+                <label class="mk-checkrow">
                   <input type="checkbox" class="mk-check" data-role="consent" required>
                   <span>Я даю согласие на обработку <a href="#" target="_blank" rel="noopener">персональных данных</a> и принимаю <a href="#" target="_blank" rel="noopener">политику конфиденциальности</a></span>
                 </label>
-                <label class="cbm-check">
+                <label class="mk-checkrow">
                   <!-- согласие на рекламу не может быть предзаполнено: только активное действие -->
                   <input type="checkbox" class="mk-check" name="promo">
                   <span>Согласен получать новости и спецпредложения <em>(необязательно)</em></span>
                 </label>
-                <div class="cbm-foot">
-                  <div class="cbm-alert" data-role="alert" hidden role="alert">
+                <div class="mk-formfoot">
+                  <div class="mk-alert" data-role="alert" hidden role="alert">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v5M12 16.5v.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
               <span><b>Заявка не ушла.</b> Похоже, пропала связь. Данные сохранены — нажмите ещё раз.
                 Если не выходит, позвоните: <a href="tel:+74952561000">+7 (495) 256-10-00</a></span>
             </div>
-            <button type="submit" class="cbm-submit mk-btn mk-btn--primary" disabled>Задать вопрос</button>
+            <button type="submit" class="mk-submit mk-btn mk-btn--primary" disabled>Задать вопрос</button>
                 </div>
               </form>
             </div>

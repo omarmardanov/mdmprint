@@ -110,7 +110,7 @@
      (так и вышло: лого, крошки, согласие и весь футер вспышку сохранили). Взамен — свой :active. */
   a,button{-webkit-tap-highlight-color:transparent}
   .logo:active{opacity:.7}
-  .usl .cbm-check a:active{opacity:.6}
+  .usl .mk-checkrow a:active{opacity:.6}
 
   /* подшапка — не компонент кита, поэтому под его правило не попадала,
      и на ней оставалась родная вспышка iOS (серый прямоугольник поверх пункта). Гасим и даём :active. */
@@ -200,8 +200,8 @@
   .faq-form form{margin-top:var(--sp-16);display:flex;flex-direction:column;gap:13px}
   .faq-form .cbm-sub{margin-top:6px}
   .faq-form .cbm-done{padding:8px 4px 4px}
-  /* .cbm-field{display:flex} перебивает [hidden] — возвращаем для скрытых контакт-полей (как .mk-btn[hidden] в ките) */
-  .faq-form .cbm-field[hidden]{display:none}
+  /* .mk-field{display:flex} перебивает [hidden] — возвращаем для скрытых контакт-полей (как .mk-btn[hidden] в ките) */
+  .faq-form .mk-field[hidden]{display:none}
   /* элементы мобильной ЧАВО-шторки — на десктопе скрыты (специфичность бьёт .cbm-x) */
   .faq-cta,.faq-backdrop{display:none}
   .faq-form .cbm-x{display:none}
@@ -253,10 +253,6 @@
   /* Низ бейджа совпадает с низом кнопки, при этом кнопка остаётся на своём месте: строку
      держит бейдж (50px против 32px у кнопки), поэтому поднимаем его на половину разницы. */
   .usl-rev .rev-badge{display:inline-flex;line-height:0}
-
-  /* Оценка звёздами — компонент кита (.mk-rate). Ошибка «поставьте оценку» подсвечивает
-     подпись поля, рамку рисовать не на чем: это не поле ввода. */
-  .cbm-field.invalid .mk-rate label{color:var(--surface-gray-2)}
 
   /* натуральные 150×50: ужимали до высоты кнопки — вторая строка бейджа переставала читаться */
   .usl-rev .rev-badge img{display:block}
@@ -1076,74 +1072,9 @@
   .cbm-title-svc{color:var(--text-secondary)}
   .cbm-sub{font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-secondary);margin-top:var(--sp-8)}
   .cbm form{margin-top:18px;display:flex;flex-direction:column;gap:13px}
-  .cbm-field{display:flex;flex-direction:column;gap:6px}
-  /* Было 12.5px — такого кегля нет ни в шкале, ни в природе. Ступень --t-small (14/20), а не
-     --t-label: label — ступень КАПСА (теги, eyebrow), а лейбл поля набран строчными, и 12 для него
-     мелко. Пара «лейбл 14 / поле 16» — обычная для форм: подпись тише ввода, но читается. */
-  .cbm-lbl{font-size:var(--t-small);line-height:var(--t-small-lh);font-weight:600;color:var(--text-primary)}
-  .cbm-lbl i{color:var(--danger);font-style:normal}
-  .cbm-lbl em{color:var(--text-tertiary);font-weight:500;font-style:normal}
-  .cbm input[type=tel],.cbm input.cbm-tf,.faq-form input[type=tel],.faq-form input.cbm-tf{height:46px;border:1px solid var(--border-strong);border-radius:var(--radius-md);padding:0 14px;font-family:inherit;font-size:var(--t-ui);color:var(--text-primary);outline:none;transition:border-color .15s,box-shadow .15s;width:100%}
-  .cbm input[type=tel]:focus,.cbm input.cbm-tf:focus,.faq-form input[type=tel]:focus,.faq-form input.cbm-tf:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
   .cbm input::placeholder,.faq-form input::placeholder{color:var(--text-tertiary)}
-  .cbm-row{display:flex;gap:11px}
-  .cbm-row .cbm-field{flex:1;min-width:0}
-  .cbm-ta{border:1px solid var(--border-strong);border-radius:var(--radius-md);padding:11px 14px;font-family:inherit;font-size:var(--t-ui);color:var(--text-primary);outline:none;transition:border-color .15s,box-shadow .15s;width:100%;resize:vertical;min-height:76px;line-height:1.4}
-  .cbm-ta:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
-  .cbm-ta::placeholder{color:var(--text-tertiary)}
-  /* селектор способа связи */
-  .cbm-sel{position:relative}
-  .cbm-sel select{appearance:none;-webkit-appearance:none;cursor:pointer;width:100%;height:46px;border:1px solid var(--border-strong);border-radius:var(--radius-md);padding:0 36px 0 14px;font-family:inherit;font-size:var(--t-ui);color:var(--text-primary);background:var(--surface-card);outline:none;transition:border-color .15s,box-shadow .15s}
-  .cbm-sel select:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
-  .cbm-sel select:invalid{color:var(--text-tertiary)}
-  .cbm-sel::after{content:"";position:absolute;right:15px;top:calc(50% - 6px);width:8px;height:8px;transform:rotate(45deg);border-right:2px solid var(--text-secondary);border-bottom:2px solid var(--text-secondary);pointer-events:none}
-  /* загрузка файлов */
-  .cbm-file{position:relative;display:flex;align-items:center;gap:8px;height:46px;border:1px dashed var(--border-strong);border-radius:var(--radius-md);padding:0 14px;cursor:pointer;color:var(--text-secondary);font-size:14px;transition:border-color .15s,background .15s}
-  .cbm-file:hover{border-color:var(--text-tertiary);background:var(--surface-subtle)}
-  .cbm-file input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-  .cbm-file svg{flex-shrink:0;color:var(--text-secondary)}
-  .cbm-file-btn{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-  .cbm-file-hint{font-size:var(--t-micro);color:var(--text-tertiary);line-height:var(--t-micro-lh);margin-top:-4px}
-  /* Список выбранных файлов. Существует потому, что накопление ведём сами: человек должен
-     видеть, что именно прикреплено, и мочь убрать лишнее. */
-  .cbm-files{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:var(--sp-4)}
-  .cbm-files li{display:flex;align-items:center;gap:var(--sp-8);
-    background:var(--surface-on-light);border-radius:var(--radius-inside);padding:var(--sp-6) var(--sp-6) var(--sp-6) var(--sp-10)}
-  .cbm-f-name{flex:1 1 auto;min-width:0;font-size:var(--t-caption);line-height:var(--t-caption-lh);
-    color:var(--text-primary);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-  .cbm-f-size{flex:0 0 auto;font-size:var(--t-micro);line-height:var(--t-micro-lh);color:var(--text-tertiary)}
-  /* Кнопка 28px визуально, но ::after добирает область нажатия до 44 — по чек-листу приёмки
-     тач-цели не меньше 44, а плашка файла такой высоты быть не должна. */
-  .cbm-f-x{position:relative;flex:0 0 auto;width:28px;height:28px;display:flex;align-items:center;justify-content:center;
-    border:none;background:none;border-radius:var(--radius-inside);color:var(--text-secondary);cursor:pointer;
-    -webkit-tap-highlight-color:transparent;transition:background .15s,color .15s}
-  .cbm-f-x::after{content:"";position:absolute;inset:-8px}
-  @media (hover:hover){.cbm-f-x:hover{background:var(--surface-on-light-2);color:var(--text-primary)}}
-  .cbm-f-x:active{background:var(--surface-on-light-2);color:var(--text-primary)}
+  @media (hover:hover){.mk-filelist__x:hover{background:var(--surface-on-light-2);color:var(--text-primary)}}
   #reqBack .cbm,#revBack .cbm{max-width:440px;max-height:calc(100vh - 40px);overflow-y:auto}
-  /* Подсветка была только у input — select и textarea оставались нетронутыми,
-     и ошибка в «Способе связи» никак не показывалась. */
-  .cbm-field.invalid input,.cbm-field.invalid select,.cbm-field.invalid textarea{border-color:var(--danger)}
-  .cbm-field.invalid input:focus,.cbm-field.invalid select:focus,.cbm-field.invalid textarea:focus{box-shadow:0 0 0 3px rgba(224,72,58,.12)}
-  .cbm-err{display:none;font-size:var(--t-micro);line-height:var(--t-micro-lh);color:var(--danger)}
-  .cbm-field.invalid .cbm-err{display:block}
-  .cbm-hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
-  /* Строка согласия. Было: текст --t-label (12) с line-height 1.45 и чекбокс --mk-check--sm (18),
-     заведённый как раз «потому что 12px набор» — костыль под костылём. Но --t-label это ступень
-     КАПСА, а согласие набрано строчными: ступень --t-caption (13/16).
-     Тач-цель — весь лейбл, а он давал 34px против 44 (Apple): min-height + поля добирают до нормы.
-     Чекбокс вернулся к базовым 22 — мелкий вариант тут больше не нужен. */
-  .cbm-check{display:flex;gap:var(--sp-10);align-items:flex-start;cursor:pointer;
-    font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-secondary);
-    min-height:44px;padding-block:var(--sp-6)}
-  .cbm-check input{margin-top:1px}
-  /* Согласие — тоже обязательное поле, и без него заявка не уйдёт. Раньше оно
-     никак не выделялось, и человек искал ошибку в текстовых полях. */
-  .cbm-check.invalid{color:var(--danger)}
-  .cbm-check.invalid .mk-check{border-color:var(--danger)}
-  .cbm-check a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
-  .cbm-check a:hover{color:var(--text-primary)}
-  .cbm-check em{color:var(--text-tertiary);font-style:normal}
 
   /* ── ЛАЙТБОКС ВИДЕО (портфолио) ────────────────────────────────────────────────
      Отдельный компонент, а не .cbm: у форм карточка светлая, с полями и подвалом, а на
@@ -1241,31 +1172,6 @@
   /* мобильная шторка: активный шаг = скролл-слой [data-role] (как у родных форм);
      нижний отступ + safe-area — чтобы кнопка не липла к краю экрана */
   @media(max-width:1023px){ #authBack .cbm > [data-role]{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--sp-20) + env(safe-area-inset-bottom,0px))} }
-  /* .cbm-submit = .mk-btn--primary; своё — растяжка по ширине формы */
-  .cbm-submit{width:100%;margin-top:3px}
-  /* ОШИБКА ОТПРАВКИ — четвёртое состояние формы (было три: пусто / ошибка полей / успех).
-     Не экран-заглушка, а плашка НАД кнопкой: экран увёл бы человека от формы, а с ним и
-     заполненные поля. Здесь данные остаются на месте, повтор — одно нажатие.
-     Запасной канал в тексте обязателен: если сервер лежит, вторая попытка тоже не пройдёт,
-     и телефон — единственное, что человеку осталось. */
-  .cbm-alert{display:flex;gap:var(--sp-10);align-items:flex-start;
-    background:#fdecea;border:1px solid #f5c6c0;border-radius:var(--radius-md);
-    padding:var(--sp-12) var(--sp-14);margin-bottom:var(--sp-12);
-    font-size:var(--t-caption);line-height:1.45;color:var(--text-primary)}
-  .cbm-alert[hidden]{display:none}
-  .cbm-alert svg{width:18px;height:18px;flex-shrink:0;color:var(--danger);margin-top:1px}
-  .cbm-alert a{color:var(--text-primary);font-weight:600;white-space:nowrap;
-    border-bottom:1px solid var(--border-strong)}
-  /* Пока запрос в пути: кнопка занята и не принимает второй клик — иначе на медленной сети
-     человек жмёт трижды и создаёт три заявки. */
-  .cbm-submit[data-busy]{pointer-events:none}
-  /* Подвал формы. Раньше кнопка и примечание были прямыми детьми form и разделялись её
-     gap:13px; теперь они внутри обёртки, и расстояние надо задать здесь — иначе слипаются. */
-  .cbm-foot{display:flex;flex-direction:column;gap:var(--sp-10)}
-  /* Было 10.5px хардкодом — мимо шкалы ДС. Сначала перевёл на --t-micro (11), но 11px для
-     примечания, которое НАДО прочитать, всё ещё мелко: --t-micro — кегль для служебных
-     подписей, а не для текста. Ставим --t-caption и цвет secondary вместо tertiary. */
-  .cbm-fine{font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-secondary);text-align:center}
   .cbm-done{text-align:center;padding:8px 4px 4px}
   /* Иконка 40, а не 56: она подтверждает, а не солирует. При тексте 13–15px пятно 56px
      перевешивало и заголовок, и саму суть сообщения. Глиф уменьшен пропорционально. */
@@ -1286,9 +1192,9 @@
   .cbm-done-list dd{margin:0;flex:1 1 auto;min-width:0;text-align:right;
     font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-primary);font-weight:600;
     overflow-wrap:anywhere}
-  .cbm-done .cbm-fine{margin-bottom:var(--sp-16)}
+  .cbm-done .mk-fine{margin-bottom:var(--sp-16)}
   .cbm-done .cbm-sub{margin:6px 0 20px}
-  .cbm-done .cbm-submit{width:100%;margin-top:0}
+  .cbm-done .mk-submit{width:100%;margin-top:0}
 
   /* border-top НЕТ: над меню всегда стоит либо .navbar с border-bottom, либо (при
      body.scrolled, когда .nav скрыт) сам header с border-bottom. Своя линия давала две
@@ -1592,7 +1498,7 @@
   /* Вид аккордеона (тёплый фон без обводки, маркер в кружке) переехал в кит целиком — это и есть
      канон .mk-acc--card, а не местная правка. */
   /* disabled CTA на тёплой подложке: gray сливается с subtle → плотнее (gray-2) */
-  .faq-form .cbm-submit:disabled{background:var(--surface-gray-2)}
+  .faq-form .mk-submit:disabled{background:var(--surface-gray-2)}
 
   /* МЕГАМЕНЮ C2 (scoped body) */
 
@@ -1700,7 +1606,7 @@
     html{overscroll-behavior-y:none;background:var(--surface-page)}
     /* iOS зумит страницу при фокусе на поле со шрифтом <16px. Это ограничение платформы, а не
        предпочтение, поэтому !important: у большинства полей есть свой font-size в более
-       специфичном селекторе (.search input 14px, .cbm-sel select 15px, #email 14px…), и правило
+       специфичном селекторе (.search input 14px, .mk-select select 15px, #email 14px…), и правило
        без !important молча проигрывало — замер показал 7 полей из 10 в диапазоне 14–15px. */
     /* 16px здесь — КОНСТАНТА ПЛАТФОРМЫ, а не ступень шкалы: ниже 16 iOS зумит страницу при
        фокусе поля. Именно поэтому число, а не var(--t-body): если ступень body однажды уедет
@@ -2045,8 +1951,8 @@
        Карточку (фон + поля 24) НЕ снимаем: в отличие от .ptable в «Ценах» и .files в
        «Требованиях», форма — самостоятельный объект среди аккордеонов, и подложка отделяет её
        от них (решение Omar, 16.07). Плата за это — контент 310 из 390: контейнер 16 + карточка 24. */
-    .faq-form .cbm-row{flex-direction:column;gap:var(--sp-12)}
-    .faq-form input[type=tel],.faq-form input.cbm-tf,.faq-form .cbm-sel select{height:48px}
+    .faq-form .mk-formrow{flex-direction:column;gap:var(--sp-12)}
+    .faq-form input.mk-input,.faq-form .mk-select select{height:48px}
 
     /* ── ЧАВО = КНОПКА + НИЖНЯЯ ШТОРКА ────────────────────────────────────
        Инлайн-форма среди аккордеонов на телефоне — длинная простыня полей.
@@ -2141,7 +2047,7 @@
     /* Подвал выходит из боковых полей прокручиваемого слоя в отрицательные margin и
        возвращает их себе padding'ом: фон и линия идут от края до края экрана, а кнопка
        остаётся на сетке 16px. Тот же приём, что у лент и разделителей секций. */
-    .cbm-foot{position:sticky;bottom:0;background:var(--surface-card);
+    .mk-formfoot{position:sticky;bottom:0;background:var(--surface-card);
       border-top:1px solid var(--border);
       margin-inline:calc(var(--container-pad) * -1);
       padding:var(--sp-12) var(--container-pad)
@@ -2154,7 +2060,7 @@
     /* Поля в одну колонку. Двухколоночная сетка на 390px давала по 144px на поле —
        туда не влезала ни подсказка («Как к вам обра»), ни введённое значение.
        У формы ЧАВО это правило уже было; в модалках его просто не завели. */
-    .cbm .cbm-row{flex-direction:column;gap:var(--sp-12)}
+    .cbm .mk-formrow{flex-direction:column;gap:var(--sp-12)}
     /* ПОДПИСИ КАРТОЧЕК. Замер: заголовок 16/24 — это леадинг ПРОЗЫ (1.5), а тут 1–2 строки,
        от него подпись расползалась; кадр→тег 12 и тег→заголовок 8 почти равны, поэтому подпись
        не читалась как одна группа. Ставим заголовку 1.25 и разводим отступы вдвое (8 снаружи,
