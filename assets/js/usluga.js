@@ -948,7 +948,8 @@
       for(const m of map){ if(m.sec.offsetTop <= y) cur = m; }
       if(cur.a === active) return;   // двигаем только при СМЕНЕ активного, иначе деремся с ручной прокруткой ленты
       active = cur.a;
-      links.forEach(a=>a.classList.toggle('active', a===cur.a));
+      // is-active — соглашение кита (.mk-subnav a.is-active), у нас было своё 'active'
+      links.forEach(a=>a.classList.toggle('is-active', a===cur.a));
       reveal(cur.a);
     };
     window.addEventListener('scroll', spy, {passive:true});

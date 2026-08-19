@@ -60,7 +60,7 @@
      (ловили 16.07: мобильная шкала уехала в токены, страница осталась на десктопной). -->
 <link rel="stylesheet" href="../assets/css/fonts.css?v=20260717l">
 <link rel="stylesheet" href="../assets/css/tokens.css?v=20260817a">
-<link rel="stylesheet" href="../assets/css/kit.css?v=20260807a">
+<link rel="stylesheet" href="../assets/css/kit.css?v=20260819a">
 <!-- Стили страницы: строго после кита — страница переопределяет кит, а не наоборот -->
 <link rel="stylesheet" href="../assets/css/usluga.css?v=20260819a">
 
@@ -1230,7 +1230,7 @@
             <span class="cbm-lbl" id="revRateLbl">Оценка <i>*</i></span>
             <!-- Порядок звёзд в разметке обратный (5 → 1), а ряд развёрнут в CSS: тогда подсветка
                  «до наведённой» делается одним соседним селектором, без скрипта. -->
-            <div class="rev-rate" role="radiogroup" aria-labelledby="revRateLbl">
+            <div class="mk-rate" role="radiogroup" aria-labelledby="revRateLbl">
               <input type="radio" name="rating" id="revRate5" value="5" required aria-required="true"><label for="revRate5" aria-label="5 из 5">★</label>
               <input type="radio" name="rating" id="revRate4" value="4"><label for="revRate4" aria-label="4 из 5">★</label>
               <input type="radio" name="rating" id="revRate3" value="3"><label for="revRate3" aria-label="3 из 5">★</label>
@@ -1559,8 +1559,8 @@
     </section>
 
     <!-- STICKY SUBNAV -->
-    <nav class="usl-subnav" aria-label="Разделы страницы">
-      <div class="wrap">
+    <nav class="usl-subnav mk-subnav" aria-label="Разделы страницы">
+      <div class="wrap mk-subnav__list">
         <a href="#obzor" class="active">Обзор</a>
         <a href="#preim">Преимущества</a>
         <a href="#vidy">Виды</a>
@@ -2435,12 +2435,12 @@
        шрифтом. Факт выбора храним с датой и версией текста: доказывать согласие придётся нам.
        РАЗРАБОТЧИКУ: аналитика и реклама (Метрика, пиксели) подключаются ТОЛЬКО после «Принять».
        Сейчас счётчика на прототипе нет, поэтому в коде только запись решения. -->
-  <div class="cookie" id="cookieBar" role="dialog" aria-modal="false" aria-labelledby="cookieTx" hidden>
-   <div class="wrap">
-    <p class="cookie-tx" id="cookieTx">Мы используем cookie, чтобы сайт работал и чтобы понимать,
+  <div class="mk-cookie" id="cookieBar" role="dialog" aria-modal="false" aria-labelledby="cookieTx" hidden>
+   <div class="wrap mk-cookie__row">
+    <p class="mk-cookie__tx" id="cookieTx">Мы используем cookie, чтобы сайт работал и чтобы понимать,
       какими разделами пользуются. Часть из них нужна для работы сайта, остальные — для аналитики.
       Подробности — в <a href="#" target="_blank" rel="noopener">политике обработки данных</a>.</p>
-    <div class="cookie-btns">
+    <div class="mk-cookie__btns">
       <button type="button" class="mk-btn mk-btn--ghost mk-btn--md" data-cookie="necessary">Только необходимые</button>
       <button type="button" class="mk-btn mk-btn--primary mk-btn--md" data-cookie="all">Принять все</button>
     </div>

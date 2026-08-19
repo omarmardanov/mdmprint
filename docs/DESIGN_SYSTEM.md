@@ -386,8 +386,14 @@
 
 `container · btn(+badge) · card(--gray/--dark) · statbar · checklist · tile · pricelist/pcard ·
 scroller · mcard · list · ph · tabs/tab · tabpanels · segment · chip · reqlist · check · kv ·
-filerow · acc(+--card) · tilelink · review · skip · arr · rowlink · eyebrow · h1–h4 / lead / body /
-small / caption / label`
+filerow · acc(+--card) · tilelink · review · skip · arr · rowlink · eyebrow · subnav · rate ·
+cookie · h1–h4 / lead / body / small / caption / label`
+
+**Поднято из страницы 19.08:** `subnav` (подшапка-навигация, была `.usl-subnav` и почти дублировала
+`.mk-tab`), `rate` (оценка звёздами из формы отзыва), `cookie` (баннер согласия). Во всех трёх в
+ките только вид: липкость подшапки и её `top` зависят от высоты конкретной шапки, поэтому остались
+на странице. Активный пункт подшапки помечается `.is-active` — соглашение кита; своё `active`
+из скроллспая убрано.
 
 - **Заголовок карточки `.mk-mcard__title` — наборный** (Roboto 16/600). Так набраны и уникальные
   тексты (имя работы, заголовок статьи), и ярлыки из закрытого списка (продукт, технология).

@@ -584,3 +584,60 @@
     content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
     width:max(100%,44px);height:44px}
 }
+
+/* ── ПОДШАПКА-НАВИГАЦИЯ ─────────────────────────────────────────────────────────
+   Строка ссылок по разделам страницы с подчёркиванием активного. Раньше жила на странице
+   как .usl-subnav и была почти дублем .mk-tab; поднята в кит 19.08 — компонент нужен любой
+   длинной странице, а не только услуге.
+   ЗДЕСЬ ТОЛЬКО ВИД. Липкость (position:sticky, top под шапкой) и поведение скроллспая —
+   на стороне страницы: они зависят от высоты конкретной шапки. */
+.mk-subnav{background:var(--surface-card);border-bottom:1px solid var(--border)}
+.mk-subnav__list{display:flex;gap:28px;height:52px;align-items:stretch;overflow-x:auto}
+.mk-subnav a{display:inline-flex;align-items:center;font-size:var(--t-small);
+  color:var(--text-secondary);border-bottom:2px solid transparent;white-space:nowrap;
+  transition:.15s;-webkit-tap-highlight-color:transparent}
+@media (hover:hover){.mk-subnav a:hover{color:var(--text-primary)}}
+.mk-subnav a:active{color:var(--text-primary)}
+.mk-subnav a.is-active{color:var(--text-primary);font-weight:600;border-bottom-color:var(--brand)}
+.mk-subnav a:focus-visible{outline:2px solid var(--brand-dark);outline-offset:2px;border-radius:var(--radius-inside)}
+
+/* ── ОЦЕНКА ЗВЁЗДАМИ ───────────────────────────────────────────────────────────
+   Ряд развёрнут (row-reverse), поэтому в разметке звёзды идут от 5 к 1, а на экране слева
+   направо. Такой порядок позволяет подсветить «до наведённой» одним соседним селектором,
+   без скрипта. Переключатели не display:none, а уведены за пределы видимости — иначе их
+   не поймает клавиатура. */
+.mk-rate{display:inline-flex;flex-direction:row-reverse;justify-content:flex-end;gap:var(--sp-4)}
+.mk-rate input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.mk-rate label{font-size:28px;line-height:1.1;color:var(--surface-gray-2);cursor:pointer;
+  padding:0 2px;border-radius:var(--radius-inside);transition:color .12s,transform .12s}
+.mk-rate label:hover,
+.mk-rate label:hover ~ label,
+.mk-rate input:checked ~ label{color:var(--brand)}
+/* звезда под курсором слегка подрастает и приподнимается — только та, на которую навели:
+   если поднимать весь ряд, движется половина строки и эффект превращается в шум */
+.mk-rate label:hover{transform:translateY(-2px) scale(1.12)}
+.mk-rate input:focus-visible + label{outline:2px solid var(--brand-dark);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.mk-rate label{transition:none}.mk-rate label:hover{transform:none}}
+
+/* ── КУКИ-БАННЕР ───────────────────────────────────────────────────────────────
+   Полоса внизу экрана: текст со ссылкой на политику и две кнопки. Две, потому что согласие
+   по 152-ФЗ должно быть активным действием, а отказ — такой же законный выбор, поэтому он
+   полноценная кнопка, а не серая ссылка мелким шрифтом (CMS_FIELDS §3.5).
+   Полоса во всю ширину, содержимое — по контейнеру страницы: внутрь кладём .wrap. */
+.mk-cookie{position:fixed;left:0;right:0;bottom:0;z-index:95;
+  background:var(--surface-card);border-top:1px solid var(--border);
+  box-shadow:0 -4px 16px rgba(0,0,0,.06);
+  padding-block:var(--sp-16) calc(var(--sp-16) + env(safe-area-inset-bottom))}
+.mk-cookie[hidden]{display:none}
+.mk-cookie__row{display:flex;align-items:center;gap:var(--sp-16)}
+.mk-cookie__tx{margin:0;max-width:820px;color:var(--text-secondary);
+  font-size:var(--t-small);line-height:var(--t-small-lh)}
+.mk-cookie__tx a{color:var(--text-primary);text-decoration:underline;text-underline-offset:2px}
+.mk-cookie__btns{display:flex;gap:var(--sp-10);margin-left:auto;flex-shrink:0}
+@media (max-width:1023px){
+  /* на узком кнопки в строку с текстом не встают: столбик, кнопки поровну по ширине */
+  .mk-cookie{padding-block:var(--sp-16) calc(var(--sp-12) + env(safe-area-inset-bottom))}
+  .mk-cookie__row{flex-direction:column;align-items:stretch;gap:var(--sp-12)}
+  .mk-cookie__btns{margin-left:0}
+  .mk-cookie__btns .mk-btn{flex:1;min-width:0}
+}

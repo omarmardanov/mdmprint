@@ -99,9 +99,11 @@
   /* низ липкой зоны = top подрубрикатора (54) + его высота (53) */
   .usl-req{--stack-top:107px}
   /* фон плотный: сквозь rgba(...,.92) при скролле просвечивал контент под липкой полосой */
-  .usl-subnav{position:sticky;top:54px;z-index:30;background:var(--surface-card);border-bottom:1px solid var(--border);padding:0!important}
+  /* Вид подшапки — в ките (.mk-subnav). Здесь только липкость: top зависит от высоты нашей
+     шапки, а это уже про страницу, а не про компонент. */
+  .usl-subnav{position:sticky;top:54px;z-index:30;padding:0!important}
   .usl-subnav + section{border-top:none}
-  .usl-subnav .wrap{display:flex;gap:28px;height:52px;align-items:stretch;overflow-x:auto}
+
   /* -webkit-tap-highlight-color: iOS рисует свою вспышку серым ПРЯМОУГОЛЬНИКОМ, игнорируя радиус.
      В ките гасим явным списком компонентов (чужую разметку он трогать не вправе), а тут — страница
      целиком наша, поэтому одним правилом: иначе список пришлось бы вести вручную и он бы отставал
@@ -112,10 +114,6 @@
 
   /* подшапка — не компонент кита, поэтому под его правило не попадала,
      и на ней оставалась родная вспышка iOS (серый прямоугольник поверх пункта). Гасим и даём :active. */
-  .usl-subnav a{display:inline-flex;align-items:center;font-size:var(--t-small);color:var(--text-secondary);border-bottom:2px solid transparent;white-space:nowrap;transition:.15s;-webkit-tap-highlight-color:transparent}
-  @media (hover:hover){.usl-subnav a:hover{color:var(--text-primary)}}
-  .usl-subnav a:active{color:var(--text-primary)}
-  .usl-subnav a.active{color:var(--text-primary);font-weight:600;border-bottom-color:var(--brand)}
 
   /* generic card */
   .usl .card{background:var(--surface-card);border:1px solid var(--border);border-radius:14px}
@@ -256,26 +254,10 @@
      держит бейдж (50px против 32px у кнопки), поэтому поднимаем его на половину разницы. */
   .usl-rev .rev-badge{display:inline-flex;line-height:0}
 
-  /* ОЦЕНКА ЗВЁЗДАМИ в модалке отзыва. Ряд развёрнут (row-reverse), поэтому в разметке звёзды
-     идут от 5 к 1, а на экране — слева направо. Такой порядок позволяет подсветить «до
-     наведённой» одним соседним селектором (~), без единой строки скрипта.
-     Сами переключатели не display:none — иначе их не поймает клавиатура; уводим за пределы
-     видимости, фокус показываем на звезде. */
-  .rev-rate{display:inline-flex;flex-direction:row-reverse;justify-content:flex-end;gap:var(--sp-4)}
-  .rev-rate input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
-  .rev-rate label{font-size:28px;line-height:1.1;color:var(--surface-gray-2);cursor:pointer;
-    padding:0 2px;border-radius:var(--radius-inside);transition:color .12s,transform .12s}
-  .rev-rate label:hover,
-  .rev-rate label:hover ~ label,
-  .rev-rate input:checked ~ label{color:var(--brand)}
-  /* Как на mdmprint.ru: звезда под курсором слегка подрастает и приподнимается. Только та, на
-     которую навели: если поднимать весь ряд, движется половина строки и эффект превращается в шум. */
-  .rev-rate label:hover{transform:translateY(-2px) scale(1.12)}
-  .rev-rate input:focus-visible + label{outline:2px solid var(--brand-dark);outline-offset:2px}
-  /* Ошибка у оценки: рамку рисовать не на чем (это не поле ввода), поэтому краснеет подпись */
-  .cbm-field.invalid .rev-rate label{color:var(--surface-gray-2)}
-  @media (prefers-reduced-motion:reduce){.rev-rate label{transition:none}
-    .rev-rate label:hover{transform:none}}
+  /* Оценка звёздами — компонент кита (.mk-rate). Ошибка «поставьте оценку» подсвечивает
+     подпись поля, рамку рисовать не на чем: это не поле ввода. */
+  .cbm-field.invalid .mk-rate label{color:var(--surface-gray-2)}
+
   /* натуральные 150×50: ужимали до высоты кнопки — вторая строка бейджа переставала читаться */
   .usl-rev .rev-badge img{display:block}
 
@@ -544,21 +526,6 @@
   /* ЛИПКИЙ CTA. База скрыта; включается и на мобилке (@media ниже — полоса снизу),
      и на десктопе (правило прямо здесь — плавающая кнопка справа-снизу). Правило стоит
      ЗДЕСЬ, а не рядом с мобильными: при равной специфичности выигрывает записанное ПОЗЖЕ. */
-  /* КУКИ-БАННЕР — полоса внизу. z-index 95: выше липкой полосы (90), ниже модалок (100), чтобы
-     форма заявки могла перекрыть баннер, а не наоборот. Пока баннер не решён, липкую полосу не
-     показываем вовсе — иначе два слоя в одном углу (скрипт полосы это учитывает). */
-  /* Полоса — во всю ширину экрана, СОДЕРЖИМОЕ — по контейнеру страницы (.wrap): иначе текст
-     липнет к левому краю монитора, а кнопки к правому, и баннер живёт по своей сетке. */
-  .cookie{position:fixed;left:0;right:0;bottom:0;z-index:95;
-    background:var(--surface-card);border-top:1px solid var(--border);
-    box-shadow:0 -4px 16px rgba(0,0,0,.06);
-    padding-block:var(--sp-16) calc(var(--sp-16) + env(safe-area-inset-bottom))}
-  .cookie .wrap{display:flex;align-items:center;gap:var(--sp-16)}
-  .cookie[hidden]{display:none}
-  .cookie-tx{margin:0;max-width:820px;color:var(--text-secondary);
-    font-size:var(--t-small);line-height:var(--t-small-lh)}
-  .cookie-tx a{color:var(--text-primary);text-decoration:underline;text-underline-offset:2px}
-  .cookie-btns{display:flex;gap:var(--sp-10);margin-left:auto;flex-shrink:0}
 
   .usl-stickycta{display:none}
   /* Каналы: монохром на нейтральной плашке. Тач-цель 44 — минимум платформы, у нас он держится
@@ -641,11 +608,6 @@
       transform:translateY(110%);transition:transform .22s ease;
       will-change:transform}
     .usl-stickycta.show{transform:translateY(0)}
-    /* На узком кнопки в строку с текстом не встают: столбик, кнопки поровну по ширине */
-    .cookie{padding-block:var(--sp-16) calc(var(--sp-12) + env(safe-area-inset-bottom))}
-    .cookie .wrap{flex-direction:column;align-items:stretch;gap:var(--sp-12)}
-    .cookie-btns{margin-left:0}
-    .cookie-btns .mk-btn{flex:1;min-width:0}
 
     .usl-stickycta{display:flex;align-items:center;gap:var(--sp-10)}
     .usl-stickycta .scta-ways{display:flex;gap:var(--sp-8);flex:0 0 auto}
