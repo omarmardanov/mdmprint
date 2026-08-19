@@ -289,7 +289,13 @@
   /* align-items:stretch выравнивает карточки по самой высокой; height:100% его бы отменил */
   /* зазор — от кита (--gap-card); свой был 24 против китовых 20, отчего ленты жили по разным законам */
   .usl-rev .mk-scroller__track{align-items:stretch;padding-block:2px}
-  .usl-rev .rev-head{display:flex;align-items:baseline;gap:var(--sp-12);flex-wrap:wrap;margin-top:var(--sp-12)}
+  /* Оценка и подпись — по БАЗОВОЙ линии (низы коробок у 32px и 18px кегля не совпадают).
+     Бейдж с кнопкой вынесены из потока: иначе бейдж (50px) растит строку, и зазор под
+     заголовком раздувается с 12 до 30px. */
+  .usl-rev .rev-head{position:relative;display:flex;align-items:baseline;gap:var(--sp-12);
+    flex-wrap:wrap;margin-top:var(--sp-12)}
+  .usl-rev .rev-actions{position:absolute;right:0;bottom:0;display:flex;align-items:flex-end;
+    gap:var(--sp-12)}
   .usl-rev .rev-score{font-family:var(--font-head);font-weight:700;font-size:var(--t-h2);
     line-height:1;color:var(--text-primary)}
   .usl-rev .rev-of{font-size:var(--t-small);color:var(--text-secondary)}
@@ -301,11 +307,10 @@
      одинаковые цифры читались как дубль. По краям они не спорят. */
   /* Низ бейджа совпадает с низом кнопки, при этом кнопка остаётся на своём месте: строку
      держит бейдж (50px против 32px у кнопки), поэтому поднимаем его на половину разницы. */
-  .usl-rev .rev-badge{display:inline-flex;align-self:flex-end;line-height:0;margin-left:auto;
-    margin-bottom:9px}
+  .usl-rev .rev-badge{display:inline-flex;line-height:0}
   /* натуральные 150×50: ужимали до высоты кнопки — вторая строка бейджа переставала читаться */
   .usl-rev .rev-badge img{display:block}
-  .usl-rev .rev-add{align-self:center}
+
   /* карточки компактнее: 4 строки цитаты вместо 5, padding 24 вместо 28 */
   /* текст отзыва скроллится внутри карточки; max-height ≈ 5 строк, дальше — вертикальный скролл */
   .usl-rev .mk-review__text{font-size:var(--t-small);line-height:var(--t-small-lh);max-height:7.5em;
@@ -760,9 +765,9 @@
     .usl-rev .rev-of{width:100%;margin-top:var(--sp-4)}
     /* На узком кнопке в строку с подписью не встать: роняем на свою строку (width:100% + ширина
        по контенту), прижимать её вправо не к чему — рядом ничего нет. */
-    .usl-rev .rev-badge{width:100%;margin-top:var(--sp-12)}
-    .usl-rev .rev-add{width:100%;margin:var(--sp-12) 0 0;justify-content:flex-start;
-      max-width:max-content}
+    /* На узком абсолют не нужен: группа встаёт своей строкой под подписью */
+    .usl-rev .rev-actions{position:static;width:100%;margin-top:var(--sp-12);
+      align-items:center;gap:var(--sp-12)}
     /* Косяк №3: ссылка-источник («Яндекс Карты») давала цель 16px по высоте. */
     .usl-rev .mk-review__source{min-height:32px;padding-block:var(--sp-8)}
     /* .usl-art .art-grid — см. второй брейкпоинт в <style id="port-after">: здесь правило
@@ -4194,10 +4199,12 @@
                  Светлый собран перекраской тёмного, то есть это ВРЕМЕННЫЙ ассет: у Яндекса в
                  промоматериалах есть официальная светлая тема, её и ставить на бой (там же берётся
                  их код — оценка живая и клик ведёт в профиль; у картинки цифра зашита). -->
-            <a class="rev-badge" href="https://yandex.ru/maps/org/mdmprint/1299127609/" target="_blank" rel="noopener">
-              <img src="../assets/img/badge-yandex-light.svg" width="150" height="50" alt="Хорошее место по версии Яндекса — оценка 5,0" loading="lazy">
-            </a>
-            <a class="rev-add mk-btn mk-btn--ghost mk-btn--sm" href="#">Добавить отзыв</a>
+            <span class="rev-actions">
+              <a class="rev-badge" href="https://yandex.ru/maps/org/mdmprint/1299127609/" target="_blank" rel="noopener">
+                <img src="../assets/img/badge-yandex-light.svg" width="150" height="50" alt="Хорошее место по версии Яндекса — оценка 5,0" loading="lazy">
+              </a>
+              <a class="rev-add mk-btn mk-btn--ghost mk-btn--sm" href="#">Добавить отзыв</a>
+            </span>
           </div>
         </div>
         <div class="mk-scroller revs" data-scroller>
