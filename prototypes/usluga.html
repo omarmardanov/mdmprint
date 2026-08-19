@@ -598,6 +598,16 @@
      и на десктопе (правило прямо здесь — плавающая кнопка справа-снизу). Правило стоит
      ЗДЕСЬ, а не рядом с мобильными: при равной специфичности выигрывает записанное ПОЗЖЕ. */
   .usl-stickycta{display:none}
+  /* Каналы: монохром на нейтральной плашке. Тач-цель 44 — минимум платформы, у нас он держится
+     по всему макету. Фирменных цветов мессенджеров нет намеренно (см. комментарий у разметки). */
+  .usl-stickycta .scta-ic{width:44px;height:44px;flex:0 0 44px;display:inline-flex;
+    align-items:center;justify-content:center;border-radius:var(--radius-md);
+    background:var(--surface-card);border:1px solid var(--border);color:var(--text-primary);
+    transition:background .15s,border-color .15s}
+  .usl-stickycta .scta-ic svg{width:20px;height:20px;display:block}
+  @media (hover:hover){.usl-stickycta .scta-ic:hover{background:var(--surface-subtle);border-color:var(--text-primary)}}
+  .usl-stickycta .scta-ic:active{background:var(--surface-subtle)}
+  @media (prefers-reduced-motion:reduce){.usl-stickycta .scta-ic{transition:none}}
   /* ДЕСКТОП: при скролле шапка сворачивается и главной CTA не остаётся — плавающая кнопка
      подхватывает. Показывается тем же условием, что мобильная (нет CTA на экране + проскроллили). */
   @media(min-width:1024px){
@@ -605,8 +615,12 @@
       opacity:0;transform:translateY(16px);pointer-events:none;
       transition:opacity .22s ease,transform .22s ease}
     .usl-stickycta.show{opacity:1;transform:translateY(0);pointer-events:auto}
+    .usl-stickycta{display:flex;flex-direction:column;align-items:flex-end;gap:var(--sp-10)}
     .usl-stickycta .mk-btn{width:auto;padding:14px 26px;
       box-shadow:0 10px 30px rgba(20,15,0,.18),0 2px 8px rgba(20,15,0,.08)}
+    /* каналы столбиком НАД кнопкой: угол один, и порядок сверху вниз повторяет приоритет —
+       быстрый канал выше, главное действие последним, ближе к большому пальцу */
+    .usl-stickycta .scta-ways{display:flex;flex-direction:column;gap:var(--sp-8)}
     @media (prefers-reduced-motion:reduce){.usl-stickycta{transition:opacity .01s;transform:none}}
   }
 
@@ -664,7 +678,9 @@
       transform:translateY(110%);transition:transform .22s ease;
       will-change:transform}
     .usl-stickycta.show{transform:translateY(0)}
-    .usl-stickycta .mk-btn{width:100%}
+    .usl-stickycta{display:flex;align-items:center;gap:var(--sp-10)}
+    .usl-stickycta .scta-ways{display:flex;gap:var(--sp-8);flex:0 0 auto}
+    .usl-stickycta .mk-btn{flex:1;min-width:0;width:auto}
     @media (prefers-reduced-motion:reduce){.usl-stickycta{transition:none}}
     /* КАЛЬКУЛЯТОР без тёмной плашки: просто группа внутри бежевой секции, после кнопки.
        Отступы по правилу «внешние > внутренних»: внутри группы 12 (заголовок/подпись/кнопка),
@@ -4618,7 +4634,25 @@
   <!-- ЛИПКИЙ CTA (мобилка). Класс .tb-cta осознанно: setupLead навешивает открытие модалки
        на все .tb-cta через querySelectorAll, поэтому отдельная логика кнопке не нужна —
        она откроет ту же форму заявки, что и кнопки в блоках. -->
+  <!-- ЛИПКАЯ ПОЛОСА = заявка + быстрые каналы. Каналы здесь, а не отдельным плавающим виджетом:
+       по Метрике переход в мессенджер — самый частый контакт на сайте (4,08% визитов против 3,22%
+       у форм), но угол на всех троих не хватает. Иконки монохромные: цвет на странице значит
+       «главное действие», три фирменных логотипа рядом с жёлтой кнопкой превращают угол в ёлку.
+       ВНИМАНИЕ ПРИ ПЕРЕНОСЕ: чат должен открывать виджет Битрикс24 (site_button), а не вести в
+       личку — иначе переписка уходит мимо CRM. Собственную плавающую кнопку виджета скрыть,
+       открытие повесить на эту иконку (docs/HANDOFF.md). -->
   <div class="usl-stickycta" aria-hidden="true">
+    <span class="scta-ways">
+      <a class="scta-ic" href="tel:+74952561000" tabindex="-1" aria-label="Позвонить" title="Позвонить">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg>
+      </a>
+      <a class="scta-ic" href="#" tabindex="-1" aria-label="Написать в Телеграме" title="Телеграм">
+        <svg viewBox="39.4 66.2 142.4 120" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M54.3,118.8c35-15.2,58.3-25.3,70-30.2 c33.3-13.9,40.3-16.3,44.8-16.4c1,0,3.2,0.2,4.7,1.4c1.2,1,1.5,2.3,1.7,3.3s0.4,3.1,0.2,4.7c-1.8,19-9.6,65.1-13.6,86.3 c-1.7,9-5,12-8.2,12.3c-7,0.6-12.3-4.6-19-9c-10.6-6.9-16.5-11.2-26.8-18c-11.9-7.8-4.2-12.1,2.6-19.1c1.8-1.8,32.5-29.8,33.1-32.3 c0.1-0.3,0.1-1.5-0.6-2.1c-0.7-0.6-1.7-0.4-2.5-0.2c-1.1,0.2-17.9,11.4-50.6,33.5c-4.8,3.3-9.1,4.9-13,4.8 c-4.3-0.1-12.5-2.4-18.7-4.4c-7.5-2.4-13.5-3.7-13-7.9C45.7,123.3,48.7,121.1,54.3,118.8z"/></svg>
+      </a>
+      <a class="scta-ic" href="#" tabindex="-1" aria-label="Написать в Максе" title="Макс">
+        <svg viewBox="0 0 266 265" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M78.7282 246.114C77.385 245.162 75.5339 245.421 74.4078 246.622C59.3591 262.672 20.8452 273.931 19.081 252.024C19.081 234.86 15.2258 220.397 10.9812 204.471C5.78268 184.967 0 163.272 0 131.74C0 56.5481 61.6671 0 134.783 0C207.899 0 265.225 59.3087 265.225 132.47C265.225 205.631 206.074 263.48 135.475 263.48C110.428 263.48 98.2731 259.952 78.7282 246.114ZM136.834 65.195C102.135 63.3755 75.0576 87.4529 69.0868 125.138C64.142 156.345 72.9088 194.372 80.4074 196.286C83.5879 197.098 91.2419 191.243 96.8105 185.992C97.8576 185.005 99.4401 184.839 100.668 185.59C109.348 190.898 119.176 194.887 130.011 195.455C165.634 197.323 197.202 169.443 199.067 133.818C200.933 98.1929 172.456 67.0632 136.834 65.195Z"/></svg>
+      </a>
+    </span>
     <button type="button" class="tb-cta mk-btn mk-btn--primary" tabindex="-1">Оставить заявку на расчёт</button>
   </div>
 
@@ -5867,7 +5901,8 @@
   (function(){
     const bar = document.querySelector('.usl-stickycta');
     if(!bar || !('IntersectionObserver' in window)) return;
-    const btn = bar.querySelector('.mk-btn');
+    // из фокуса убираем ВСЮ полосу: рядом с кнопкой теперь ещё и каналы связи
+    const focusables = [...bar.querySelectorAll('.mk-btn, .scta-ic')];
 
     const footAnchor = document.querySelector('.usl-foot');
     const anchors = [
@@ -5901,7 +5936,7 @@
       /* Скрытый бар убираем и из доступности, иначе скринридер и Tab находят
          кнопку, которой на экране нет. */
       bar.setAttribute('aria-hidden', show ? 'false' : 'true');
-      btn.tabIndex = show ? 0 : -1;
+      focusables.forEach(el => { el.tabIndex = show ? 0 : -1; });
     }
 
     addEventListener('scroll', update, {passive:true});
