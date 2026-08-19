@@ -4827,6 +4827,75 @@
     return ()=>{ delete btn.dataset.busy; btn.disabled = false; btn.textContent = label; };
   }
 
+  /* ── ОБЩИЕ КИРПИЧИ ФОРМ ─────────────────────────────────────────────────────
+     Форм на странице три (звонок, заявка, вопрос) и валидируют они одно и то же: телефон,
+     почту, согласие, непустой текст. Раньше эти правила были написаны дважды — в setupLead
+     и в блоке ЧАВО, — и любая правка (формат номера, текст проверки, поведение подсветки)
+     делалась в двух местах или расходилась. Здесь общее собрано один раз; формам остаётся
+     только своё: у заявки — файлы, у ЧАВО — выбор способа связи и шторка на мобилке.
+     Контракт компонента описан в docs/CMS_FIELDS.md §3.4. */
+  const fk = (function(){
+    const digits = v => (v||'').replace(/\D/g,'');
+    /* 8XXX и XXX приводим к 7XXX: человек набирает номер как привык, а уходит он в одном виде */
+    function norm(v){ let d = digits(v); if(d[0]==='8') d='7'+d.slice(1); if(d && d[0]!=='7') d='7'+d; return d.slice(0,11); }
+    const phoneOk = v => { const d = norm(v); return d.length===11 && d[0]==='7'; };
+    const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v||'').trim());
+    // лёгкое форматирование в +7 (XXX) XXX-XX-XX
+    function fmtPhone(v){
+      const d = norm(v);
+      if(!d) return '';
+      let r = '+7';
+      if(d.length>1) r += ' (' + d.slice(1,4);
+      if(d.length>=4) r += ')';
+      if(d.length>=5) r += ' ' + d.slice(4,7);
+      if(d.length>=8) r += '-' + d.slice(7,9);
+      if(d.length>=10) r += '-' + d.slice(9,11);
+      return r;
+    }
+    /* Имя: хотя бы одна БУКВА и два знака, цифры не запрещаем. У нас B2B, и «Отдел 5» —
+       законный ответ на «как к вам обращаться». Полный запрет цифр — переусердствованная
+       валидация: отсекает живого человека вместе с мусором. */
+    const nameOk = v => /\p{L}/u.test(v||'') && (v||'').trim().length >= 2;
+    const mark = (el, bad) => { const w = el.closest('.cbm-field'); if(w) w.classList.toggle('invalid', !!bad); };
+    /* Мягкая проверка по уходу из поля: ругаемся только на ЗАПОЛНЕННОЕ и неверное — ругать
+       того, кто ещё печатает, незачем. Про пустое скажем по нажатию кнопки. Гасим сразу,
+       как исправил. */
+    function soft(el, valid){
+      const check = () => mark(el, el.value.trim() ? !valid(el) : false);
+      el.addEventListener('blur',   check);
+      el.addEventListener('change', check);
+      el.addEventListener('input',  () => { if(valid(el)) mark(el, false); });
+    }
+    /* Доводим до первого проблемного поля явно: внутри шторки свой скролл-контейнер, и одного
+       focus() мало — поле оставалось за экраном, человек жал кнопку, а внешне ничего.
+       К СТРОКЕ согласия (.cbm-check), а не к квадратику 22×22: иначе по центру экрана окажется
+       чекбокс без текста. block:'center' — чтобы поле не встало под липкую шапку.
+       preventScroll — иначе браузер дёрнет свой скачок поверх плавного. */
+    function goTo(el){
+      (el.closest('.cbm-check') || el.closest('.cbm-field') || el).scrollIntoView({block:'center', behavior:'smooth'});
+      if(el.focus) el.focus({preventScroll:true});
+    }
+    /* Отправка: гасим прошлую ошибку, занимаем кнопку, шлём. Ответ — true/false, чтобы форма
+       сама решила, что показывать (у модалок экран «Заявка принята», у ЧАВО — своё место). */
+    function send(form, payload){
+      const alert = form.querySelector('[data-role="alert"]');
+      const btn   = form.querySelector('button[type="submit"]');
+      if(alert) alert.hidden = true;
+      const done = busy(btn);
+      return sendLead(payload)
+        .then(()=>{ done(); return true; })
+        .catch(()=>{
+          done();
+          if(alert){ alert.hidden = false; alert.scrollIntoView({block:'nearest', behavior:'smooth'}); }
+          return false;
+        });
+    }
+    /* Кнопка активна всегда (почему — CMS_FIELDS §3.2). disabled в разметке — страховка на
+       случай, если скрипт не загрузился: тогда форма не уйдёт полупустой. */
+    const unlock = btn => { if(btn) btn.disabled = false; };
+    return {norm, phoneOk, emailOk, fmtPhone, nameOk, mark, soft, goTo, send, unlock};
+  })();
+
   function setupLead(back, triggerSel){
     if(!back) return;
     const formWrap = back.querySelector('[data-role="form"]');
@@ -4893,15 +4962,12 @@
     /* Форма звонка файлов не имеет — отсюда проверка на null. */
     function resetFiles(){ picked = []; if(fileInput) fileInput.value = ''; renderFiles(); }
 
-    const digits = v => (v||'').replace(/\D/g,'');
-    function norm(v){ let d = digits(v); if(d[0]==='8') d='7'+d.slice(1); if(d && d[0]!=='7') d='7'+d; return d.slice(0,11); }
-    function phoneValid(){ const d = norm(phone.value); return d.length===11 && d[0]==='7'; }
-    const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v||'').trim());
+    const phoneValid = () => fk.phoneOk(phone.value);
     function formValid(){
       if(!phoneValid() || !consent.checked) return false;
       // М2: e-mail НЕ обязателен, но если введён — должен быть валиден
       const em = form.querySelector('input[type=email]');
-      if(em && em.value.trim() && !emailOk(em.value)) return false;
+      if(em && em.value.trim() && !fk.emailOk(em.value)) return false;
       // все прочие поля с атрибутом required (имя, способ связи…)
       for(const el of form.querySelectorAll('[required]')){
         if(el===phone || el===consent) continue;
@@ -4910,54 +4976,22 @@
       }
       return true;
     }
-    /* ОБРАТНАЯ СВЯЗЬ ПО ПОЛЯМ.
-       Раньше кнопка просто гасла: форма знала, что не так, а человек нет. Причём узнать
-       было НЕЛЬЗЯ в принципе — сообщение об ошибке показывалось в обработчике отправки,
-       а он не может сработать у заблокированной кнопки. Замкнутый круг.
-       Теперь кнопка активна всегда, а ошибки показываются: при уходе из поля и по нажатию. */
+    /* Какое поле считается заполненным верно. Правила общие (fk), тут только раскладка
+       по полям ЭТОЙ формы: телефон обязателен, e-mail — нет, но формат проверяем. */
     function fieldValid(el){
       if(el === phone) return phoneValid();
       if(el.type === 'checkbox') return el.checked;
-      if(el.type === 'email') return !el.value.trim() || emailOk(el.value);   // М2: пусто допустимо
+      if(el.type === 'email') return !el.value.trim() || fk.emailOk(el.value);   // М2: пусто допустимо
       if(!el.value.trim()) return false;
-      /* Имя: требуем хотя бы одну БУКВУ и два знака, а цифры не запрещаем.
-         Полный запрет цифр — классическая переусердствованная валидация: у нас B2B,
-         и «Отдел 5» или «21 век» — законный ответ на «как к вам обращаться».
-         Это правило отсекает мусор вроде «12345», но живого человека не блокирует. */
-      if(el.name === 'name') return /\p{L}/u.test(el.value) && el.value.trim().length >= 2;
+      if(el.name === 'name') return fk.nameOk(el.value);
       return true;
     }
-    function mark(el, bad){
-      const wrap = el.closest('.cbm-field');
-      if(wrap) wrap.classList.toggle('invalid', !!bad);
-    }
-    /* Ошибку показываем по уходу из поля, а не по вводу: ругаться на первой букве адреса —
-       значит ругаться на человека, который ещё печатает. А вот ГАСИМ сразу, как исправил.
-       ПУСТОЕ поле по уходу не ругается: модалка сама ставит фокус в телефон, и первый же
-       тап в соседнее поле красил телефон, хотя человек в него не печатал. Про незаполненное
-       сообщаем только по нажатию кнопки — там это уместно. */
     // М2: e-mail не required, но формат по уходу проверяем — поэтому добавлен в набор явно
     form.querySelectorAll('[required], input[type=email]').forEach(el=>{
       if(el.type === 'checkbox') return;
-      const softCheck = ()=> mark(el, el.value.trim() ? !fieldValid(el) : false);
-      el.addEventListener('blur',   softCheck);
-      el.addEventListener('change', softCheck);
-      el.addEventListener('input',  ()=> { if(fieldValid(el)) mark(el, false); });
+      fk.soft(el, fieldValid);
     });
-    function refresh(){ submit.disabled = false; }
-
-    // лёгкое форматирование в +7 (XXX) XXX-XX-XX
-    function fmt(v){
-      const d = norm(v);
-      if(!d) return '';
-      let r = '+7';
-      if(d.length>1) r += ' (' + d.slice(1,4);
-      if(d.length>=4) r += ')';
-      if(d.length>=5) r += ' ' + d.slice(4,7);
-      if(d.length>=8) r += '-' + d.slice(7,9);
-      if(d.length>=10) r += '-' + d.slice(9,11);
-      return r;
-    }
+    const refresh = () => fk.unlock(submit);
 
     function openModal(e){
       if(e) e.preventDefault();
@@ -5031,7 +5065,7 @@
       else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
     });
 
-    phone.addEventListener('input', ()=>{ phone.value = fmt(phone.value); pField.classList.remove('invalid'); });
+    phone.addEventListener('input', ()=>{ phone.value = fk.fmtPhone(phone.value); pField.classList.remove('invalid'); });
     phone.addEventListener('blur', ()=>{ if(phone.value && !phoneValid()) pField.classList.add('invalid'); });
     form.addEventListener('input', refresh);
     form.addEventListener('change', refresh);
@@ -5046,24 +5080,15 @@
         form.querySelectorAll('[required]').forEach(el=>{
           if(el.type === 'checkbox') return;
           const bad = !fieldValid(el);
-          mark(el, bad);
+          fk.mark(el, bad);
           if(bad && !first) first = el;
         });
         // М2: e-mail не required, но если введён с ошибкой — тоже отметить
         const em = form.querySelector('input[type=email]');
-        if(em && em.value.trim() && !emailOk(em.value)){ mark(em, true); if(!first) first = em; }
+        if(em && em.value.trim() && !fk.emailOk(em.value)){ fk.mark(em, true); if(!first) first = em; }
         if(!consent.checked) consent.closest('.cbm-check')?.classList.add('invalid');
-        /* Доводим до первого проблемного поля явно. Внутри шторки свой скролл-контейнер,
-           и одного focus() мало: поле могло остаться за экраном — человек жал кнопку,
-           а внешне не происходило ничего.
-           block:'center' — чтобы поле не встало вплотную под липкую шапку или над подвалом.
-           preventScroll у focus() — иначе браузер дёрнет свой скачок поверх плавного. */
-        /* Если текстовые поля в порядке, а не отмечено согласие — ведём к нему.
-           Прокручиваем к СТРОКЕ целиком (.cbm-check), а не к самому input 22×22:
-           иначе по центру экрана оказывается квадратик, а текст рядом с ним — нет. */
-        if(!first) first = consent;
-        (first.closest('.cbm-check') || first).scrollIntoView({block:'center', behavior:'smooth'});
-        if(first.focus) first.focus({preventScroll:true});
+        // текстовые поля в порядке, а согласие не отмечено — ведём к нему
+        fk.goTo(first || consent);
         return;
       }
       consent.closest('.cbm-check')?.classList.remove('invalid');
@@ -5095,16 +5120,8 @@
       const ctxSrc = form.querySelector('input[name="context"]');
       set('[data-done-ctx]', ctxSrc && ctxSrc.value);
 
-      const alert = form.querySelector('[data-role="alert"]');
-      const btn   = form.querySelector('button[type="submit"]');
-      if(alert) alert.hidden = true;          // прошлую ошибку гасим до новой попытки
-      const done = busy(btn);
-      sendLead({way, page: location.href})
-        .then(()=>{ done(); formWrap.hidden = true; doneWrap.hidden = false; })
-        .catch(()=>{
-          done();
-          if(alert){ alert.hidden = false; alert.scrollIntoView({block:'nearest', behavior:'smooth'}); }
-        });
+      fk.send(form, {way, page: location.href})
+        .then(ok=>{ if(ok){ formWrap.hidden = true; doneWrap.hidden = false; } });
     });
 
     refresh();
@@ -5127,14 +5144,7 @@
     const contacts = [...form.querySelectorAll('[data-contact]')];
     const phone    = form.querySelector('input[type="tel"]');
 
-    const digits = v => (v||'').replace(/\D/g,'');
-    function norm(v){ let d=digits(v); if(d[0]==='8') d='7'+d.slice(1); if(d && d[0]!=='7') d='7'+d; return d.slice(0,11); }
-    const phoneValid = ()=>{ const d=norm(phone.value); return d.length===11 && d[0]==='7'; };
-    const emailOk = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((v||'').trim());
-    function fmt(v){ const d=norm(v); if(!d) return ''; let r='+7';
-      if(d.length>1) r+=' ('+d.slice(1,4); if(d.length>=4) r+=')';
-      if(d.length>=5) r+=' '+d.slice(4,7); if(d.length>=8) r+='-'+d.slice(7,9);
-      if(d.length>=10) r+='-'+d.slice(9,11); return r; }
+    const phoneValid = () => fk.phoneOk(phone.value);
 
     // способ связи выбирает, какое контакт-поле показать; лишние прячем и отключаем
     const activeField = ()=> contacts.find(f => f.dataset.contact.split(' ').includes(way.value));
@@ -5144,34 +5154,28 @@
     }
     function contactValid(){
       const inp = activeField().querySelector('input');
-      if(way.value==='Email')    return emailOk(inp.value);
+      if(way.value==='Email')    return fk.emailOk(inp.value);
       if(way.value==='Telegram') return !!inp.value.trim();
       return phoneValid();                                   // Телефон / MAX
     }
     const formValid = ()=> consent.checked && !!q.value.trim() && contactValid();
-    /* Реактивная валидация — как в модалках (setupLead): кнопка активна всегда, ошибки
-       показываем по уходу из поля и по нажатию. Превентивный disabled прятал от человека,
-       ЧТО не так, а сказать было негде — замкнутый круг. Best practice GOV.UK / NN-g. */
-    function refresh(){ submit.disabled = false; }
+    const refresh = () => fk.unlock(submit);
     const activeInput = ()=> activeField().querySelector('input');
-    function markFaq(el, bad){ const w = el.closest('.cbm-field'); if(w) w.classList.toggle('invalid', !!bad); }
+    /* Раскладка по полям ЭТОЙ формы: контакт-поле одно, но его тип зависит от способа связи. */
     function inputValid(el){
       if(el.type === 'tel')   return phoneValid();
-      if(el.type === 'email') return emailOk(el.value);
+      if(el.type === 'email') return fk.emailOk(el.value);
       return !!el.value.trim();                              // Telegram / MAX-ник
     }
 
     way.addEventListener('change', ()=>{ syncContacts(); refresh(); });
-    phone.addEventListener('input', ()=>{ phone.value = fmt(phone.value); markFaq(phone, false); });
-    q.addEventListener('input', ()=>{ if(q.value.trim()) markFaq(q, false); });
-    /* Мягкая проверка контакт-полей по уходу: ругаемся только на ЗАПОЛНЕННОЕ и невалидное
-       (пустое по уходу не трогаем — про незаполненное скажем по кнопке). Гасим сразу, как исправил. */
+    phone.addEventListener('input', ()=>{ phone.value = fk.fmtPhone(phone.value); fk.mark(phone, false); });
+    q.addEventListener('input', ()=>{ if(q.value.trim()) fk.mark(q, false); });
+    /* Скрытые контакт-поля проверять нечего: способ связи показывает ровно одно, остальные
+       ещё и disabled. Поэтому обёртка над общей мягкой проверкой. */
     contacts.forEach(f=>{
       const el = f.querySelector('input');
-      const soft = ()=>{ if(!el.disabled) markFaq(el, el.value.trim() ? !inputValid(el) : false); };
-      el.addEventListener('blur', soft);
-      el.addEventListener('change', soft);
-      el.addEventListener('input', ()=>{ if(inputValid(el)) markFaq(el, false); });
+      fk.soft(el, e => e.disabled || inputValid(e));
     });
     form.addEventListener('submit', e=>{
       e.preventDefault();
@@ -5179,29 +5183,17 @@
       if(!formValid()){
         /* По нажатию подсвечиваем всё незаполненное и ведём фокус на первое из них. */
         let first = null;
-        if(!q.value.trim()){ markFaq(q, true); first = first || q; }
+        if(!q.value.trim()){ fk.mark(q, true); first = first || q; }
         const inp = activeInput();
-        if(!contactValid()){ markFaq(inp, true); first = first || inp; }
+        if(!contactValid()){ fk.mark(inp, true); first = first || inp; }
         if(!consent.checked){ consent.closest('.cbm-check')?.classList.add('invalid'); first = first || consent; }
-        if(first){
-          (first.closest('.cbm-field') || first.closest('.cbm-check') || first)
-            .scrollIntoView({block:'center', behavior:'smooth'});
-          if(first.focus) first.focus({preventScroll:true});
-        }
+        if(first) fk.goTo(first);
         return;
       }
       consent.closest('.cbm-check')?.classList.remove('invalid');
       // на реале: POST { comment, contact_way, contact, name, promo, consent:true, page, ts } + антиспам/rate-limit
-      const alert = form.querySelector('[data-role="alert"]');
-      const btn   = form.querySelector('button[type="submit"]');
-      if(alert) alert.hidden = true;
-      const done = busy(btn);
-      sendLead({page: location.href})
-        .then(()=>{ done(); formWrap.hidden = true; doneWrap.hidden = false; })
-        .catch(()=>{
-          done();
-          if(alert){ alert.hidden = false; alert.scrollIntoView({block:'nearest', behavior:'smooth'}); }
-        });
+      fk.send(form, {page: location.href})
+        .then(ok=>{ if(ok){ formWrap.hidden = true; doneWrap.hidden = false; } });
     });
 
     // ── Мобилка: кнопка «Задать вопрос» → шторка снизу (та же форма). ──
@@ -5763,9 +5755,11 @@
     const show = n => steps.forEach(s=>s.hidden = s.dataset.step!==String(n));
     let timerId=null, currentPhone='', loggedIn=false;
 
-    function digits(v){ let d=v.replace(/\D/g,''); if(d[0]==='8')d='7'+d.slice(1); if(d[0]!=='7')d=d?('7'+d):''; return d.slice(0,11); }
-    function fmtPhone(v){ const d=digits(v); if(!d) return ''; let r='+7'; if(d.length>1)r+=' ('+d.slice(1,4); if(d.length>=4)r+=')'; if(d.length>4)r+=' '+d.slice(4,7); if(d.length>=7)r+='-'+d.slice(7,9); if(d.length>=9)r+='-'+d.slice(9,11); return r; }
-    const isValidPhone = v => digits(v).length===11;
+    /* Телефон здесь тот же, что в формах, — берём общие правила (fk выше по документу),
+       свою копию не держим. Заодно ушёл висячий дефис: старая копия на девяти цифрах
+       показывала «+7 (999) 123-45-», хотя вводить ещё две. */
+    const fmtPhone = v => fk.fmtPhone(v);
+    const isValidPhone = v => fk.phoneOk(v);
 
     function open(){ back.classList.add('show'); back.setAttribute('aria-hidden','false'); resetAll(); }
     function close(){ back.classList.remove('show'); back.setAttribute('aria-hidden','true'); stopTimer(); }
