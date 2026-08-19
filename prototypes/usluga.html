@@ -597,6 +597,20 @@
   /* ЛИПКИЙ CTA. База скрыта; включается и на мобилке (@media ниже — полоса снизу),
      и на десктопе (правило прямо здесь — плавающая кнопка справа-снизу). Правило стоит
      ЗДЕСЬ, а не рядом с мобильными: при равной специфичности выигрывает записанное ПОЗЖЕ. */
+  /* КУКИ-БАННЕР — полоса внизу. z-index 95: выше липкой полосы (90), ниже модалок (100), чтобы
+     форма заявки могла перекрыть баннер, а не наоборот. Пока баннер не решён, липкую полосу не
+     показываем вовсе — иначе два слоя в одном углу (скрипт полосы это учитывает). */
+  .cookie{position:fixed;left:0;right:0;bottom:0;z-index:95;
+    display:flex;align-items:center;gap:var(--sp-16);
+    background:var(--surface-card);border-top:1px solid var(--border);
+    box-shadow:0 -4px 16px rgba(0,0,0,.06);
+    padding:var(--sp-16) var(--container-pad) calc(var(--sp-16) + env(safe-area-inset-bottom))}
+  .cookie[hidden]{display:none}
+  .cookie-tx{margin:0;max-width:820px;color:var(--text-secondary);
+    font-size:var(--t-small);line-height:var(--t-small-lh)}
+  .cookie-tx a{color:var(--text-primary);text-decoration:underline;text-underline-offset:2px}
+  .cookie-btns{display:flex;gap:var(--sp-10);margin-left:auto;flex-shrink:0}
+
   .usl-stickycta{display:none}
   /* Каналы: монохром на нейтральной плашке. Тач-цель 44 — минимум платформы, у нас он держится
      по всему макету. Фирменных цветов мессенджеров нет намеренно (см. комментарий у разметки). */
@@ -678,6 +692,12 @@
       transform:translateY(110%);transition:transform .22s ease;
       will-change:transform}
     .usl-stickycta.show{transform:translateY(0)}
+    /* На узком кнопки в строку с текстом не встают: столбик, кнопки поровну по ширине */
+    .cookie{flex-direction:column;align-items:stretch;gap:var(--sp-12);
+      padding:var(--sp-16) var(--container-pad) calc(var(--sp-12) + env(safe-area-inset-bottom))}
+    .cookie-btns{margin-left:0}
+    .cookie-btns .mk-btn{flex:1;min-width:0}
+
     .usl-stickycta{display:flex;align-items:center;gap:var(--sp-10)}
     .usl-stickycta .scta-ways{display:flex;gap:var(--sp-8);flex:0 0 auto}
     .usl-stickycta .mk-btn{flex:1;min-width:0;width:auto}
@@ -4634,6 +4654,24 @@
   <!-- ЛИПКИЙ CTA (мобилка). Класс .tb-cta осознанно: setupLead навешивает открытие модалки
        на все .tb-cta через querySelectorAll, поэтому отдельная логика кнопке не нужна —
        она откроет ту же форму заявки, что и кнопки в блоках. -->
+  <!-- КУКИ-БАННЕР. По 152-ФЗ и разъяснениям РКН cookie с идентификаторами — персональные данные,
+       значит нужно информировать И получать согласие ДО их установки. «Продолжение пользования
+       сайтом = согласие» больше не работает: согласие должно быть конкретным и активным действием.
+       Отсюда две кнопки, а не одна: принять всё или оставить только необходимые. Отказ — такой же
+       законный выбор, поэтому «Только необходимые» — полноценная кнопка, а не серая ссылка мелким
+       шрифтом. Факт выбора храним с датой и версией текста: доказывать согласие придётся нам.
+       РАЗРАБОТЧИКУ: аналитика и реклама (Метрика, пиксели) подключаются ТОЛЬКО после «Принять».
+       Сейчас счётчика на прототипе нет, поэтому в коде только запись решения. -->
+  <div class="cookie" id="cookieBar" role="dialog" aria-modal="false" aria-labelledby="cookieTx" hidden>
+    <p class="cookie-tx" id="cookieTx">Мы используем cookie, чтобы сайт работал и чтобы понимать,
+      какими разделами пользуются. Часть из них нужна для работы сайта, остальные — для аналитики.
+      Подробности — в <a href="#" target="_blank" rel="noopener">политике обработки данных</a>.</p>
+    <div class="cookie-btns">
+      <button type="button" class="mk-btn mk-btn--ghost mk-btn--md" data-cookie="necessary">Только необходимые</button>
+      <button type="button" class="mk-btn mk-btn--primary mk-btn--md" data-cookie="all">Принять все</button>
+    </div>
+  </div>
+
   <!-- ЛИПКАЯ ПОЛОСА = заявка + быстрые каналы. Каналы здесь, а не отдельным плавающим виджетом:
        по Метрике переход в мессенджер — самый частый контакт на сайте (4,08% визитов против 3,22%
        у форм), но угол на всех троих не хватает. Иконки монохромные: цвет на странице значит
@@ -5894,6 +5932,34 @@
   })();
 </script>
   <script>
+  /* ── КУКИ-БАННЕР ────────────────────────────────────────────────────────────
+     Решение храним с датой и версией текста: если политику перепишут, версию поднимают и
+     согласие спрашивают заново — старое относилось к другому тексту.
+     На бою здесь же включаются счётчики: при 'all' — аналитика и реклама, при 'necessary' —
+     ничего, кроме технических cookie. localStorage взят потому, что бэкенда у прототипа нет;
+     в проде это cookie с датой истечения (год) плюс запись согласия на стороне сервера. */
+  const COOKIE_KEY = 'mdm.cookie.consent';
+  const COOKIE_VER = 1;
+  (function(){
+    const bar = document.getElementById('cookieBar');
+    if(!bar) return;
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(COOKIE_KEY) || 'null'); } catch { saved = null; }
+    if(saved && saved.ver === COOKIE_VER) return;          // уже решил — не спрашиваем снова
+    bar.hidden = false;
+    document.body.classList.add('cookie-open');            // липкая полоса ждёт решения
+    bar.querySelectorAll('[data-cookie]').forEach(b => b.addEventListener('click', ()=>{
+      try {
+        localStorage.setItem(COOKIE_KEY, JSON.stringify({
+          choice: b.dataset.cookie, ver: COOKIE_VER, ts: new Date().toISOString()
+        }));
+      } catch {}                                            // приватный режим — просто закрываем
+      bar.hidden = true;
+      document.body.classList.remove('cookie-open');
+      // на бою: if(b.dataset.cookie === 'all') подключить счётчики
+    }));
+  })();
+
   /* ЛИПКИЙ CTA — показывать только тогда, когда помочь больше нечем.
      Правило: бар виден, если НИ ОДНА настоящая кнопка заявки не попадает в экран
      и мы не в самом верху страницы. Наблюдаем четыре блочных CTA (герой, цены,
@@ -5932,9 +5998,12 @@
            прячем только у ФУТЕРА, чтобы не наезжать на футер/финальную CTA. */
       const scrolled = scrollY > 240;
       const footerVisible = footAnchor && onScreen.has(footAnchor);
-      const show = mq.matches
+      /* Пока куки-баннер не решён, полосу не показываем: это один и тот же угол экрана,
+         и два слоя друг на друге заставляют выбирать между «принять» и «оставить заявку». */
+      const cookieOpen = document.body.classList.contains('cookie-open');
+      const show = !cookieOpen && (mq.matches
         ? (onScreen.size === 0 && scrolled && !document.body.classList.contains('nav-open'))
-        : (scrolled && !footerVisible);
+        : (scrolled && !footerVisible));
       bar.classList.toggle('show', show);
       /* Скрытый бар убираем и из доступности, иначе скринридер и Tab находят
          кнопку, которой на экране нет. */
