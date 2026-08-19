@@ -308,6 +308,23 @@
   /* Низ бейджа совпадает с низом кнопки, при этом кнопка остаётся на своём месте: строку
      держит бейдж (50px против 32px у кнопки), поэтому поднимаем его на половину разницы. */
   .usl-rev .rev-badge{display:inline-flex;line-height:0}
+
+  /* ОЦЕНКА ЗВЁЗДАМИ в модалке отзыва. Ряд развёрнут (row-reverse), поэтому в разметке звёзды
+     идут от 5 к 1, а на экране — слева направо. Такой порядок позволяет подсветить «до
+     наведённой» одним соседним селектором (~), без единой строки скрипта.
+     Сами переключатели не display:none — иначе их не поймает клавиатура; уводим за пределы
+     видимости, фокус показываем на звезде. */
+  .rev-rate{display:inline-flex;flex-direction:row-reverse;justify-content:flex-end;gap:var(--sp-4)}
+  .rev-rate input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .rev-rate label{font-size:28px;line-height:1.1;color:var(--surface-gray-2);cursor:pointer;
+    padding:0 2px;border-radius:var(--radius-inside);transition:color .12s}
+  .rev-rate label:hover,
+  .rev-rate label:hover ~ label,
+  .rev-rate input:checked ~ label{color:var(--brand)}
+  .rev-rate input:focus-visible + label{outline:2px solid var(--brand-dark);outline-offset:2px}
+  /* Ошибка у оценки: рамку рисовать не на чем (это не поле ввода), поэтому краснеет подпись */
+  .cbm-field.invalid .rev-rate label{color:var(--surface-gray-2)}
+  @media (prefers-reduced-motion:reduce){.rev-rate label{transition:none}}
   /* натуральные 150×50: ужимали до высоты кнопки — вторая строка бейджа переставала читаться */
   .usl-rev .rev-badge img{display:block}
 
@@ -3380,6 +3397,97 @@
     </div>
   </div>
 
+  <!-- МОДАЛКА «Добавить отзыв». Поля как в форме отзыва на mdmprint.ru (имя, почта, текст,
+       файлы, два согласия) плюс ОЦЕНКА ЗВЁЗДАМИ, которой там нет: карточки отзывов у нас рисуют
+       звёзды, и своим отзывам их было бы неоткуда взять; без оценки не собрать и AggregateRating,
+       ради которого свои отзывы и заводятся (CMS_FIELDS §2.11).
+       Телефон здесь не спрашиваем: отзыв — не заявка, обратная связь идёт по почте. -->
+  <div class="cbm-back" id="revBack" aria-hidden="true">
+    <div class="cbm" role="dialog" aria-modal="true" aria-labelledby="revTitle">
+      <button class="cbm-x" type="button" data-cbm-close aria-label="Закрыть">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+
+      <div data-role="form">
+        <h2 class="cbm-title" id="revTitle">Добавить отзыв</h2>
+        <p class="cbm-sub">Расскажите, как прошёл заказ. Отзыв появится на сайте после проверки.</p>
+        <form novalidate>
+          <input type="hidden" name="context" value="Тиснение фольгой">
+          <div class="cbm-field">
+            <span class="cbm-lbl" id="revRateLbl">Оценка <i>*</i></span>
+            <!-- Порядок звёзд в разметке обратный (5 → 1), а ряд развёрнут в CSS: тогда подсветка
+                 «до наведённой» делается одним соседним селектором, без скрипта. -->
+            <div class="rev-rate" role="radiogroup" aria-labelledby="revRateLbl">
+              <input type="radio" name="rating" id="revRate5" value="5" required aria-required="true"><label for="revRate5" aria-label="5 из 5">★</label>
+              <input type="radio" name="rating" id="revRate4" value="4"><label for="revRate4" aria-label="4 из 5">★</label>
+              <input type="radio" name="rating" id="revRate3" value="3"><label for="revRate3" aria-label="3 из 5">★</label>
+              <input type="radio" name="rating" id="revRate2" value="2"><label for="revRate2" aria-label="2 из 5">★</label>
+              <input type="radio" name="rating" id="revRate1" value="1"><label for="revRate1" aria-label="1 из 5">★</label>
+            </div>
+            <span class="cbm-err">Поставьте оценку</span>
+          </div>
+          <div class="cbm-row">
+            <div class="cbm-field">
+              <label class="cbm-lbl" for="revName">Имя <i>*</i></label>
+              <input type="text" class="cbm-tf" id="revName" name="name" autocomplete="name" placeholder="Как вас подписать" required aria-required="true">
+              <span class="cbm-err">Укажите имя — минимум две буквы</span>
+            </div>
+            <div class="cbm-field">
+              <!-- Почта нужна модератору, чтобы ответить или уточнить; на сайте её не публикуем -->
+              <label class="cbm-lbl" for="revEmail">E-mail <em>— необязательно</em></label>
+              <input type="email" class="cbm-tf" id="revEmail" name="email" autocomplete="email" placeholder="you@example.ru">
+              <span class="cbm-err">Проверьте адрес: нужен формат name@mail.ru</span>
+            </div>
+          </div>
+          <div class="cbm-field">
+            <label class="cbm-lbl" for="revText">Отзыв <i>*</i></label>
+            <textarea class="cbm-ta" id="revText" name="review" rows="4" placeholder="Что заказывали, как прошла работа, что понравилось" required aria-required="true"></textarea>
+            <span class="cbm-err">Напишите пару слов о заказе</span>
+          </div>
+          <div class="cbm-field">
+            <label class="cbm-lbl">Есть фото работы? Приложите</label>
+            <label class="cbm-file">
+              <input type="file" id="revFiles" name="files" multiple accept=".png,.jpg,.jpeg,.webp,.heic">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M21 11.5l-8.4 8.4a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="cbm-file-btn" data-file-label>Прикрепить фото</span>
+            </label>
+          </div>
+          <ul class="cbm-files" data-file-list hidden></ul>
+          <p class="cbm-file-hint">До 10 фото, JPG · PNG · WEBP.</p>
+          <input type="text" class="cbm-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label class="cbm-check">
+            <input type="checkbox" class="mk-check" data-role="consent" required>
+            <span>Я даю согласие на обработку <a href="#" target="_blank" rel="noopener">персональных данных</a> и принимаю <a href="#" target="_blank" rel="noopener">политику конфиденциальности</a></span>
+          </label>
+          <label class="cbm-check">
+            <input type="checkbox" class="mk-check" name="promo">
+            <span>Согласен получать новости и спецпредложения <em>(необязательно)</em></span>
+          </label>
+          <div class="cbm-foot">
+            <div class="cbm-alert" data-role="alert" hidden role="alert">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 8v5M12 16.5v.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span><b>Отзыв не ушёл.</b> Похоже, пропала связь. Текст сохранён — нажмите ещё раз.
+                Если не выходит, напишите на <a href="mailto:info@mdmprint.ru">info@mdmprint.ru</a>.</span>
+            </div>
+            <button type="submit" class="cbm-submit mk-btn mk-btn--primary" disabled>Отправить отзыв</button>
+            <p class="cbm-note">Публикуем после проверки — обычно в течение рабочего дня.</p>
+          </div>
+        </form>
+      </div>
+
+      <div data-role="done" hidden>
+        <div class="cbm-done">
+          <div class="cbm-done-ic" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h2 class="cbm-title">Спасибо за отзыв</h2>
+          <p class="cbm-sub">Он появится на сайте после проверки — обычно в течение рабочего дня.</p>
+          <button type="button" class="cbm-submit mk-btn mk-btn--primary" data-cbm-close>Понятно</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- МОДАЛКА «Оставить заявку»: расширенная заявка; телефон обязателен, остальное — необязательно; согласие на ПДн (152-ФЗ) -->
   <div class="cbm-back" id="reqBack" aria-hidden="true">
     <div class="cbm" role="dialog" aria-modal="true" aria-labelledby="reqTitle">
@@ -4203,7 +4311,7 @@
               <a class="rev-badge" href="https://yandex.ru/maps/org/mdmprint/1299127609/" target="_blank" rel="noopener">
                 <img src="../assets/img/badge-yandex-light.svg" width="150" height="50" alt="Хорошее место по версии Яндекса — оценка 5,0" loading="lazy">
               </a>
-              <a class="rev-add mk-btn mk-btn--ghost mk-btn--sm" href="#">Добавить отзыв</a>
+              <button type="button" class="rev-add mk-btn mk-btn--ghost mk-btn--sm">Добавить отзыв</button>
             </span>
           </div>
         </div>
@@ -4930,8 +5038,10 @@
     const formWrap = back.querySelector('[data-role="form"]');
     const doneWrap = back.querySelector('[data-role="done"]');
     const form     = back.querySelector('form');
+    /* Телефона может не быть вовсе: в отзыве его не спрашивают. Все обращения к нему ниже
+       через проверку — модалка одна на три формы. */
     const phone    = back.querySelector('input[type="tel"]');
-    const pField   = phone.closest('.cbm-field');
+    const pField   = phone && phone.closest('.cbm-field');
     const consent  = back.querySelector('input[data-role="consent"]');
     const submit   = back.querySelector('button[type="submit"]');
     const hp       = form.querySelector('.cbm-hp');
@@ -4991,7 +5101,7 @@
     /* Форма звонка файлов не имеет — отсюда проверка на null. */
     function resetFiles(){ picked = []; if(fileInput) fileInput.value = ''; renderFiles(); }
 
-    const phoneValid = () => fk.phoneOk(phone.value);
+    const phoneValid = () => !phone || fk.phoneOk(phone.value);
     function formValid(){
       if(!phoneValid() || !consent.checked) return false;
       // М2: e-mail НЕ обязателен, но если введён — должен быть валиден
@@ -5001,6 +5111,8 @@
       for(const el of form.querySelectorAll('[required]')){
         if(el===phone || el===consent) continue;
         if(el.type==='checkbox'){ if(!el.checked) return false; continue; }
+        // оценка звёздами: required висит на первом переключателе, выбран может быть любой
+        if(el.type==='radio'){ if(!form.querySelector(`input[name="${el.name}"]:checked`)) return false; continue; }
         if(!el.value.trim()) return false;
       }
       return true;
@@ -5008,8 +5120,9 @@
     /* Какое поле считается заполненным верно. Правила общие (fk), тут только раскладка
        по полям ЭТОЙ формы: телефон обязателен, e-mail — нет, но формат проверяем. */
     function fieldValid(el){
-      if(el === phone) return phoneValid();
+      if(phone && el === phone) return phoneValid();
       if(el.type === 'checkbox') return el.checked;
+      if(el.type === 'radio') return !!form.querySelector(`input[name="${el.name}"]:checked`);
       if(el.type === 'email') return !el.value.trim() || fk.emailOk(el.value);   // М2: пусто допустимо
       if(!el.value.trim()) return false;
       if(el.name === 'name') return fk.nameOk(el.value);
@@ -5017,9 +5130,12 @@
     }
     // М2: e-mail не required, но формат по уходу проверяем — поэтому добавлен в набор явно
     form.querySelectorAll('[required], input[type=email]').forEach(el=>{
-      if(el.type === 'checkbox') return;
+      if(el.type === 'checkbox' || el.type === 'radio') return;
       fk.soft(el, fieldValid);
     });
+    // оценка: подсветку гасим сразу по выбору звезды
+    form.querySelectorAll('input[type=radio]').forEach(el=>
+      el.addEventListener('change', ()=> fk.mark(el, false)));
     const refresh = () => fk.unlock(submit);
 
     function openModal(e){
@@ -5032,12 +5148,13 @@
       back.classList.add('show'); back.setAttribute('aria-hidden','false');
       document.body.style.overflow = 'hidden';
       if(typeof closeMega==='function') closeMega();
-      setTimeout(()=>phone.focus(), 60);
+      const firstField = phone || form.querySelector('input:not([type=hidden]):not(.cbm-hp), textarea');
+      if(firstField) setTimeout(()=>firstField.focus(), 60);
     }
     function closeModal(){
       back.classList.remove('show'); back.setAttribute('aria-hidden','true');
       document.body.style.overflow = '';
-      form.reset(); pField.classList.remove('invalid'); refresh();
+      form.reset(); if(pField) pField.classList.remove('invalid'); refresh();
       if(lastFocus && lastFocus.focus) lastFocus.focus();
     }
 
@@ -5094,8 +5211,10 @@
       else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
     });
 
-    phone.addEventListener('input', ()=>{ phone.value = fk.fmtPhone(phone.value); pField.classList.remove('invalid'); });
-    phone.addEventListener('blur', ()=>{ if(phone.value && !phoneValid()) pField.classList.add('invalid'); });
+    if(phone){
+      phone.addEventListener('input', ()=>{ phone.value = fk.fmtPhone(phone.value); pField.classList.remove('invalid'); });
+      phone.addEventListener('blur', ()=>{ if(phone.value && !phoneValid()) pField.classList.add('invalid'); });
+    }
     form.addEventListener('input', refresh);
     form.addEventListener('change', refresh);
 
@@ -5112,6 +5231,7 @@
           fk.mark(el, bad);
           if(bad && !first) first = el;
         });
+        if(phone && !phoneValid()) fk.mark(phone, true);
         // М2: e-mail не required, но если введён с ошибкой — тоже отметить
         const em = form.querySelector('input[type=email]');
         if(em && em.value.trim() && !fk.emailOk(em.value)){ fk.mark(em, true); if(!first) first = em; }
@@ -5127,6 +5247,8 @@
          независимо от способа связи — обещание расходилось с формой.
          Контакт тоже подставляем по способу: для почты показывать телефон бессмысленно. */
       const wayEl = form.querySelector('[name="contact_way"]');
+      if(!phone){ fk.send(form, {page: location.href})
+        .then(ok=>{ if(ok){ formWrap.hidden = true; doneWrap.hidden = false; } }); return; }
       const way   = wayEl ? wayEl.value : '';
       const mailEl = form.querySelector('input[type="email"]');
       /* Одной фразой: КАК свяжемся и КОГДА. Срок «за 15 минут» здесь НЕ обещаем: вместе
@@ -5157,6 +5279,7 @@
   }
   setupLead(document.getElementById('cbmBack'), '.cb');       // обратный звонок
   setupLead(document.getElementById('reqBack'), '.tb-cta');   // оставить заявку
+  setupLead(document.getElementById('revBack'), '.rev-add');  // добавить отзыв (без телефона)
 
   /* ── FAQ: инлайн-форма «Задайте свой вопрос» (поля как в блоке FAQ на mdmprint.ru) ── */
   (function(){
