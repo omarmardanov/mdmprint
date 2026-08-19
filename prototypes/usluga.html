@@ -754,6 +754,13 @@
        правила, а запас в две строки — min-height (без него прижимать не к чему, и короткие
        подписи всплывают вверх). */
     .usl-prod .pcards{grid-template-columns:1fr 1fr}
+    /* Свёрнутый вид: 12 плиток на телефоне — это 6 рядов и 1223px, почти полтора экрана на одном
+       блоке. Показываем первые 6, остальное по кнопке (решение 19.08, CMS_FIELDS §2.9).
+       Кнопку раскрывает JS и только когда плиток больше шести — в прототипе их ровно 6,
+       поэтому вживую состояние видно по адресу `usluga.html?limits=prod12` (демо-скрипт в
+       начале <script>). */
+    .usl-prod .pcards.is-clamped > :nth-child(n+7){display:none}
+    .usl-prod .prod-more{width:100%;margin-top:var(--gap-card)}
     /* flex:1 — тело забирает весь остаток высоты плитки. Без него в рядах, где у соседа подпись
        в три строки, плитка растягивалась до высоты ряда, а тело оставалось по контенту: текст
        висел выше низа (замер: отступ 28 против 10). Прижим держится на паре flex:1 + flex-end. */
@@ -1524,7 +1531,46 @@
   .usl-art .art-card .mk-arr{color:var(--text-tertiary);transition:transform .15s}
   .usl-art .art-card:hover .mk-arr{transform:translateX(2px);color:var(--text-primary)}
   @media (prefers-reduced-motion:reduce){.usl-art .art-card .mk-arr{transition:none}.usl-art .art-card:hover .mk-arr{transform:none}}
+  /* ВИДЫ — с четвёртой карточки сетка превращается в ленту со стрелками (решение 19.08,
+     CMS_FIELDS §2.4). До трёх — обычные три колонки, стрелок нет вовсе: листать нечего.
+     Карточка остаётся шириной в треть, ровно три в кадре; четвёртая краем не выглядывает —
+     что список продолжается, показывают стрелки.
+     Только десктоп: на мобилке лента есть всегда (карточка 80%, свайп), её правила — в первом
+     брейкпоинте. Класс .mk-scroller__track на сетке стоит ради китового JS ([data-scroller]),
+     а его display:flex перебит правилом .usl-vidy .vidy-grid (0,2,0 против 0,1,0). */
+  /* База — стрелок нет: их не должно быть ни при трёх карточках, ни на мобилке (там свайп).
+     Правило вне медиа намеренно, иначе на телефоне кнопки вылезли бы в шапку. */
+  .usl-vidy .vidy-nav{display:none;gap:var(--sp-8)}
+  @media (min-width:1024px){
+    .usl-vidy .vidy-head{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-16)}
+    .usl-vidy:has(.vidy-grid > :nth-child(4)) .vidy-nav{display:flex}
+    /* кит держит стрелки по краям ленты (absolute) и проявляет их на hover — в шапке они стоят
+       в потоке и видны всегда */
+    .usl-vidy .vidy-nav .mk-scroller__nav{position:static;transform:none;opacity:1}
+    /* Кит прячет неактивную стрелку целиком (opacity:0) — там она висит поверх ленты и мозолит
+       глаза. В шапке прятать нельзя: пара кнопок схлопнулась бы в одну, съехавшую вбок.
+       Поэтому на краях ленты стрелка ПРИГЛУШЕНА, а не исчезает. */
+    .usl-vidy .vidy-nav .mk-scroller__nav:disabled{opacity:.35!important}
+    .usl-vidy .vidy-grid:has(> :nth-child(4)){
+      --item-w:calc((100% - 2 * var(--gap-card)) / 3);
+      display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+      scrollbar-width:none;-ms-overflow-style:none}
+    .usl-vidy .vidy-grid:has(> :nth-child(4))::-webkit-scrollbar{display:none}
+    .usl-vidy .vidy-grid:has(> :nth-child(4)) > *{flex:0 0 var(--item-w);scroll-snap-align:start}
+    @media (prefers-reduced-motion:reduce){.usl-vidy .vidy-grid{scroll-behavior:auto}}
+  }
+
   .usl-art .art-grid{grid-template-columns:repeat(5,1fr)}
+  /* Неполный ряд статей: колонок ровно столько, сколько карточек, — ряд заполняется целиком
+     (решение 19.08, CMS_FIELDS §2.12). Одна статья не выводится вовсе, шесть и больше не бывает:
+     блок отдаёт 5 свежих. Только десктоп: на мобилке колонка одна при любом количестве, поэтому
+     правила и живут в @media(min-width:1024px) — иначе :has перебил бы мобильное правило
+     специфичностью (0,3,0 против 0,2,0). */
+  @media (min-width:1024px){
+    .usl-art .art-grid:has(> :nth-child(2):last-child){grid-template-columns:repeat(2,1fr)}
+    .usl-art .art-grid:has(> :nth-child(3):last-child){grid-template-columns:repeat(3,1fr)}
+    .usl-art .art-grid:has(> :nth-child(4):last-child){grid-template-columns:repeat(4,1fr)}
+  }
 
   /* КАЛЬКУЛЯТОР = .mk-btn--ghost --md как в ките (белая плашка + рамка); своё — только иконка */
   .calcbtn .calc-ic{display:inline-flex;flex-shrink:0}
@@ -3602,10 +3648,19 @@
     </section>
 
     <!-- ВИДЫ -->
-    <section class="usl-vidy" id="vidy">
+    <section class="usl-vidy" id="vidy" data-scroller>
       <div class="wrap">
-        <div class="sec-head"><h2>Виды тиснения</h2></div>
-        <div class="vidy-grid">
+        <div class="sec-head vidy-head">
+          <h2>Виды тиснения</h2>
+          <!-- Стрелки появляются только с четвёртой карточки (CSS :has ниже) и только на десктопе:
+               на мобилке лента листается свайпом. Кнопки и JS — китовые (.mk-scroller__nav +
+               [data-scroller]), у нас переопределено лишь место: не по краям ленты, а в шапке. -->
+          <div class="vidy-nav">
+            <button type="button" class="mk-scroller__nav mk-scroller__nav--prev" data-dir="-1" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+            <button type="button" class="mk-scroller__nav mk-scroller__nav--next" data-dir="1" aria-label="Вперёд"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+          </div>
+        </div>
+        <div class="vidy-grid mk-scroller__track">
           <div class="mk-mcard">
             <div class="mk-mcard__media gold"></div>
             <div class="mk-mcard__body">
@@ -4030,6 +4085,7 @@
             <span class="mk-mcard__body"><span class="mk-mcard__title">Открытки</span></span>
           </a>
         </div>
+        <button type="button" class="prod-more mk-btn mk-btn--ghost mk-btn--md" hidden>Показать ещё</button>
       </div>
     </section>
 
@@ -4418,6 +4474,34 @@
   </div>
 
 <script>
+  /* ── ДЕМО-СОСТОЯНИЯ БЛОКОВ (?limits=…) — УДАЛИТЬ ПРИ ПЕРЕНОСЕ В CMS ──────────
+     Лимиты карточек описаны в CMS_FIELDS (крайние значения у каждого блока), но в самом
+     прототипе контент один и граничные состояния не видны: карусель «Видов» включается с
+     четвёртой карточки, кнопка «Показать ещё» — с седьмой плитки, растяжка статей — при 2–4.
+     Чтобы разработчику и тестировщику не собирать это руками, состояние задаётся адресом:
+
+       usluga.html?limits=vidy5          — «Виды» лентой со стрелками
+       usluga.html?limits=prod12         — 12 плиток «Где применяется» (на мобилке кнопка)
+       usluga.html?limits=art2,combo2    — можно несколько блоков сразу
+
+     Ключи: vidy, price, prod, combo, art. Скрипт стоит ПЕРВЫМ намеренно: ниже инициализируются
+     скроллеры и кнопка «Показать ещё», и они должны увидеть уже изменённое количество карточек.
+     Карточки клонируются по кругу, поэтому в демо повторяются — это стенд, не контент. */
+  (function(){
+    const q = new URLSearchParams(location.search).get('limits');
+    if (!q) return;
+    const map = {vidy:'.vidy-grid', price:'.mk-pricelist', prod:'.usl-prod .pcards',
+                 combo:'.combo-grid', art:'.art-grid'};
+    q.split(',').forEach(part => {
+      const m = part.trim().match(/^([a-z]+)(\d+)$/);
+      const grid = m && document.querySelector(map[m[1]]);
+      if (!grid || !grid.children.length) return;
+      const n = Number(m[2]), items = [...grid.children];
+      while (grid.children.length > n) grid.lastElementChild.remove();
+      for (let i = 0; grid.children.length < n; i++) grid.appendChild(items[i % items.length].cloneNode(true));
+    });
+  })();
+
   const mega = document.getElementById('mega');
   const catbtn = document.getElementById('catbtn');
   const hcat = document.getElementById('hcat');
@@ -5361,6 +5445,26 @@
     sc.addEventListener('mk:sync', sync);
     sync();
   });
+
+  /* ── «ГДЕ ПРИМЕНЯЕТСЯ»: свёрнутая сетка на мобилке ──────────────────────────
+     Первые 6 плиток видны сразу, остальные открывает кнопка. Только на телефоне: на десктопе
+     12 плиток спокойно лежат в два ряда. Подпись без числа — считать остаток шаблону не нужно.
+     Обратно не сворачиваем: закрывающая кнопка увезла бы вверх уже прочитанное. */
+  (function(){
+    const grid = document.querySelector('.usl-prod .pcards');
+    const btn  = document.querySelector('.usl-prod .prod-more');
+    if (!grid || !btn || grid.children.length <= 6) return;
+    const mq = matchMedia('(max-width:1023px)');
+    let opened = false;
+    const sync = () => {
+      const clamp = mq.matches && !opened;
+      grid.classList.toggle('is-clamped', clamp);
+      btn.hidden = !clamp;
+    };
+    btn.addEventListener('click', () => { opened = true; sync(); });
+    mq.addEventListener('change', sync);
+    sync();
+  })();
 
   /* ── ЛАЙТБОКС ВИДЕО ПОРТФОЛИО ───────────────────────────────────────────────
      Открывается кликом по карточке во вкладке «Видео». Плеер чужой: по умолчанию
