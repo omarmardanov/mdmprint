@@ -1,0 +1,1751 @@
+/* Стили лендинга 3D-стикеров. Токены и шрифты подключаются отдельно
+   (../assets/css/tokens.css, fonts.css) — здесь только слой самой страницы.
+   При правке бампать ?v= в stickers-v2.html, иначе браузер отдаст старый файл. */
+  /* ═══ Лендинг 3D-стикеров v2 — собираем по порядку, секция за секцией ═══ */
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    /* Суб-бренд «чёрно-жёлтый хром». Значения те же, что были хардкодом — задача была
+       собрать их в одно место, а не перекрасить. В ДС каталога --text-primary это #222220,
+       здесь чернота глубже, это осознанное отличие лендинга. */
+    --v-ink:#141212;          /* чернота суб-бренда: кнопки, заголовки */
+    --v-ink-press:#000;       /* нажатое состояние */
+    --v-ink-hover:#2c2825;    /* ховер плотных кнопок */
+    --v-ink-2:#4a4136;        /* тёмно-тёплый текст: бейджи, подписи */
+    --v-muted:#8c8477;        /* приглушённый тёплый: иконки, источники */
+    --v-muted-2:#a49c8e;      /* самый тихий: плейсхолдеры, форматы файлов */
+    --v-gold-dark:#7a6a3a;    /* золото как ЦВЕТ ТЕКСТА на светлом */
+    --v-gold-deep:#c79600;    /* золото для пунктира и обводок */
+    --v-err:#b3261e;          /* ошибка загрузки файла */
+    --v-text-warm:#5b554a;    /* тёплый вторичный текст лендинга */
+    --v-muted-3:#a8a29a;      /* тихий на тёмном */
+    --v-hair:#c9c0ae;         /* волосяные разделители, точки */
+    --v-gold-text:#7d5c00;    /* золото как текст на жёлтом фоне */
+    --v-brand-hover:#ffcd2e;  /* жёлтый на ховере */
+    --v-brand-light:#ffe08a;  /* светлая грань кубика */
+    /* ТРИ близких кремовых пришли из разных заходов — свести к одному отдельным решением */
+    --v-paper:#FBFAF5;        /* стекло шапки, theme-color */
+    --v-paper-2:#fbfaf7;
+    --v-paper-3:#f6f4ef;
+    /* Переливы одним рецептом: тёплое жёлтое пятно сверху справа, холодное снизу слева.
+       Раньше эти четыре слоя были скопированы в .forms, .calc и .b2b по отдельности. */
+    /* Плитка переливов: глоу сидят ВНУТРИ плитки и гаснут до прозрачного, не доходя до её краёв,
+       поэтому при повторе стыков не видно и фон идёт сквозь секции непрерывно. */
+    --v-glow:radial-gradient(52% 26% at 84% 22%, rgba(255,193,0,.22), transparent 70%),
+             radial-gradient(44% 22% at 8% 62%, rgba(120,200,255,.16), transparent 72%),
+             radial-gradient(40% 20% at 62% 88%, rgba(255,193,0,.12), transparent 72%);
+    --v-pad:24px; --v-max:1200px;
+  }
+  /* Фон документа = верхняя кромка героя, а не белый. От него Safari на iOS красит статус-бар
+     («scroll edge color»), и он же виден при оттяжке страницы. Белый здесь был виден как
+     чужая полоса над тёплым героем. Секции своего фона не теряют: он живёт на .page-bg,
+     белый остался у карточек-плашек. */
+  body{font-family:var(--font-body);background:var(--v-paper-2);color:var(--v-ink);
+    -webkit-font-smoothing:antialiased;line-height:1.5}
+  /* Уведомление о cookie: узкая плашка в углу, а не полоса во всю ширину — на телефоне
+     полоса села бы поверх мобильной строки заказа (z-index 55) и перекрыла главное действие.
+     Здесь z-index 70: выше строки, но ниже шторок (80), иначе всплыло бы поверх модалки. */
+  .cookie{position:fixed;z-index:70;left:16px;right:16px;bottom:16px;
+    display:flex;align-items:center;gap:var(--sp-16);
+    padding:14px 16px;border-radius:var(--radius-md);
+    background:var(--surface-card);color:var(--text-secondary);
+    box-shadow:0 12px 32px -12px rgba(20,18,18,.35),inset 0 0 0 1px rgba(20,18,18,.08)}
+  .cookie p{margin:0;font-size:var(--t-micro);line-height:var(--t-micro-lh);max-width:74ch}
+  .cookie a{color:var(--text-primary)}
+  .cookie__ok{flex:none;font:inherit;font-size:13px;font-weight:700;cursor:pointer;
+    padding:9px 18px;border:0;border-radius:12px;
+    background:var(--v-ink);color:var(--surface-card)}
+  .cookie__ok:hover{background:var(--v-ink-hover)}
+  .cookie__ok:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+  /* ОБЯЗАТЕЛЬНО: у .cookie задан display:flex, а он перебивает браузерное [hidden]{display:none}.
+     Без этой строки атрибут hidden ставится, но плашка остаётся на экране — она буквально
+     не закрывалась по кнопке. */
+  .cookie[hidden]{display:none}
+  @media(min-width:861px){.cookie{left:auto;max-width:560px}}
+  @media(max-width:860px){
+    /* над мобильной строкой заказа, с запасом под системный индикатор iPhone */
+    .cookie{flex-direction:column;align-items:stretch;gap:10px;
+      bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+    .cookie__ok{width:100%}
+  }
+  /* Документ, которого ещё нет: текст остаётся на месте, но не притворяется ссылкой.
+     Пунктир — общепринятый знак «здесь будет пояснение», а не «сюда можно нажать». */
+  [data-pending]{text-decoration:underline dotted;text-underline-offset:3px;
+    cursor:help;opacity:.75}
+  [data-pending] svg{display:none}   /* стрелка «внешняя ссылка» врала бы */
+  .ft__legal em{font-style:normal;opacity:.7}
+  /* последнее слово + стрелка «внешняя ссылка» не разрываются: иначе стрелка уезжает
+     на следующую строку и висит в пустоте отдельно от текста */
+  .ft__nb{white-space:nowrap}
+  /* Ссылка-пропуск: не видна мышью, выезжает по табу первой. Ведёт к расчёту — это главное
+     действие страницы, ради него сюда и приходят. */
+  .skip{position:absolute;left:16px;top:-100px;z-index:200;padding:12px 18px;
+    background:var(--v-ink);color:var(--surface-card);border-radius:var(--radius-md);
+    font-weight:700;text-decoration:none;transition:top .15s}
+  .skip:focus-visible{top:16px;outline:3px solid var(--brand);outline-offset:2px}
+  .wrap{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+
+  /* ── ШАПКА: плоская, минимальная (реф рефдес1): лого+меню слева, пилюля справа ──
+     Два состояния: (1) в герое — прозрачная; (2) на скролле — тёплое стекло + сжатие.
+     Третье, инверсия над тёмной секцией, удалено 30.07. --hd-h (88px) держал порог инверсии в JS и осиротел вместе с ней.
+     --hd-h-sm — РЕАЛЬНАЯ высота сжатой шапки, по ней считается scroll-margin якорей:
+     стояло 62px при фактических 58 (падинги 9+9 плюс кнопка 40), и переход по меню
+     уводил секцию на 16px ниже, чем надо. */
+  :root{ --hd-h-sm:58px; }
+  .hd{position:fixed;top:0;left:0;right:0;z-index:50;padding:22px 0;
+    transition:padding .22s ease,background-color .22s ease,box-shadow .22s ease}
+  /* плашка живёт на .hd__bar, а не на .hd: так стекло идёт во всю ширину экрана,
+     а содержимое остаётся на сетке страницы (контейнер 1200 — как у секций) */
+  /* ── СТЕКЛО ШАПКИ: тон отдельно, блюр отдельно.
+     Одним слоем не выходит: маска гасит ТОН, но не СИЛУ размытия — в зоне затухания оставалось
+     размытое-но-просвечивающее содержимое, и это читалось как грязь. Поэтому блюр собран
+     стеком полос (.hd__glass i) с убывающим радиусом, у каждой своя маска с перекрытием.
+     Тон — многоступенчатый, стопы по кривой: двух стопов на 26px давали видимую полосу. */
+  .hd::before{content:"";position:absolute;left:0;right:0;top:0;bottom:-52px;
+    opacity:0;pointer-events:none;transition:opacity .22s ease;
+    background:linear-gradient(180deg,
+      rgba(251,250,245,.93) 0%,   rgba(251,250,245,.92) 34%,
+      rgba(251,250,245,.86) 52%,  rgba(251,250,245,.72) 65%,
+      rgba(251,250,245,.5)  76%,  rgba(251,250,245,.28) 85%,
+      rgba(251,250,245,.11) 93%,  rgba(251,250,245,0)  100%)}
+  /* Слои блюра. visibility, а не только opacity: у скрытого через opacity элемента
+     backdrop-filter всё равно считается — в герое это четыре лишних композита. */
+  .hd__glass{position:absolute;left:0;right:0;top:0;bottom:-52px;pointer-events:none;
+    opacity:0;visibility:hidden;transition:opacity .22s ease,visibility 0s linear .22s}
+  .hd--stuck .hd__glass{opacity:1;visibility:visible;transition:opacity .22s ease,visibility 0s}
+  .hd__glass i{position:absolute;inset:0;display:block}
+  .hd__glass i:nth-child(1){-webkit-backdrop-filter:saturate(1.5) blur(18px);backdrop-filter:saturate(1.5) blur(18px);
+    -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 30%,transparent 52%);
+    mask-image:linear-gradient(180deg,#000 0%,#000 30%,transparent 52%)}
+  .hd__glass i:nth-child(2){-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    -webkit-mask-image:linear-gradient(180deg,transparent 26%,#000 46%,#000 58%,transparent 76%);
+    mask-image:linear-gradient(180deg,transparent 26%,#000 46%,#000 58%,transparent 76%)}
+  .hd__glass i:nth-child(3){-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);
+    -webkit-mask-image:linear-gradient(180deg,transparent 50%,#000 66%,#000 78%,transparent 91%);
+    mask-image:linear-gradient(180deg,transparent 50%,#000 66%,#000 78%,transparent 91%)}
+  .hd__glass i:nth-child(4){-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+    -webkit-mask-image:linear-gradient(180deg,transparent 72%,#000 88%,transparent 100%);
+    mask-image:linear-gradient(180deg,transparent 72%,#000 88%,transparent 100%)}
+  .hd--stuck{padding:9px 0}
+  .hd--stuck::before{opacity:1}
+  /* grid, а не flex: боковые колонки 1fr держат навигацию РОВНО по центру шапки
+     независимо от того, что логотип и контакты разной ширины */
+  .hd__bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;
+    position:relative;max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+  .hd__logo{display:flex;align-items:center;gap:9px;text-decoration:none;justify-self:start}
+  /* 19px остались от локапа, где знак был одним из четырёх объектов. Теперь он один и должен
+     держать левый край: 28px в герое, 22px на скролле — вместе со сжатием самой шапки. */
+  .hd__logo img{height:28px;display:block;transition:height .22s ease}
+  .hd--stuck .hd__logo img{height:22px}
+  .hd__logo .sub{display:inline-flex;align-items:center;
+    font-family:var(--font-head);font-weight:700;font-size:18px;line-height:1;
+    letter-spacing:.02em;text-transform:uppercase;color:var(--v-ink)}
+  /* ── КУБИК «3Д»: три грани на CSS-трансформах. ОДИН компонент на шапку и на текст героя.
+     Все размеры в em ОТ font-size самого куба, а грани его НАСЛЕДУЮТ (font-size:1em) — иначе
+     em внутри грани считался бы от её собственного размера и грани разъехались бы.
+     perspective живёт внутри transform куба: на родителе она задела бы весь логотип. */
+  .cube3{position:relative;display:inline-block;flex:none;
+    font-size:.72em;width:1.55em;height:1.55em;vertical-align:-.2em;
+    transform-style:preserve-3d;
+    transform:perspective(7em) rotateX(-16deg) rotateY(-32deg);
+    transition:transform .35s cubic-bezier(.22,.61,.36,1)}
+  /* inset отрицательный — лёгкий нахлёст закрывает волосяные щели по рёбрам куба;
+     скругление снято: на трёх гранях оно оставляло пустые углы */
+  .cube3 i{position:absolute;inset:-.03em;display:grid;place-items:center;
+    font:800 1em/1 var(--font-head);font-style:normal}
+  .cube3 i:nth-child(1){background:var(--brand);color:var(--v-ink);transform:translateZ(.775em)}
+  .cube3 i:nth-child(2){background:var(--v-ink);color:var(--brand);
+    transform:rotateY(90deg) translateZ(.775em)}
+  .cube3 i:nth-child(3){background:var(--v-brand-light);transform:rotateX(90deg) translateZ(.775em)}
+  .hd__logo .cube3{margin-right:.5em}
+  .hd__logo:hover .cube3{transform:perspective(7em) rotateX(-16deg) rotateY(-58deg)}
+  /* на тёмной секции чёрная грань пропадала в фоне — меняем её на белую */
+  @media(prefers-reduced-motion:reduce){.cube3{transition:none}}
+  /* Пункты: только цвет, никаких плашек и линий. Было три языка выделения сразу (пилюля,
+     плашка на ховере, белая пилюля у активного), потом подчёркивание — тоже лишнее.
+     Осталось одно средство: приглушённый серый → чёрный. Активный держится весом. */
+  .hd__nav{display:flex;gap:26px;justify-self:center}
+  .hd__nav a{color:rgba(20,18,18,.45);text-decoration:none;font-size:15px;font-weight:500;
+    padding:6px 0;transition:color .15s ease}
+  .hd__nav a:hover{color:rgba(20,18,18,.92)}
+  /* активный отличается от ховера ВЕСОМ: на одном цвете эти два состояния сливались */
+  .hd__nav a[aria-current]{color:var(--v-ink);font-weight:800}
+  /* ── ПРАВЫЙ КРАЙ: «Связаться» с карточкой + «Рассчитать». Кнопки тесно друг к другу,
+     между группами воздух — раньше все элементы стояли с равными зазорами и не группировались. */
+  /* gap:0 намеренно: у схлопнутой в ноль «Рассчитать» ширины нет, но gap всё равно дал бы
+     8px пустоты справа от «Связаться». Зазор живёт на margin-left самой кнопки. */
+  .hd__contacts{display:flex;align-items:center;gap:0;justify-self:end}
+  .hd__reach{position:relative}
+  .hd__reachbtn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-weight:700;
+    font-size:14.5px;color:var(--v-ink);background:transparent;cursor:pointer;white-space:nowrap;
+    padding:9px 15px;border-radius:14px;border:0;box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.22);
+    transition:background-color .15s ease,box-shadow .15s ease}
+  .hd__reachbtn svg{width:13px;height:13px;transition:transform .2s ease}
+  .hd__reachbtn:hover{background:rgba(255,255,255,.8);box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.38)}
+  .hd__reach[data-open] .hd__reachbtn svg{transform:rotate(180deg)}
+  /* Материал ТОТ ЖЕ, что у шапки (см. .hd::before): рядом с тёплым полупрозрачным стеклом
+     сплошная белая карточка с плотной тенью читалась как чужой объект. Плотность выше, чем
+     у шапки (.94 против .82) — под карточкой идёт контент, и текст по нему поплыл бы. */
+  .hd__reachmenu{position:absolute;top:calc(100% + 8px);right:0;z-index:2;width:272px;
+    display:flex;flex-direction:column;padding:8px;
+    background:rgba(251,250,245,.94);-webkit-backdrop-filter:saturate(1.6) blur(14px);
+    backdrop-filter:saturate(1.6) blur(14px);
+    border-radius:16px;box-shadow:0 14px 30px -16px rgba(20,18,18,.22),
+    inset 0 0 0 1px rgba(20,18,18,.09);
+    opacity:0;transform:translateY(-6px);pointer-events:none;
+    transition:opacity .18s ease,transform .18s ease}
+  .hd__reach[data-open] .hd__reachmenu{opacity:1;transform:none;pointer-events:auto}
+  .hd__reachmenu a{position:relative;display:flex;align-items:center;gap:11px;
+    padding:9px 10px;border-radius:11px;text-decoration:none;color:var(--text-secondary);
+    font-size:12px;line-height:1.25;transition:background-color .13s ease}
+  .hd__reachmenu a:hover{background:rgba(20,18,18,.055)}   /* на стекле сплошной серый выглядел заплаткой */
+  .hd__reachmenu a b{display:block;font-size:14px;font-weight:700;color:var(--v-ink);margin-bottom:2px}
+  .hd__reachmenu a svg{width:19px;height:19px;flex:none;color:var(--v-muted)}
+  .hd__reachmenu a img{display:block;flex:none}
+  /* подтверждение копирования — поверх строки, чтобы не двигать соседей */
+  .hd__copied{position:absolute;right:10px;top:50%;transform:translateY(-50%);opacity:0;
+    pointer-events:none;background:var(--v-ink);color:var(--surface-card);font-size:11px;font-weight:600;
+    padding:4px 9px;border-radius:8px;transition:opacity .15s ease}
+  .hd__phone[data-done] .hd__copied{opacity:1}
+  /* CTA в шапке — ЕДИНСТВЕННЫЙ плотный акцент, поэтому живёт не по правилу «плашка на ховере».
+     Появляется вместе со стеклом: в герое кнопки есть в самом герое, а к концу сцены они уезжают
+     вверх — дальше по странице путь к заявке даёт только шапка. Низ экрана занят мобильной
+     полосой (.calcbar / .rbar). */
+  /* 14px, а не пилюля: на странице все действия — скруглённые прямоугольники 14px
+     (.btn, «Оформить заказ», мобильная полоса, FAB). Пилюли в шапке остались от раннего
+     варианта и были единственными на странице. Пилюля теперь только у бейджа героя. */
+  /* В герое кнопка не просто прозрачная, а СХЛОПНУТА в ноль ширины: раньше она держала место
+     и справа от «Связаться» зияла пустота. Теперь «Связаться» стоит у правого края, а на скролле
+     кнопка раскрывается и отодвигает её влево. */
+  .hd__cta{display:inline-flex;align-items:center;overflow:hidden;border-radius:14px;
+    max-width:0;padding:9px 0;margin-left:0;
+    background:var(--v-ink);color:var(--surface-card);font-weight:700;font-size:14.5px;text-decoration:none;white-space:nowrap;
+    opacity:0;pointer-events:none;
+    transition:max-width .3s ease,padding .3s ease,margin .3s ease,opacity .2s ease,background-color .15s ease}
+  /* Раскрывается НЕ по факту скролла, а когда кнопки героя ушли за верхнюю кромку: пока
+     «Рассчитать стоимость» видна на экране, дублировать её в шапке незачем (класс ставит JS). */
+  .hd--cta .hd__cta{max-width:14em;padding:9px 17px;margin-left:8px;opacity:1;pointer-events:auto}
+  .hd__cta:hover{background:var(--v-ink-hover)}
+  .hd a:focus-visible{outline:3px solid var(--v-ink);outline-offset:3px;border-radius:6px}
+  @media(max-width:900px){.hd__nav{display:none}}
+  @media(prefers-reduced-motion:reduce){.hd,.hd::before,.calcbar,.calc__out{transition:none}}
+  /* прозрачность карточки итога ведёт тот же скролл — она проявляется, пока полоса уходит */
+  @media(max-width:860px){.calc__out{will-change:opacity}}
+  /* якоря не должны уезжать под фикс-шапку */
+  html{scroll-behavior:smooth}
+  section[id]{scroll-margin-top:calc(var(--hd-h-sm) + 12px)}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+  /* ── 1. ГЕРОЙ: асимметрия — текст+кнопки слева, карточка-стикеры справа до края ── */
+  /* ГЕРОЙ (десктоп): 3D-лист лежит ПОДЛОЖКОЙ во весь экран, сверху белая вуаль, на вуали текст.
+     Лист в покое отклонён назад и по скроллу выпрямляется в лицо (см. JS).
+     .hero — ДОРОЖКА скролла (200vh), .hero__pin — липкий экран внутри неё: пока дорожка не
+     кончилась, первый экран стоит на месте и скролл проигрывает сцену. Нативный sticky, без
+     перехвата колеса — клавиатура, трекпад и полоса прокрутки работают как обычно.
+     ВАЖНО: overflow:hidden нельзя вешать на дорожку — он делает её скролл-контейнером и
+     sticky перестаёт липнуть. Обрезка живёт на .hero__pin. */
+  .hero{position:relative;height:200vh}
+  .hero__pin{position:sticky;top:0;height:100vh;overflow:hidden;
+    display:flex;align-items:center;
+    /* фон тот же, что у светлых секций страницы (.page-bg) — стык героя со следующей
+       секцией получается без шва. Прежние hero-bg.webp и белая вуаль сняты вместе
+       с композицией «лист-подложка», которую они обслуживали. */
+    background:var(--v-glow),var(--v-paper-2);
+    /* верхний отступ = под фикс-шапку: --hd-h удалён 30.07, есть только --hd-h-sm (сжатая),
+       а в покое шапка выше — запас проверен замером.
+       Боковых падингов здесь НЕТ: горизонтальную сетку держит .hero__in теми же
+       --v-max/--v-pad, что шапка и секции. */
+    padding:clamp(92px,11vh,128px) 0 48px}
+  /* низ героя растворяется в белый — стык со следующей секцией без шва.
+     Лежит НАД сценой (z-index:2): в фоне он оказался бы под моделями. */
+  /* Растворяем НЕ в белый, а в цвет .page-bg — иначе на стыке героя и первой секции
+     виден шов: белый клин против тёплого песка. */
+  .hero__pin::after{content:"";position:absolute;left:0;right:0;bottom:0;height:22%;z-index:2;
+    pointer-events:none;background:linear-gradient(180deg,rgba(251,250,247,0),var(--v-paper-2))}
+  /* две колонки: текст слева, сцена со стикерами справа */
+  .hero__in{position:relative;z-index:3;width:100%;max-width:var(--v-max);margin:0 auto;
+    padding-inline:var(--v-pad);   /* та же сетка, что у .hd__bar и секций: контент кромка в кромку */
+    display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);
+    gap:clamp(24px,4vw,64px);align-items:center}
+  .hero__text{position:relative;z-index:3;display:flex;flex-direction:column;align-items:flex-start;
+    text-align:left}
+  /* eyebrow: моно-надстрочник в мягкой пилюле с жёлтой точкой */
+  /* Плашка была сплошь жёлтой и оказывалась самым ярким пятном экрана, хотя несёт меньше
+     всего смысла — взгляд цеплялся за неё раньше заголовка. Жёлтый остался, но точкой:
+     площадь маленькая, акцент читается, с заголовком не спорит. */
+  .hero__eyebrow{display:inline-flex;align-items:center;gap:9px;align-self:flex-start;
+    font-size:12.5px;font-weight:800;letter-spacing:.08em;   /* был моно: в капсе читался тяжело */
+    text-transform:uppercase;color:var(--text-secondary);margin-bottom:20px}
+  .hero__eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;
+    background:var(--brand);flex:none}
+  /* кегль уменьшен: в две колонки прежние 92px не влезали. Акцентное слово теперь без
+     жёлтой кисти-подчёркивания — снято по правке Omar 03.08. */
+  .hero h1{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(34px,4.6vw,64px);line-height:.98;letter-spacing:-.01em;color:var(--v-ink);
+    max-width:none;text-wrap:balance}
+  .hero h1 .hl{white-space:nowrap}
+  .hero__sub{font-size:clamp(15px,1.35vw,19px);line-height:1.55;color:var(--v-text-warm);max-width:46ch;margin:20px 0 0}
+  .hero__cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:28px}
+  /* Три факта под кнопками. Набраны НЕ заголовочным 22px, как было: в таком весе они спорили
+     с кнопкой «Рассчитать стоимость» и уводили взгляд вниз, мимо главного действия.
+     Теперь это подпись — тем же телесным шрифтом, на ступень мельче кнопки. */
+  /* Плашка акции: жёлтый только на цифре — сплошная заливка перетянула бы внимание
+     с заголовка, как это было с прежним надстрочником. */
+  /* Купон, а не подпись: бледная плашка на brand-soft терялась рядом с чёрной кнопкой.
+     Собран инверсией — жёлтая пилюля, а цифра в чёрной вставке: контраст внутри самого
+     элемента делает его заметным, не увеличивая площадь. Жёлтый совпадает с брендом,
+     чёрная вставка рифмуется с кнопкой рядом. */
+  .hero__promo{display:inline-flex;align-items:center;gap:10px;margin:20px 0 0;
+    padding:5px 16px 5px 5px;border-radius:999px;background:var(--brand);
+    font-size:13px;font-weight:700;color:var(--v-ink);white-space:nowrap;
+    box-shadow:0 10px 22px -12px rgba(255,193,0,.95),inset 0 1px 0 rgba(255,255,255,.45)}
+  .hero__promo b{display:inline-flex;align-items:center;padding:6px 11px;border-radius:999px;
+    background:var(--v-ink);color:var(--brand);font-family:var(--font-head);font-size:14px;
+    letter-spacing:.005em}
+  .hero__facts{display:flex;gap:26px;flex-wrap:wrap;margin-top:24px;font-size:12.5px;
+    line-height:1.35;color:var(--v-muted)}
+  .hero__facts b{display:block;font-size:14.5px;font-weight:800;color:var(--text-primary);
+    line-height:1.3}
+  /* кнопки — простые тихие (акцент на стикерах) */
+  .btn{display:inline-flex;align-items:center;gap:9px;font:inherit;font-weight:800;font-size:16px;
+    padding:15px 30px;border-radius:14px;text-decoration:none;cursor:pointer;border:0;
+    letter-spacing:-.01em;transition:background .15s ease}
+  .btn--primary{background:var(--v-ink);color:var(--surface-card)}
+  .btn--primary:hover{background:var(--v-ink-hover)}
+  .btn--primary:active{background:var(--v-ink-press)}
+  /* Вторая кнопка рядом с объёмной первой выглядела наклейкой на стекле. Дали ей тот же
+     купол, что у плашек логотипов, — светлая смола, а не контур. Ободок сохранён. */
+  .btn--ghost{background:var(--surface-card);color:var(--v-ink);
+    transition:background .15s ease,transform .12s ease,box-shadow .12s ease;
+    box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.22),
+      inset 0 2px 1px -1px rgba(255,255,255,1),
+      inset 0 -7px 10px -8px rgba(20,18,18,.35),
+      0 2px 2px -1px rgba(20,18,18,.10),
+      0 10px 18px -12px rgba(20,18,18,.45)}
+  .btn--ghost:hover{background:var(--surface-gray)}
+  .btn--ghost:active{background:var(--surface-gray);transform:translateY(2px);
+    box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.22),inset 0 3px 6px -4px rgba(20,18,18,.3),
+      0 2px 6px -6px rgba(20,18,18,.4)}
+  .btn:focus-visible{outline:3px solid var(--v-ink);outline-offset:3px}
+  /* ── ОБЪЁМ И БЛИК у плотных чёрных кнопок (просьба маркетолога 03.08: «кнопки хочется 3д
+     и с бликом»). Собрано слоями-псевдоэлементами, а НЕ background-image: у кнопок ховер
+     задан shorthand'ом `background:`, он бы затирал картинку.
+     ::before — верхняя подсветка (свет падает сверху), ::after — блик, уезжающий по наведению.
+     Список селекторов = все плотные действия страницы; призрачные и ссылки не трогаем. ── */
+  /* 10.08, повторная просьба маркетолога «хочется больше 3D»: первый заход (03.08) на рендере
+     читался почти плоским. Усилено на ступень — кромка-стенка снизу, контактная тень,
+     ход при нажатии. В стиль стоковых надувных кнопок не идём: блестеть должен продукт. */
+  .btn--primary,.hd__cta,.calc__cta,.calc__big-cta,.show__btn,.rbar__btn,.calcbar__btn{
+    position:relative;overflow:hidden;isolation:isolate;
+    transition:background .15s ease,transform .12s ease,box-shadow .12s ease;
+    box-shadow:inset 0 1.5px 0 rgba(255,255,255,.34),inset 0 -2px 0 rgba(0,0,0,.55),
+      0 2px 0 rgba(20,18,18,.45),0 12px 22px -12px rgba(20,18,18,.85)}
+  .btn--primary::before,.hd__cta::before,.calc__cta::before,.calc__big-cta::before,
+  .show__btn::before,.rbar__btn::before,.calcbar__btn::before{
+    content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;
+    background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.03) 54%,rgba(0,0,0,.2))}
+  /* блик — узкая наклонная полоса, в покое стоит слева за кромкой */
+  .btn--primary::after,.hd__cta::after,.calc__cta::after,.calc__big-cta::after,
+  .show__btn::after,.rbar__btn::after,.calcbar__btn::after{
+    content:"";position:absolute;top:-60%;left:0;width:34%;height:220%;z-index:-1;pointer-events:none;
+    background:linear-gradient(100deg,rgba(255,255,255,0),rgba(255,255,255,.3),rgba(255,255,255,0));
+    transform:translateX(-160%) rotate(9deg);transition:transform .6s ease}
+  .btn--primary:hover::after,.hd__cta:hover::after,.calc__cta:hover::after,.calc__big-cta:hover::after,
+  .show__btn:hover::after,.rbar__btn:hover::after,.calcbar__btn:hover::after{
+    transform:translateX(420%) rotate(9deg)}
+  /* 10.08, уточнение маркетолога: «при наведении нижняя тень уходит — эффект прижимания».
+     На наведении кнопка садится НАПОЛОВИНУ: кромка-стенка тоньше, контактная тень мягче.
+     Полный ход оставлен нажатию — иначе у наведённой кнопки не остаётся запаса на клик.
+     Правило под @media(hover:hover): на тач-экранах :hover залипает после тапа, и кнопка
+     осталась бы прижатой навсегда; там отклик даёт :active ниже. */
+  @media(hover:hover){
+    .btn--primary:hover,.hd__cta:hover,.calc__cta:hover,.calc__big-cta:hover,
+    .show__btn:hover,.rbar__btn:hover,.calcbar__btn:hover{
+      transform:translateY(1px);
+      box-shadow:inset 0 1.5px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(0,0,0,.5),
+        0 1px 0 rgba(20,18,18,.4),0 7px 14px -13px rgba(20,18,18,.8)}
+  }
+  /* нажатие — кнопка «садится»: верхняя подсветка гаснет, тень уходит */
+  .btn--primary:active,.hd__cta:active,.calc__cta:active,.calc__big-cta:active,
+  .show__btn:active,.rbar__btn:active,.calcbar__btn:active{
+    transform:translateY(2px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(0,0,0,.35),
+      0 0 0 rgba(20,18,18,.45),0 4px 10px -8px rgba(20,18,18,.7)}
+  @media(prefers-reduced-motion:reduce){
+    .btn--primary::after,.hd__cta::after,.calc__cta::after,.calc__big-cta::after,
+    .show__btn::after,.rbar__btn::after,.calcbar__btn::after{transition:none;display:none}
+  }
+  /* скролл-подсказка внизу 100vh-героя */
+  /* z-index был 2 — ровно как у вуали, из-за чего подсказка казалась «под оверлеем».
+     Плюс 10,5px мono с трекингом .18em на тёплом фоне читались как выключенные. */
+  .hero__scroll{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:4;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    font-size:13px;font-weight:700;letter-spacing:.01em;color:var(--v-ink-2)}
+  .hero__scroll svg{width:22px;height:22px;animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+  @media(prefers-reduced-motion:reduce){.hero__scroll svg{animation:none}}
+  /* ── СЦЕНА: четыре 3D-стикера кучкой, по скроллу раскрываются. Позы задаёт таблица в JS,
+     разметка у всех одинаковая. pointer-events:none — канвасы ничего под собой не глушат. ── */
+  .hero__stage{position:relative;aspect-ratio:1/1;max-height:74vh;width:100%;margin-inline:auto;
+    pointer-events:none}
+  .obj{position:absolute;left:50%;top:50%;aspect-ratio:1/1;will-change:transform,filter}
+  .obj--main{width:52%;z-index:4}
+  .obj--a{width:38%;z-index:3}
+  .obj--b{width:36%;z-index:2}
+  .obj--c{width:34%;z-index:1}
+  /* --progress-bar-height:0 — иначе над каждой моделью висит серая полоса загрузки,
+     в сцене из четырёх это четыре посторонние линии */
+  .hero__model{width:100%;height:100%;background:none;--poster-color:transparent;
+    --progress-bar-height:0;--progress-bar-color:transparent}
+  /* Подпись покрытия висит под стикером и едет вместе с ним. Встаёт СО СТОРОНЫ, куда стикер
+     уходит от центра: у верхних спутников снизу она уезжала под главный стикер и обрезалась. */
+  .obj span{position:absolute;left:50%;bottom:-2%;transform:translateX(-50%);white-space:nowrap;
+    pointer-events:none;color:var(--v-ink);font-size:11px;font-weight:700;
+    letter-spacing:.10em;text-transform:uppercase;padding-top:16px}
+  .obj span::before{content:"";position:absolute;left:50%;top:0;width:1px;height:12px;
+    background:var(--v-ink);opacity:.5}
+  .obj span.top{bottom:auto;top:-4%;padding-top:0;padding-bottom:16px}
+  .obj span.top::before{top:auto;bottom:0}
+  /* Общая тень: она и говорит, что стикеры лежат в пространстве, а не наклеены на фон.
+     Ядро сплошное до 34% — чистый мягкий градиент после блюра выцветает почти в ноль. */
+  .hero__sh{position:absolute;left:52%;top:82%;width:56%;height:13%;border-radius:50%;
+    background:radial-gradient(50% 50% at 50% 50%,rgba(20,18,18,.5) 0 34%,rgba(20,18,18,0) 76%);
+    filter:blur(12px);will-change:transform,opacity;pointer-events:none}
+  /* встроенная полоса загрузки model-viewer — своя тема, к нашей не относится */
+  model-viewer::part(default-progress-bar){display:none}
+  /* подсказка уходит, как только лист начал выпрямляться */
+  .hero--rolled .hero__scroll{opacity:0}
+  .hero__scroll{transition:opacity .25s}
+  /* Плавающая пилюля .fabbar убрана 31.07: без светлой полосы у нижней кромки iOS Safari
+     красил свой тулбар в цвет кнопки, то есть в чёрный. Её роль забрала мобильная полоса
+     внизу (см. «МОБИЛЬНАЯ ПОЛОСА»): у неё сплошная светлая поверхность, и тулбар остаётся
+     светлым. Полоса же и ведёт к заявке, когда герой пролистан. */
+  @media(max-width:860px){
+    /* мобилка: шапки нет сознательно (её роль берёт нижняя полоса).
+       Герой — поток сверху вниз: текст → модель на остаток экрана, пересечься не могут. */
+    /* Шапка на мобилке — ТОЛЬКО логотип по центру, и она НЕ фиксированная: просто первый
+       блок страницы, который уезжает со скроллом. Путь к заявке держит нижняя полоса,
+       поэтому меню и контакты здесь не нужны, а стекло и его слои не включаются. */
+    /* 04.08: мобилка приведена к десктопу по содержанию — та же сцена из четырёх стикеров
+       и то же раскрытие веером по скроллу. Прежний стикерпак .hero__mmodel с гироскопом
+       снят: он весил 5,1 МБ против 627 КБ у всех четырёх моделей вместе. */
+    /* Шапка ВЫНУТА ИЗ ПОТОКА (была static). В потоке она сдвигала липкий экран героя вниз
+       на свою высоту: до первого скролла низ героя уходил на 44px под кромку экрана, и
+       подсказка «Листайте вниз» была не видна — замер это показал. Absolute, а не fixed:
+       она по-прежнему уезжает вместе со страницей, её роль на телефоне берёт нижняя полоса. */
+    .hd{position:absolute;left:0;right:0;top:0;z-index:20;
+      padding:calc(env(safe-area-inset-top,0px) + 18px) 0 0;background:none}
+    .hd::before,.hd__glass,.hd__nav,.hd__contacts{display:none}
+    .hd__bar{grid-template-columns:1fr;justify-items:center;gap:0}
+    .hd__logo{justify-self:center}
+    .hd__logo img{height:26px}
+    /* Липкости на телефоне НЕТ (решение Omar 04.08): герой — обычный экран, он просто уезжает
+       вверх, а стикеры раскрываются веером по ходу этого ухода. Дорожки 200vh здесь тоже нет —
+       она нужна только затем, чтобы удерживать липкий экран.
+       Фон и растворение низа берутся с .hero__pin из десктопной части: прежний hero-bg.webp
+       снят, чтобы стык героя со следующей секцией был таким же бесшовным, как на десктопе. */
+    .hero{height:auto}
+    /* align-items:stretch вместо десктопного center: колонка занимает ровно внутреннюю
+       высоту липкого экрана, текст сверху — сцена на остаток.
+       Верхний padding = место под шапку: она здесь absolute (см. .hd ниже), в потоке её нет. */
+    .hero__pin{position:static;height:100svh;padding:64px 0 0;align-items:stretch}
+    /* Растворение низа: 22% от 844 — это 186px, и нижний стикер уходил в белое целиком.
+       Выглядело как обрезка, хотя он на месте. На телефоне достаточно 12%. */
+    .hero__pin::after{height:12%}
+    /* одна колонка: текст сверху, сцена на остаток экрана */
+    .hero__in{display:flex;flex-direction:column;align-items:center;
+      gap:0;padding-inline:20px;min-height:0;justify-content:flex-start}
+    .hero__text{align-items:center;text-align:center}
+    .hero__eyebrow{align-self:center}
+    .hero__sub{margin-inline:auto}
+    .hero__facts{display:none}   /* три факта — десктопная строка, на 390 они ломают экран */
+    /* акцию оставляем: это единственный ценовой аргумент на первом экране */
+    .hero__promo{margin-top:14px;font-size:12px;padding:4px 13px 4px 4px;gap:8px}
+    .hero__promo b{font-size:13px;padding:5px 9px}
+    /* ОДНА разметка заголовка на обе раскладки: раньше мобилка дублировала текст в h2,
+       из-за чего на мобилке не рендерился H1 вообще (индексация mobile-first). */
+    .hero__text{width:100%;max-width:none}
+    .hero__eyebrow{font-size:11px;margin-bottom:14px}   /* плашки больше нет, падинги не нужны */
+    /* Жёсткий <br> из десктопной раскладки на узком экране не давал строке переноситься
+       по месту — «ТРЕТЬЕ ИЗМЕРЕНИЕ» уезжало за край. Ширину подзаголовка тоже снимаем:
+       44ch это ~400px при доступных 350. */
+    /* <br> ОСТАВЛЕН: пробела на его месте в разметке нет, и без него слова слипались
+       («измерениевашего»). При уменьшенном кегле строка «ТРЕТЬЕ ИЗМЕРЕНИЕ» и так влезает. */
+    /* Потолок 40px, а не 46: на 860 clamp упирался в максимум и заголовок был 46px, тогда как
+       десктопный clamp(34,4.6vw,64) на 861 даёт 39.6 — при расширении окна на один пиксель
+       кегль ПАДАЛ на шесть. Теперь стык гладкий. */
+    .hero h1{font-size:clamp(30px,8.8vw,40px);line-height:1;max-width:620px}
+    /* Мера строки: без ограничения подзаголовок на планшете растягивался на всю ширину —
+       на 860 это ~100 знаков в строке, глаз теряет начало следующей. На телефоне ограничение
+       не срабатывает (доступно и так меньше), так что мобильный вид не меняется. */
+    .hero__sub{font-size:15.5px;margin-top:14px;max-width:42ch;text-wrap:pretty}
+    .hero__cta{margin-top:16px}
+    /* «Заказать образец» вернулась: скрывали, когда она была мёртвой ссылкой, а это живая
+       услуга и с телефона в неё не было входа. Не второй кнопкой, а ссылкой под основной —
+       так она не спорит с главным действием. */
+    .hero__cta{flex-direction:column;align-items:center;gap:10px}
+    .hero .btn--ghost{display:inline-flex;background:none;box-shadow:none;
+      padding:6px 4px;font-weight:700;font-size:15px;color:var(--v-text-warm);
+      text-decoration:underline;text-underline-offset:4px;
+      text-decoration-color:rgba(20,18,18,.28)}
+    .hero .btn--ghost:hover,.hero .btn--ghost:active{background:none;color:var(--v-ink)}
+    /* Сцена занимает остаток экрана под кнопками. min-height:0 обязателен: без него
+       flex-элемент не даёт себя сжать и сцена выталкивает низ героя за экран.
+       Квадрат сцены здесь не нужен — стикеры сами квадратные, а лишняя высота на телефоне
+       дороже, чем ровный бокс. */
+    .hero__stage{flex:1 1 auto;min-height:0;max-height:none;aspect-ratio:auto;width:100%}
+    /* подписи мельче: в кучке на 390 они стоят вплотную и полноразмерные наезжают друг на друга */
+    .obj span{font-size:9.5px;letter-spacing:.06em;padding-top:10px}
+    .obj span::before{height:8px}
+    .obj span.top{padding-top:0;padding-bottom:10px}
+    .hero__scroll{bottom:14px;font-size:12px}
+  }
+
+  /* ── 2. ВИДЫ И ПОКРЫТИЯ: лента карточек (реф рефдес1), геометрия по ДС ──
+     Карточка 236–292px = «плитка» по ДС: padding 16, внутренний зазор 12, radius-outside,
+     тёплая граница --border. Постер — статичный, 3D открывается в крупном просмотре. */
+  /* фон секции перенесён из песочницы по реф4: мягкое тёплое свечение сверху справа
+     и холодное слева — атмосфера от продукта, а не заливка плашек */
+  /* Фон-переливы живёт на .page-bg (обёртка светлых секций), а не на каждой секции: раньше
+     у каждой был свой набор глоу, и на границе рисунок обрывался. Плитка 1600px повторяется. */
+  .page-bg{background:var(--v-glow),var(--v-paper-2);
+    background-repeat:repeat-y;background-size:100% 1600px}
+  /* Только верхняя растушёвка — она сшивает секцию с белым низом героя. Нижний градиент
+     (0deg) заливал белым низ секции и обрывался на границе с калькулятором: это и был шов.
+     Ниже фон общий, от .page-bg, ничего перекрывать не нужно. */
+  /* Белая растушёвка сверху УБРАНА 04.08: она сшивала секцию с белым низом героя, когда «Виды»
+     шли сразу за ним. После перестановки блоков (B2B поднят выше) этот белый клин оказался
+     в середине страницы и читался как шов. */
+  .forms{padding-block:clamp(64px,7vw,110px)}
+  .forms__head{max-width:var(--v-max);margin:0 auto clamp(24px,3vw,40px);padding-inline:var(--v-pad)}
+  .forms h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(28px,3.6vw,46px);line-height:1;letter-spacing:-.005em;
+    max-width:27ch;text-wrap:balance}
+  .forms__note{margin-top:14px;max-width:60ch;color:var(--text-secondary);
+    font-size:var(--t-body);line-height:var(--t-body-lh)}
+  /* лента. ГЛАВНОЕ: scroll-padding обязателен — без него снап прижимает первую карточку
+     к нулю и padding-left визуально исчезает (проверено замером: scrollLeft = padding). */
+  .lane{--lane-pad:max(var(--v-pad),calc((100vw - var(--v-max))/2 + var(--v-pad)));
+    display:flex;gap:var(--gap-card);overflow-x:auto;
+    /* mandatory, а не proximity: лента останавливается РОВНО на карточке, а не «примерно там».
+       scroll-padding-inline уже равен отступу ленты, поэтому карточка встаёт по краю контейнера. */
+    scroll-snap-type:x mandatory;overscroll-behavior-x:contain;
+    padding:var(--sp-12) var(--lane-pad) var(--sp-24);
+    scroll-padding-inline:var(--lane-pad);
+    scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .lane::-webkit-scrollbar{display:none}
+  .lane:focus-visible{outline:3px solid var(--text-primary);outline-offset:-3px;border-radius:var(--radius-md)}
+  /* gap влияет только на пару заголовок→текст: кадр внизу прижат своим margin-top:auto */
+  .fcard{flex:0 0 clamp(236px,25vw,292px);scroll-snap-align:start;
+    display:flex;flex-direction:column;gap:var(--sp-6);
+    background:var(--surface-card);border-radius:var(--radius-outside);padding:var(--sp-16)}
+  .fcard h3{font-family:var(--font-head);font-weight:800;text-transform:uppercase;margin:0;
+    font-size:var(--t-h4);line-height:var(--t-h4-lh);letter-spacing:var(--t-h4-ls)}
+  .fcard p{margin:0 0 var(--sp-12);font-size:var(--t-small);line-height:var(--t-small-lh);
+    color:var(--text-secondary);min-height:calc(var(--t-small-lh) * 3)}
+  /* кадр = сам рендер: плитка со стикером и есть лицо карточки, цветных полей нет
+     (плитка на них читалась как серый квадрат в рамке, а чёрное поле спорило с белой карточкой) */
+  /* кадр без отступов: минусовые поля гасят padding карточки, плитка ложится в край,
+     радиус снизу = радиус карточки минус её граница */
+  .fcard__art{position:relative;margin:auto calc(var(--sp-16) * -1) calc(var(--sp-16) * -1);
+    border-radius:0 0 14px 14px;overflow:hidden;aspect-ratio:4/3;background:none}
+  /* Кадры вместо живых моделей: интерактив в карточках убран, пять GLB на 30 МБ больше
+     не грузятся. Постеры сняты с тех же моделей, поэтому картинка не изменилась. */
+  .fcard__art img{width:100%;height:100%;object-fit:cover;display:block}
+  /* Первая карточка тёмная — здесь темнота это СМЫСЛ: свечение видно только в темноте.
+     Зелёное гало под стикером — на CSS, радиальным градиентом в ::after кадра. */
+  /* Гало на ВСЕЙ карточке, а не внутри кадра: внутри его закрывал белый лист и видно было
+     только по краям. Сверху со screen оно тоже не работало — на светлой фотографии screen
+     даёт почти белое. Теперь свет идёт от стикера вверх по тёмному фону, как и должен. */
+  .fcard--glow{position:relative;isolation:isolate;
+    background:radial-gradient(95% 52% at 50% 72%,
+      rgba(126,255,122,.55), rgba(126,255,122,.16) 52%, rgba(126,255,122,0) 82%), var(--v-ink)}
+  .fcard--glow > *{position:relative;z-index:1}
+  .fcard--glow h3{color:var(--surface-card)}
+  .fcard--glow p{color:rgba(255,255,255,.72)}
+
+  .lane__foot{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-16);
+    max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+  .lane__nav{display:flex;gap:8px}
+  .lane__btn{display:grid;place-items:center;width:40px;height:40px;border:0;cursor:pointer;
+    border-radius:14px;background:transparent;color:var(--text-primary);
+    box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.3);
+    transition:background-color .15s ease,box-shadow .15s ease,opacity .15s ease}
+  .lane__btn svg{width:17px;height:17px}
+  .lane__btn:hover{background:rgba(255,255,255,.8);box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.45)}
+  /* на краях кнопка гаснет, но остаётся на месте — иначе вторая прыгает */
+  .lane__btn[disabled]{opacity:.32;cursor:default;box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.18)}
+  .lane__btn[disabled]:hover{background:transparent}
+  /* тот же язык, что у стрелок рядом: контур 1.5px, радиус 14px, высота 40px в один уровень.
+     Плотной чёрной не делаем — блок это ступень «убедиться», плотный акцент тут спорил бы
+     и с CTA шапки, и с кнопкой самого калькулятора. */
+  .lane__calc{display:inline-flex;align-items:center;gap:9px;height:40px;padding:0 19px;
+    border-radius:14px;text-decoration:none;font-weight:800;font-size:15px;
+    color:var(--text-primary);box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.3);
+    transition:background-color .15s ease,box-shadow .15s ease}
+  .lane__calc svg{width:15px;height:15px;transition:transform .15s ease}
+  .lane__calc:hover{background:rgba(255,255,255,.8);box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.45)}
+  .lane__calc:hover svg{transform:translateX(3px)}
+  @media(max-width:860px){
+    .lane__foot{padding-inline:20px}
+    .lane__nav{display:none}   /* на тач лента и так листается пальцем */
+    .forms__head{padding-inline:20px}
+    .lane{--lane-pad:20px}
+    .fcard{flex-basis:min(76vw,300px)}
+  }
+  /* ── ПРЕИМУЩЕСТВА (реф крин2): 4 колонки, ВСЕ ячейки одинаковые квадраты, ряды выровнены.
+     Разнобой даётся чередованием текст/фото, а не смещением колонок. Заголовок — первая ячейка. ── */
+  .adv{padding-block:clamp(64px,7vw,110px)}   /* белый фон снят: секция внутри .page-bg, фон общий */
+  .adv__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+  .adv h2{margin:0 0 clamp(20px,3vw,32px)}
+  .adv__empty{background:none}
+  .adv__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-20)}
+  @media(max-width:1000px){.adv__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:560px){.adv__grid{grid-template-columns:1fr}}
+  .adv__cell{aspect-ratio:1/1;border-radius:var(--radius-outside)}
+  .adv h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(26px,3vw,38px);line-height:1;letter-spacing:-.005em;text-wrap:balance}
+  @media(max-width:560px){.adv__empty{display:none}}
+  .adv__card{display:flex;flex-direction:column;background:var(--surface-card);
+    box-shadow:inset 0 0 0 1px var(--border);padding:var(--sp-20)}
+  .adv__badge{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;
+    background:var(--surface-gray);border-radius:var(--radius-pill);padding:7px 13px;
+    font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--text-primary)}
+  .adv__badge svg{width:18px;height:18px;flex:none}
+  .adv__card h3{margin:auto 0 0;font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(16px,1.25vw,19px);line-height:1.12;letter-spacing:.01em}
+  .adv__card p{margin:7px 0 0;font-size:12.5px;line-height:17px;color:var(--text-secondary)}
+  /* В одну колонку текстовая карточка-квадрат вырастала до ~350px под бейдж и одну строку
+     заголовка. На мобилке высота у неё по содержимому; медиа-ячейки остаются квадратами.
+     Отступ бейдж→заголовок задаём явно: margin:auto держал его только за счёт пустоты,
+     которой без квадрата не осталось. Правило ОБЯЗАНО стоять после базового .adv__card h3 —
+     специфичность та же, медиазапрос её не повышает. */
+  @media(max-width:560px){
+    .adv__card{aspect-ratio:auto}
+    .adv__card h3{margin-top:var(--sp-16)}
+  }
+  .adv__media{position:relative;overflow:hidden;background:var(--surface-gray-2)}
+  .adv__media img,.adv__media video{width:100%;height:100%;object-fit:cover;display:block}
+  .adv__ph{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:6px;
+    color:var(--v-muted);font-size:12px;text-align:center;border-radius:inherit;
+    box-shadow:inset 0 0 0 1.5px var(--border-strong)}
+  .adv__ph b{display:block;font-family:var(--font-head);font-weight:800;font-size:13px;color:var(--text-secondary);
+    text-transform:uppercase;letter-spacing:.02em}
+  /* ── B2B: тёмный акцент, потому что у конкурента этот блок «плохо заметен» (претензия из ТЗ).
+     Внутри — выгоды для бизнеса, спецусловия и логотипы «с кем работали». ── */
+  /* Была сплошная чёрная заливка: тяжело, спорит с тёмным героем и тёмной карточкой «Видов»,
+     и требовала инверсии шапки. Теперь секция СВЕТЛАЯ в общем ритме с «Формами» и калькулятором,
+     а заметность B2B (требование ТЗ) держат крупный заголовок и жёлтый оффер — на светлом фоне
+     он бьёт сильнее, чем бил на чёрном. */
+  .b2b{padding-block:clamp(64px,7vw,110px);color:var(--text-primary)}
+  .b2b__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+  .b2b h2{margin:0;font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(26px,3.2vw,42px);line-height:1.02;letter-spacing:-.005em;max-width:34ch;text-wrap:balance}
+  .b2b__lead{margin:var(--sp-16) 0 0;max-width:56ch;font-size:var(--t-body);line-height:var(--t-body-lh);
+    color:var(--text-secondary)}
+  /* start, а не center: при центрировании заголовок «проваливался» на 100px ниже верха фото.
+     Пропорция 3/2 вместо 4/3 — фото было выше всего текстового блока. */
+  .b2b__head{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);
+    gap:clamp(24px,3vw,48px);align-items:start}
+  @media(max-width:900px){.b2b__head{grid-template-columns:1fr}.b2b__shot{display:none}}
+  .b2b__shot{margin:0;border-radius:var(--radius-outside);overflow:hidden;aspect-ratio:3/2;
+    box-shadow:0 26px 44px -30px rgba(20,18,18,.6)}
+  .b2b__shot img{width:100%;height:100%;object-fit:cover;display:block}
+  /* было три карточки; с 10.08 их четыре — маркетолог просила развести два сценария:
+     подарить стикерпак клиенту и брендировать стикером свои подарки */
+  .b2b__grid{list-style:none;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-20);
+    margin-top:clamp(24px,3vw,40px)}
+  @media(max-width:1100px){.b2b__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:860px){.b2b__grid{grid-template-columns:1fr}}
+  /* карточки — тот же язык, что в «Преимуществах»: белая плашка, пилюля-бейдж сверху */
+  .b2b__item{background:var(--surface-card);border-radius:var(--radius-outside);padding:var(--sp-20);
+    box-shadow:inset 0 0 0 1px rgba(20,18,18,.07)}
+  .b2b__badge{display:inline-flex;align-items:center;gap:7px;margin-bottom:var(--sp-16);
+    padding:6px 12px 6px 9px;border-radius:999px;background:var(--surface-gray);
+    font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--v-ink-2)}
+  .b2b__badge svg{width:15px;height:15px;flex:none;color:var(--v-gold-deep)}
+  .b2b__item h3{margin:0;font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:var(--t-h4);line-height:var(--t-h4-lh);letter-spacing:var(--t-h4-ls)}
+  .b2b__item p{margin:8px 0 0;font-size:var(--t-small);line-height:var(--t-small-lh);color:var(--text-secondary)}
+  /* спецусловия — жёлтая плашка: единственный акцент действия в секции */
+  /* плоская жёлтая плашка. Единственное, что чинилось: было ТРИ элемента в одну строку
+     (заголовок · текст · кнопка) — читалось как рекламная полоса. Теперь текст колонкой
+     слева, действие справа. Блик и белое кольцо пробовали — плашка стала похожа на кнопку. */
+  /* Колонка текста была 1fr и растягивалась на всю плашку (1200px), кнопку уносило к правому
+     краю — две несвязанные вещи. Теперь обе по содержимому и стоят группой слева. */
+  /* Плашка живёт ПОД ЛИДОМ в левой колонке шапки, а не полосой во всю ширину секции:
+     растянутая на 1200px она разносила текст и кнопку по краям и весила больше карточек. */
+  /* с кем работали: слоты логотипов + «место для вашего стикера» */
+  .b2b__logos{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--sp-12)}
+  @media(max-width:860px){
+    /* ── БЕГУЩАЯ ЛЕНТА вместо сетки. Сеткой на 390 плашки выходили мелкими: одиннадцать
+       знаков в столбик занимали пол-экрана и всё равно читались как пыль.
+       ТРИ СЛОЯ, и это принципиально: .b2b__logos — обычный блок, .b2b__lane — неподвижное
+       окно с маской и обрезкой, .b2b__row — едущий ряд. Когда маска висела на том же
+       элементе, что и анимация, она ехала вместе с ним: растворение уползало за экран,
+       и в кадре оставалось 2.5 плашки вместо трёх. ── */
+    .b2b__logos{display:block;grid-template-columns:none}
+    .b2b__lane{overflow:hidden;
+      -webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);
+      mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+    .b2b__row{display:flex;gap:10px;width:max-content}
+    .b2b__row.is-lane{animation:b2bLane 26s linear infinite}
+    .b2b__lane:hover .b2b__row,.b2b__lane:active .b2b__row{animation-play-state:paused}
+    .b2b__logo{flex:0 0 auto;width:36vw;aspect-ratio:3/1}
+    .b2b__logo img{max-width:84%;max-height:calc(clamp(24px,7.6vw,38px) * var(--k,1))}
+    /* Прайм на телефоне лезет вперёд остальных: у него плотная плашечная гарнитура,
+       и при равной высоте масса заметно больше. На десктопе хватало .87, здесь нужно ниже. */
+    .b2b__logo[data-logo*="prime"]{--k:.72}
+    /* «Место для вашего стикера» — ПОД лентой, во всю ширину: в карусели оно уезжало
+       вместе со всеми, а это не логотип клиента, а приглашение. Ему место в покое. */
+    .b2b__logo--you{width:auto;aspect-ratio:auto;min-height:0;margin-top:10px;
+      font-size:12px;line-height:1.25;padding:14px 10px;text-wrap:balance}
+    @keyframes b2bLane{to{transform:translateX(calc(-50% - 5px))}}   /* 5px = половина gap */
+    /* Движение по кругу — из тех, что мешают: при reduce лента стоит и листается пальцем */
+    @media(prefers-reduced-motion:reduce){
+      .b2b__lane{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+      .b2b__row.is-lane{animation:none}
+      .b2b__logo{scroll-snap-align:start}
+    }
+  }
+  /* Заглушки логотипов тише: белые плашки с обводкой читались как «у нас пусто».
+     Тёплая подложка без обводки, ниже ростом. Настоящие логотипы ждём (ANSWERS.md, п.7). */
+  /* Плашка ниже (было 2.6/1): знаки узкие и вытянутые, в высокой коробке над и под ними
+     оставалось пустое поле, и ряд выглядел рыхлым. */
+  /* ── ПЛАШКА = ЛОГОТИП ПОД СМОЛОЙ ────────────────────────────────────────────────
+     Первый заход выглядел дёшево: заливка-градиент плюс косая белая полоса через всю
+     плашку — это язык «веб-глянца» нулевых, а не смолы. Настоящая капля работает иначе:
+     центр ПРОЗРАЧНЫЙ и чистый (сквозь него видно печать), а весь эффект живёт на краях —
+     свет собирается у верхней кромки, у нижней идёт преломление, по периметру тонкая
+     тёмная линия. Блик короткий и мягкий, пятном у верхнего угла, а не полосой.
+     Собрано слоями-псевдоэлементами, как объём кнопок. ── */
+  .b2b__logo{position:relative;overflow:hidden;isolation:isolate;
+    aspect-ratio:3.4/1;display:grid;place-items:center;border-radius:var(--radius-md);
+    background:var(--surface-card);font-size:11.5px;color:var(--text-tertiary);
+    /* 10.08: купол дожат. Весь эффект жил внутри плашки, а снаружи она лежала вровень
+       с фоном — ряд читался как белые прямоугольники, и метафора «ваш логотип под смолой»
+       не долетала. Добавлены тёмный ободок, преломление у нижней кромки и контактная тень. */
+    box-shadow:inset 0 0 0 1px rgba(20,18,18,.12),
+      inset 0 2px 1px -1px rgba(255,255,255,1),
+      inset 0 8px 12px -8px rgba(255,255,255,.95),
+      inset 0 -9px 12px -8px rgba(20,18,18,.42),
+      inset 0 -1.5px 0 rgba(20,18,18,.10),
+      0 2px 2px -1px rgba(20,18,18,.10),
+      0 10px 18px -12px rgba(20,18,18,.45)}
+  /* свет, собравшийся у верхней кромки купола; к центру сходит на нет */
+  .b2b__logo::before{content:"";position:absolute;inset:0;border-radius:inherit;
+    pointer-events:none;
+    background:radial-gradient(130% 150% at 50% -30%,rgba(255,255,255,.95),rgba(255,255,255,0) 42%)}
+  /* короткий мягкий блик — капля света, а не полоса */
+  .b2b__logo::after{content:"";position:absolute;left:5%;top:9%;width:34%;height:46%;
+    pointer-events:none;border-radius:50%;filter:blur(4px);
+    background:radial-gradient(60% 60% at 42% 38%,rgba(255,255,255,.85),rgba(255,255,255,0) 72%)}
+  /* Вес знаков выровнен НЕ лимитами, а обрезкой холста: у шести SVG с их сайта viewBox был
+     квадратным (4630×4630), а рисунок занимал 13–32% высоты — потому одни казались вдвое
+     мельче других. viewBox переписан по фактическому bbox, теперь все заполняют коробку
+     одинаково и лимиты работают предсказуемо. */
+  /* Высота в АБСОЛЮТНЫХ единицах, а не в процентах: у плашки высота задана через
+     aspect-ratio, и процентный max-height ребёнка в этом случае не резолвится — ограничивала
+     только ширина. Квадратный Oil Energy из-за этого вылезал за пределы плашки. */
+  .b2b__logo img{max-width:calc(74% * var(--k,1));
+    max-height:calc(clamp(17px,2.1vw,30px) * var(--k,1));
+    object-fit:contain;display:block}
+  /* Доводка по ОПТИЧЕСКОМУ весу: после обрезки холста знаки одинаковы по габаритам, но не
+     по массе — жирный плашечный РЖД тяжелее тонкого Москвариума при равной высоте.
+     Отсчёт вёлся от Генпро, дальше доводка по глазу на рендере. */
+  .b2b__logo[data-logo*="genpro"]  {--k:.94}
+  .b2b__logo[data-logo*="rzd"]     {--k:.86}
+  .b2b__logo[data-logo*="sber"]    {--k:.94}
+  .b2b__logo[data-logo*="vitobox"] {--k:.92}
+  .b2b__logo[data-logo*="prime"]   {--k:.87}
+  .b2b__logo[data-logo*="bam"]     {--k:1.10}
+  .b2b__logo[data-logo*="golubka"] {--k:1.12}
+  .b2b__logo[data-logo*="mosquar"] {--k:1.28}
+  /* Oil Energy пересобран горизонтально (капля слева, надпись справа) — см. прогресс-лог */
+  .b2b__logo[data-logo*="oil"]     {--k:1.06}
+  .b2b__logo[data-logo*="ferro"]   {--k:1.02}
+  .b2b__logo[data-logo*="endomet"] {--k:1.06}
+  /* «место для вашего стикера» — пунктирный контур высечки, фирменный приём лендинга */
+  /* Пустое место — НЕ стикер: смолы, купола и блика тут быть не должно, иначе пунктирная
+     высечка читается как уже наклеенный знак. Гасим оба слоя эффекта. */
+  .b2b__logo--you{background:none;box-shadow:none;border:1.5px dashed var(--v-gold-deep);color:var(--v-gold-text);
+    font-weight:700;text-align:center;padding:6px;line-height:1.25}
+  .b2b__logo--you::before,.b2b__logo--you::after{display:none}
+  /* Были моно-метками 11.5px, как подписи калькулятора. Правка маркетолога 10.08: под каждой
+     строкой живёт целый под-блок, метка для него мелкая. Теперь заголовок уровнем ниже
+     секционного h2 — тот же гротеск капсом, кегль между h2 и заголовком карточки. */
+  .b2b__cap,.cmp__cap{margin:0 0 var(--sp-16);
+    font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(20px,2.2vw,28px);line-height:1.08;letter-spacing:-.005em;
+    color:var(--text-primary)}
+  .b2b__cap{margin-top:clamp(28px,3.5vw,44px)}
+  /* ── ФОТО-СРАВНЕНИЕ внутри B2B (просьба маркетолога 03.08): обычный мерч → плоская наклейка
+     → 3D-стикер. Третья карточка выделена обводкой: сравнение должно заканчиваться выводом. ── */
+  .cmp{margin-top:clamp(28px,3.5vw,48px)}
+  .cmp__grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-12)}
+  @media(max-width:720px){.cmp__grid{grid-template-columns:1fr}}
+  /* Обводка вынесена в ::after, а не в box-shadow самой карточки: внутренняя тень рисуется
+     ПОД содержимым, и заглушка фото (у неё свой фон во всю ширину) съедала её сверху —
+     рамка была видна только на нижней, текстовой части. */
+  .cmp__item{position:relative;margin:0;background:var(--surface-card);
+    border-radius:var(--radius-outside);overflow:hidden}
+  .cmp__item::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(20,18,18,.07)}
+  /* Жёлтая обводка сама по себе читалась как случайность («почему выделена последняя?»),
+     поэтому у выделенной карточки есть подпись, которая её объясняет. */
+  .cmp__item--win::after{box-shadow:inset 0 0 0 2px var(--brand)}
+  /* Ярлыки («наш вариант», «хит», «топ») убраны совсем — просьба маркетолога 10.08.
+     Первый заход был мимо: плашка осталась плашкой, только с сердечками внутри, а уйти
+     просили именно от плашки. Из карточки-победителя взлетают сердечки, как лайки в сторис.
+     Слой повторяет пропорцию кадра, а не всю карточку: иначе сердечко всплывало поверх
+     подписи и читалось как опечатка.
+
+     11.08, вариант Г из _sandbox-hearts2.html:
+     · КРАСНЫЕ, а не фирменные жёлтые. Жёлтое сердечко на светлом чехле тонуло — видно было,
+       только когда попадало на тёмный участок. Красный тут не «ошибка из токенов», а цвет
+       лайка: на сердце он читается однозначно. Белая обводка держит его на любом кадре.
+     · Вылет ИЗ-ПОД СТИКЕРА, а не со дна карточки: так читается «лайкнули именно его».
+       Стартуют по бокам от знака и расходятся в стороны — поверх знака не проходят. */
+  .cmp__fly{position:absolute;left:0;right:0;top:0;aspect-ratio:4/3;z-index:3;
+    overflow:hidden;pointer-events:none}
+  .cmp__fly i{position:absolute;bottom:42%;color:#e0483a;
+    filter:drop-shadow(0 0 1.5px #fff) drop-shadow(0 0 1.5px #fff) drop-shadow(0 2px 4px rgba(20,18,18,.3));
+    animation:cmpFlyL 3.2s ease-in infinite}
+  .cmp__fly svg{display:block;width:100%;height:100%}
+  .cmp__fly i:nth-child(1){left:33%;width:20px;height:20px;animation-delay:0s}
+  .cmp__fly i:nth-child(2){left:28%;width:14px;height:14px;animation-delay:1.1s}
+  .cmp__fly i:nth-child(3){left:36%;width:16px;height:16px;animation-delay:2.2s}
+  .cmp__fly i:nth-child(4){left:64%;width:22px;height:22px;animation-delay:.6s;animation-name:cmpFlyR}
+  .cmp__fly i:nth-child(5){left:70%;width:15px;height:15px;animation-delay:1.7s;animation-name:cmpFlyR}
+  .cmp__fly i:nth-child(6){left:61%;width:17px;height:17px;animation-delay:2.7s;animation-name:cmpFlyR}
+  @keyframes cmpFlyL{
+    0%{transform:translate(0,0) scale(.5) rotate(-6deg);opacity:0}
+    15%{opacity:1}
+    70%{opacity:.75}
+    100%{transform:translate(-30px,-150px) scale(1) rotate(-16deg);opacity:0}
+  }
+  @keyframes cmpFlyR{
+    0%{transform:translate(0,0) scale(.5) rotate(6deg);opacity:0}
+    15%{opacity:1}
+    70%{opacity:.75}
+    100%{transform:translate(30px,-150px) scale(1) rotate(16deg);opacity:0}
+  }
+  /* без движения сердечки не исчезают, а лежат по бокам от стикера: смысл «это нравится» остаётся */
+  @media(prefers-reduced-motion:reduce){
+    .cmp__fly i{animation:none;opacity:.9}
+  }
+  /* картинка и заглушка занимают одну и ту же коробку 4:3 — при подстановке фото ничего не прыгает */
+  .cmp__ph,.cmp__item img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+  .cmp__ph{display:grid;place-items:center;align-content:center;gap:5px;background:var(--surface-gray);
+    color:var(--v-muted);font-size:12px;text-align:center}
+  .cmp__ph b{display:block;font-family:var(--font-head);font-weight:800;font-size:13px;
+    color:var(--text-secondary);text-transform:uppercase}
+  .cmp__item figcaption{display:block;padding:var(--sp-16);font-size:var(--t-small);
+    line-height:var(--t-small-lh);color:var(--text-secondary)}
+  .cmp__item figcaption b{display:block;font-size:var(--t-body);line-height:1.25;
+    color:var(--text-primary);margin-bottom:4px}
+  /* ── О НАС / ПРОИЗВОДСТВО (по ТЗ): кратко о типографии, оборудование, факты без выдуманных цифр ── */
+  /* был сплошной белый — единственная плоская секция между переливами B2B и панелью отзывов */
+  .abt{padding-block:clamp(64px,7vw,110px)}
+  .abt__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad);
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,3vw,48px);align-items:center}
+  @media(max-width:900px){.abt__in{grid-template-columns:1fr}}
+  .abt h2{margin:0;font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(26px,3vw,38px);line-height:1;letter-spacing:-.005em;max-width:24ch;text-wrap:balance}
+  .abt__text{margin:var(--sp-16) 0 0;font-size:var(--t-body);line-height:var(--t-body-lh);
+    color:var(--text-secondary);max-width:52ch}
+  /* факты плашками (правка маркетолога 03.08): списком они читались «в кучу».
+     Четыре в ряд — тот же шаг, что у ленты видов; ниже 1100px по две, на телефоне по одной. */
+  .abt__cards{max-width:var(--v-max);margin:clamp(28px,3.5vw,48px) auto 0;padding-inline:var(--v-pad);
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-12)}
+  @media(max-width:1100px){.abt__cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media(max-width:560px){.abt__cards{grid-template-columns:1fr}}
+  .abt__card{background:var(--surface-card);border-radius:var(--radius-outside);
+    padding:var(--sp-20);box-shadow:inset 0 0 0 1px rgba(20,18,18,.07)}
+  .abt__card svg{width:22px;height:22px;color:var(--v-gold-deep);display:block}
+  .abt__card h3{margin:var(--sp-12) 0 0;font-size:var(--t-body);line-height:1.25;
+    font-weight:800;color:var(--text-primary);text-wrap:balance}
+  .abt__card p{margin:6px 0 0;font-size:var(--t-small);line-height:var(--t-small-lh);
+    color:var(--text-secondary)}
+  .abt__media{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-12)}
+  .abt__cell{position:relative;overflow:hidden;border-radius:var(--radius-outside);
+    background:var(--surface-gray);aspect-ratio:1/1}
+  .abt__cell--tall{grid-row:span 2;aspect-ratio:1/2.06}
+  .abt__cell img,.abt__cell video{width:100%;height:100%;object-fit:cover;display:block}
+  .abt__ph{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:5px;
+    color:var(--v-muted);font-size:12px;text-align:center;box-shadow:inset 0 0 0 1.5px var(--border-strong);
+    border-radius:inherit}
+  .abt__ph b{display:block;font-family:var(--font-head);font-weight:800;font-size:13px;color:var(--text-secondary);
+    text-transform:uppercase}
+  /* ── ЛАЙТБОКС ПОРТФОЛИО (аудит 11.08: кнопки работ были кликабельны и не делали ничего) ──
+     Отдельный слой, а не .sheet: у шторок белая коробка с падингами, а здесь нужна только
+     фотография во весь экран. Затемнение то же, что у модалок, — язык страницы один. */
+  .lb{position:fixed;inset:0;z-index:90;display:none;place-items:center;padding:var(--sp-16);
+    background:rgba(20,18,18,.82)}
+  .lb[open]{display:grid}
+  .lb__img{display:block;max-width:min(1100px,100%);max-height:88vh;object-fit:contain;
+    border-radius:var(--radius-outside);background:var(--surface-card)}
+  .lb__x{position:absolute;right:16px;top:16px;width:44px;height:44px;display:grid;place-items:center;
+    border:0;border-radius:14px;background:rgba(255,255,255,.14);color:#fff;cursor:pointer}
+  .lb__x:hover{background:rgba(255,255,255,.24)}
+  .lb__x:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+  .lb__x svg{width:20px;height:20px}
+  /* шапка и полосы лежат ниже (50–60), но гасим их, как для шторок: иначе стекло шапки
+     просвечивает сквозь затемнение квадратом */
+  body:has(.lb[open]) .hd,
+  body:has(.lb[open]) .calcbar,
+  body:has(.lb[open]) .rbar{opacity:0;pointer-events:none}
+
+  /* ── ОТЗЫВЫ (по ТЗ: «Спасибо, что выбрали нас!», формат скринов из соцсетей и геосервисов).
+     Тексты отзывов НЕ придумываем — слоты под реальные скриншоты. Колоночная раскладка: у скринов
+     разная высота (сторис 9:16, квадраты, длинные отзывы), выравнивать их по строкам нельзя. ── */
+  .rev{padding-block:clamp(64px,7vw,110px)}   /* фон общий, от .page-bg */
+  .rev__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+  .rev__head{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--sp-12) var(--sp-24)}
+  .rev h2{margin:0;font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(26px,3vw,38px);line-height:1;letter-spacing:-.005em}
+  .rev__grid{columns:3;column-gap:var(--sp-20);margin-top:clamp(20px,3vw,32px)}
+  @media(max-width:900px){.rev__grid{columns:2}}
+  @media(max-width:600px){.rev__grid{columns:1}}
+  .rev__grid>*{break-inside:avoid;margin:0 0 var(--sp-20)}
+  /* Обводка в ::after, а не в box-shadow карточки: внутренняя тень рисуется ПОД содержимым,
+     и фото/видео во всю коробку съедали её (см. ту же правку у .cmp__item). */
+  .rev__slot{position:relative;overflow:hidden;border-radius:var(--radius-outside);
+    background:var(--surface-card)}
+  .rev__slot::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    border-radius:inherit;box-shadow:inset 0 0 0 1px var(--border)}
+  .rev__slot img{width:100%;height:auto;display:block}
+  .rev__ph{display:grid;place-items:center;align-content:center;gap:5px;padding:var(--sp-20);
+    color:var(--v-muted);font-size:12px;text-align:center}
+  .rev__ph:has(.rev__skel){padding:var(--sp-20) var(--sp-20) var(--sp-16);text-align:left}
+  .rev__ph b{display:block;font-family:var(--font-head);font-weight:800;font-size:13px;color:var(--text-secondary);
+    text-transform:uppercase}
+  /* пропорция нужна только пустым медиа-слотам. У заглушки-скелетона высота идёт по содержимому:
+     с aspect-ratio 4/5 и 9/16 плашка растягивалась на сотни пикселей пустоты вокруг полос. */
+  .rev__slot--story .rev__ph--media{aspect-ratio:1/1}   /* 9:16 и 3:4 давали полэкрана пустоты */
+  .rev__slot--sq .rev__ph--media{aspect-ratio:1/1}
+  /* СКЕЛЕТОН отзыва вместо пустой плашки. Полосы вместо текста — намеренно: сочинять отзывы
+     нельзя, а структура показывает, что тут будет, и блок перестаёт выглядеть дырой. */
+  .rev__skel{display:flex;flex-direction:column;gap:12px;width:100%;padding:4px 2px}
+  .rev__skel-top{display:flex;align-items:center;gap:10px}
+  .rev__ava{width:34px;height:34px;border-radius:50%;background:rgba(20,18,18,.09);flex:none;
+    display:grid;place-items:center;font-family:var(--font-head);font-weight:800;font-size:15px;
+    font-style:normal;color:var(--v-ink-2)}
+  .rev__rate{margin:0;font-size:var(--t-small);color:var(--text-secondary)}
+  .rev__rate b{font-family:var(--font-head);font-size:19px;color:var(--v-ink)}
+  .rev__stars{display:flex;gap:3px;color:var(--brand)}
+  .rev__stars svg{width:15px;height:15px}
+  /* Вместо серых полос-скелетонов — рыба текстом. Специально Lorem ipsum, а не правдоподобный
+     русский отзыв: выдуманные отзывы нельзя ни показывать, ни тем более опубликовать по ошибке.
+     Ждём настоящие скрины (ANSWERS.md, п.6). */
+  .rev__card{display:flex;flex-direction:column;gap:10px;text-align:left;width:100%}
+  .rev__nick{font-size:14px;font-weight:700;color:var(--text-primary)}
+  .rev__body{font-size:13px;line-height:18px;color:var(--text-secondary)}
+  /* был --v-muted: 3,7:1 при норме 4,5 (аудит 11.08). Тон ниже по шкале, не новый цвет. */
+  .rev__from{margin-top:2px;font-family:var(--font-body);font-size:11.5px;font-weight:700;letter-spacing:var(--t-label-ls);text-transform:uppercase;color:var(--text-secondary)}
+  /* сторис-заглушка: кружок play вместо надписи «9:16» */
+  .rev__ph--media{gap:10px}
+  .rev__play{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;
+    background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border);color:var(--v-ink-2)}
+  .rev__play svg{width:17px;height:17px;margin-left:2px}
+  /* плашка со ссылками на источники — цифры рейтинга появятся, когда даст бизнес */
+  /* каналы столбиком, одной ширины: в ряд три кнопки висели оторванно от текста,
+     а подпись канала («ответим за 10 минут», график) в строку не помещалась */
+  /* ── ШОУРУМ: узкая перетяжка вместо блока требований к макетам (маркетолог 03.08).
+     Не секция-полотно: приглашение короткое, ему хватает одной плашки в общем ритме. ── */
+  .show{padding-block:clamp(28px,4vw,56px)}   /* фон общий, от .page-bg */
+  /* .show__in — только контейнер страницы, плашка живёт внутри. Раньше это был один элемент,
+     и белая перетяжка вставала по кромке контейнера (120…1320), тогда как плашки остальных
+     секций начинаются от контента (144…1296) — блок читался шире соседних. */
+  .show__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+  .show__band{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(20px,3vw,44px);
+    align-items:center;background:var(--surface-card);border-radius:var(--radius-outside);
+    padding:clamp(24px,3vw,36px) clamp(20px,2.5vw,32px);
+    box-shadow:inset 0 0 0 1px rgba(20,18,18,.07)}
+  @media(max-width:860px){.show__band{grid-template-columns:1fr;align-items:start}}
+  .show h2{margin:0;font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(22px,2.4vw,32px);line-height:1.02;letter-spacing:-.005em}
+  .show__text p{margin:10px 0 0;font-size:var(--t-small);line-height:var(--t-small-lh);
+    color:var(--text-secondary);max-width:52ch}
+  /* адрес — факт, поэтому крупнее подписи и тёмным; часы тише строкой ниже */
+  .show__addr{margin:0 0 var(--sp-16);font-size:var(--t-small);line-height:20px;color:var(--text-secondary)}
+  .show__addr b{display:block;font-size:var(--t-body);color:var(--text-primary);margin-bottom:3px}
+  .show__acts{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-16)}
+  .show__btn{display:inline-flex;align-items:center;justify-content:center;background:var(--v-ink);
+    color:var(--surface-card);text-decoration:none;font-weight:700;font-size:15px;
+    padding:12px 20px;border-radius:14px}   /* чёрный = действие, как везде */
+  .show__btn:hover{background:var(--v-ink-hover)}
+  .show__btn:focus-visible{outline:3px solid var(--v-ink);outline-offset:3px}
+  .show__link{font:inherit;font-size:var(--t-small);color:var(--text-secondary);background:none;
+    border:0;padding:0;cursor:pointer;text-decoration:underline;
+    text-decoration-color:rgba(20,18,18,.25);text-underline-offset:3px}
+  .show__link:hover{color:var(--text-primary);text-decoration-color:var(--text-primary)}
+  .show__link:focus-visible{outline:2px solid var(--v-ink);outline-offset:3px;border-radius:3px}
+  /* ── ПОРТФОЛИО (по ТЗ «Печатаем ваши идеи!», галерея 8–12 работ с увеличением) ── */
+  .work{padding-block:clamp(64px,7vw,110px)}   /* фон общий, от .page-bg */
+  .work__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+  .work h2{margin:0;font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(26px,3vw,38px);line-height:1;letter-spacing:-.005em}
+  .work__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-16);
+    margin-top:clamp(20px,3vw,32px)}
+  @media(max-width:900px){.work__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .work__cell{position:relative;aspect-ratio:1/1;overflow:hidden;border-radius:var(--radius-outside);
+    background:var(--surface-card);padding:0;border:0;cursor:pointer}
+  .work__cell::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    border-radius:inherit;box-shadow:inset 0 0 0 1px var(--border)}
+  .work__cell img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
+  .work__cell:hover img{transform:scale(1.04)}
+  .work__cell:focus-visible{outline:3px solid var(--text-primary);outline-offset:2px}
+  .work__ph{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:5px;
+    color:var(--v-muted);font-size:12px}
+  .work__ph b{display:block;font-family:var(--font-head);font-weight:800;font-size:13px;color:var(--text-secondary);
+    text-transform:uppercase}
+
+  /* ── ЧАВО (5 вопросов из ТЗ) ── */
+  /* ── ЧАВО + обращение: слева аккордеоны по левому краю контейнера, справа форма ── */
+  .faq{padding-block:clamp(64px,7vw,110px)}
+  .faq__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+  .faq h2{margin:0 0 clamp(20px,3vw,28px);font-family:var(--font-head);font-weight:800;
+    text-transform:uppercase;font-size:clamp(26px,3vw,38px);line-height:1;letter-spacing:-.005em}
+  .faq__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,390px);
+    gap:clamp(24px,3vw,48px);align-items:start}
+  @media(max-width:900px){.faq__grid{grid-template-columns:1fr}}
+  /* Аккордеон плашками, как остальные интерактивные элементы страницы: белая карточка,
+     радиус 14, обводка в покое прозрачная и проявляется на ховере — то же правило, что
+     у карточек «Видов» и опций калькулятора. Раскрытая становится плотной. */
+  .faq details{background:var(--surface-card);border-radius:14px;
+    box-shadow:inset 0 0 0 1px rgba(20,18,18,.07);transition:box-shadow .15s ease}
+  .faq details + details{margin-top:8px}
+  .faq details:hover{box-shadow:inset 0 0 0 1px rgba(20,18,18,.18)}
+  /* padding-bottom у раскрытой, а не margin у абзаца: нижний margin схлопывался наружу карточки
+     и текст упирался в её край (замер давал 0px). */
+  .faq details[open]{box-shadow:inset 0 0 0 1.5px var(--v-ink);padding-bottom:var(--sp-16)}
+  .faq summary{display:flex;align-items:center;gap:var(--sp-16);cursor:pointer;list-style:none;
+    padding:var(--sp-16) var(--sp-20);font-family:var(--font-head);font-weight:800;
+    text-transform:uppercase;font-size:var(--t-h4);line-height:var(--t-h4-lh);
+    letter-spacing:var(--t-h4-ls)}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq__chev{flex:none;margin-left:auto;display:grid;place-items:center;width:30px;height:30px;
+    border-radius:10px;background:var(--surface-gray);color:var(--text-secondary);
+    transition:transform .22s ease,background-color .15s ease,color .15s ease}
+  .faq__chev svg{width:14px;height:14px}
+  .faq details:hover .faq__chev{background:var(--surface-gray-2)}
+  .faq details[open] .faq__chev{transform:rotate(180deg);background:var(--v-ink);
+    color:var(--surface-card)}
+  .faq summary:focus-visible{outline:3px solid var(--v-ink);outline-offset:2px;border-radius:14px}
+  /* ТОЛЬКО ответы внутри details: боковой отступ 20px отбивает ответ от кромки вопроса.
+     Прежний селектор `.faq p` ловил ВСЕ абзацы секции — и текст правой колонки
+     («Спросите — ответим и посчитаем», «Ежедневно с 9 до 22») уезжал вправо на 20px
+     относительно своего заголовка. Специфичность `.faq p` выше, чем у `.faq__ask-text`,
+     поэтому собственный `margin:9px 0 0` проигрывал. */
+  .faq details p{margin:0 var(--sp-20);max-width:62ch;font-size:var(--t-body);
+    line-height:var(--t-body-lh);color:var(--text-secondary)}
+  .faq details p a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
+  /* правая колонка — обращение */
+  .faq__ask{background:var(--surface-card);border-radius:var(--radius-outside);
+    padding:clamp(20px,2.2vw,28px);box-shadow:inset 0 0 0 1px rgba(20,18,18,.07)}
+  .faq__ask h3{margin:0;font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:var(--t-h4);line-height:var(--t-h4-lh);letter-spacing:var(--t-h4-ls)}
+  .faq__ask-text{margin:9px 0 0;font-size:var(--t-small);line-height:var(--t-small-lh);
+    color:var(--text-secondary);max-width:none}
+  .faq__form{display:flex;flex-direction:column;gap:var(--sp-12);margin-top:var(--sp-16)}
+  .faq__form .calc__cta{margin-top:4px}
+  .faq__chan{display:flex;flex-wrap:wrap;gap:8px;margin-top:var(--sp-16);
+    padding-top:var(--sp-16);border-top:1px solid var(--border)}
+  .faq__chan a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;
+    font-size:13px;font-weight:700;color:var(--text-primary);
+    padding:8px 12px;border-radius:12px;background:var(--surface-gray);
+    transition:background-color .15s ease}
+  .faq__chan a:hover{background:var(--surface-gray-2)}
+  /* ── КОПИРОВАНИЕ ТЕЛЕФОНА И ПОЧТЫ (только мышь). На телефоне тап по номеру должен звонить,
+     а не копировать, поэтому поведение включается лишь при hover:hover и pointer:fine. ── */
+  /* Пустое значение = элемент подхватил ОБЩИЙ механизм копирования. У телефона в шапке
+     значение непустое: там своя, более ранняя реализация со своим индикатором .hd__copied —
+     и если не разделить, на номере всплывают ДВЕ подсказки сразу. */
+  [data-copy=""]{position:relative}
+  [data-copy=""]::after{content:"Скопировано";position:absolute;left:50%;bottom:calc(100% + 6px);
+    transform:translate(-50%,4px);white-space:nowrap;pointer-events:none;opacity:0;
+    padding:5px 9px;border-radius:8px;background:var(--v-ink);color:var(--surface-card);
+    font-family:var(--font-body);font-size:11.5px;font-weight:700;letter-spacing:.01em;
+    text-transform:none;transition:opacity .16s ease,transform .16s ease}
+  [data-copy=""].is-copied::after{opacity:1;transform:translate(-50%,0)}
+  @media(prefers-reduced-motion:reduce){[data-copy=""]::after{transition:none}}
+  /* был --text-tertiary: 2,82:1 на 11px — самый низкий контраст на странице (аудит 11.08) */
+  .faq__note{margin:10px 0 0;font-size:var(--t-micro);line-height:var(--t-micro-lh);
+    color:var(--text-secondary)}
+
+  /* ── ФУТЕР ── */
+  /* ── ФУТЕР: единственная тёмная поверхность на странице (точка в конце) ── */
+  /* ── ФУТЕР: единственная тёмная поверхность на странице (точка в конце) ── */
+  .ft{background:var(--v-ink);color:var(--surface-card);padding-block:clamp(32px,4vw,56px)}
+  .ft__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad);
+    display:grid;grid-template-columns:1.3fr 1fr .8fr 1.1fr;gap:var(--sp-32) var(--sp-24)}
+  @media(max-width:900px){.ft__in{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.ft__in{grid-template-columns:1fr}}
+  .ft__brand img{display:block;opacity:.95}
+  .ft__brand p{margin:var(--sp-12) 0 0;font-size:var(--t-small);line-height:var(--t-small-lh);
+    color:rgba(255,255,255,.55);max-width:32ch}
+  .ft h3{margin:0 0 var(--sp-12);font-size:11.5px;font-weight:700;letter-spacing:.06em;
+    text-transform:uppercase;color:rgba(255,255,255,.5)}
+  .ft a{color:rgba(255,255,255,.78);text-decoration:none;font-size:var(--t-small);line-height:26px;
+    display:flex;align-items:center;gap:6px;transition:color .15s ease}
+  .ft a:hover{color:var(--surface-card)}
+  .ft a:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+  .ft a svg{flex:none;opacity:.5}
+  .ft__phone{font-family:var(--font-head);font-weight:800;font-size:22px;
+    color:var(--surface-card)!important;line-height:1.2;margin-bottom:2px}
+  .ft__addr{margin:var(--sp-12) 0 0;font-size:12.5px;line-height:19px;color:rgba(255,255,255,.5)}
+  /* юридическая строка — отдельным ярусом под линией */
+  /* Сетка ТА ЖЕ, что у колонок футера (.ft__in): раньше здесь было auto + 1fr, и дисклеймер
+     начинался на 598 — не под «Контактами» (502) и не под «Разделами» (783), а между ними.
+     Теперь реквизиты стоят под логотипом, дисклеймер — от колонки «Контакты» до правой кромки. */
+  .ft__legal{max-width:var(--v-max);margin:clamp(28px,3vw,40px) auto 0;padding-inline:var(--v-pad);
+    padding-top:var(--sp-20);border-top:1px solid var(--border-on-dark);
+    display:grid;grid-template-columns:1.3fr 1fr .8fr 1.1fr;gap:var(--sp-12) var(--sp-24)}
+  .ft__legal p:first-child{grid-column:1}
+  .ft__legal p:last-child{grid-column:2 / -1}
+  @media(max-width:760px){.ft__legal{grid-template-columns:1fr}
+    .ft__legal p:first-child,.ft__legal p:last-child{grid-column:1}}
+  .ft__legal p{margin:0;font-size:12px;line-height:18px;color:rgba(255,255,255,.45)}
+  .ft__legal a{display:inline;color:rgba(255,255,255,.62);text-decoration:underline;
+    text-underline-offset:2px}
+
+  /* ── КАЛЬКУЛЯТОР: отдельная секция под «Видами». Геометрия и цвета — по ДС ── */
+  .calc{padding-block:clamp(24px,3vw,32px)}
+  /* ширина как у остальных секций. Пустоты справа больше нет не из-за сужения контейнера,
+     а потому что плашки перестали упираться в потолок 255px и тянутся на всю колонку. */
+  .calc__in{max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
+  .calc h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:clamp(26px,3vw,38px);line-height:1;letter-spacing:-.005em;max-width:27ch}
+  .calc__note{margin-top:10px;max-width:56ch;color:var(--text-secondary);
+    font-size:var(--t-body);line-height:var(--t-body-lh)}
+  /* после сокращения до трёх параметров все шаги слева, справа только стоимость */
+  .calc__left{counter-reset:step}
+  .calc__grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,330px);
+    gap:var(--sp-20) var(--sp-28);margin-top:var(--sp-20);align-items:start;counter-reset:step}
+  /* группировка по смыслу: «что печатаем» — во всю ширину; слева «из чего», справа «сколько» */
+  .calc__form{display:contents}
+  .calc__right{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
+  /* размер и количество — рядом: оба компактные, так правая колонка короче */
+  /* .calc__pair и .calc__stack убраны 30.07: все шаги лежат прямо в .calc__left, у него уже
+     flex-колонка с шагом 28px. Двухколоночная пара была нужна, пока допы стояли справа. */
+  /* «Дополнительно» — добавка, а не шаг: номер у легенды снимаем */
+  /* допы теми же плашками, что остальные кнопки калькулятора, но столбиком в узкой колонке */
+  /* плашки те же, что у остальных шагов: класс opt--card и его типографика (16/12.5px),
+     свои размеры шрифта тут не задаём — расходились с калькулятором */
+  /* опции В РЯД, по содержимому: flex:1 1 200px растягивал их на всю колонку (259px каждая),
+     хотя текста там на ~180. Растёт только высота — плашки в ряду одной высоты. */
+  .calc__extra .opts{display:flex;flex-wrap:wrap;gap:var(--sp-8)}
+  .calc__extra .opt{flex:0 1 auto;min-width:0}
+  .calc__extra .opt span{width:100%;height:100%}
+  .calc__extra .opt__desc{max-width:24ch}
+  /* На мобилке допы — те же две в ряд, что и «что печатаем»: по одной на строку они
+     занимали три экранных блока под три коротких подписи. */
+  @media(max-width:860px){
+    .calc__extra .opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .calc__extra .opt{flex:none;min-width:0}
+    .calc__extra .opt span.opt--card{padding:11px 13px;height:100%}
+    .calc__extra .opt__txt{font-size:14.5px}
+    .calc__extra .opt__desc{max-width:none;font-size:12px;line-height:15px}
+  }
+  /* слева широкие шаги 1–3, справа компактные 4–6 и цена: высота = самая длинная колонка,
+     поэтому секция укладывается в один экран */
+  /* правило близости: внутри шага плашки в 8px, между шагами — 28px.
+     Раньше внешний зазор был 12 при внутреннем 8 — группы не читались как отдельные. */
+  .calc__left{display:flex;flex-direction:column;gap:var(--sp-28);min-width:0}
+  /* липкой делаем саму колонку: у sticky на дочернем блоке нет запаса, если родитель по контенту */
+  .calc__right{align-self:start}   /* липкость снята: секция и так в один экран (решение Omar) */
+
+  /* НИЗКИЕ ЭКРАНЫ (ноутбуки 800–850px): секция обязана влезать вместе с фикс-шапкой.
+     Ужимаем шапку секции, а не контролы — плашки трогать нельзя, по ним уже принято решение. */
+  @media(min-width:861px) and (max-height:870px){
+    .calc{padding-block:16px}
+    .calc h2{font-size:clamp(24px,2.4vw,30px)}
+    .calc__note{margin-top:6px;font-size:var(--t-small);line-height:var(--t-small-lh)}
+    .calc__grid{margin-top:var(--sp-12)}
+    .calc__out{padding:var(--sp-16)}
+  }
+  @media(max-width:860px){.calc__grid{grid-template-columns:1fr}.calc__in{padding-inline:20px}}
+  /* контейнера у формы нет: шаги лежат прямо на фоне секции (плашки сами держат структуру) */
+  /* два столбца: шаги 1–3 слева, 4–6 справа */
+
+  @media(max-width:860px){.calc__grid{grid-template-columns:1fr}}
+  .fs--wide{grid-column:auto}
+  .fs{border:0}
+  .fs--wide{grid-column:1 / -1}
+  /* номер шага — перед подписью поля, одной строкой */
+  .fs legend{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin-bottom:9px}
+  /* номер шага в мягком сквиркле */
+  .fs legend::before{counter-increment:step;content:counter(step);
+    display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;
+    border-radius:8px;background:rgba(20,18,18,.07);color:var(--v-ink-2);flex:none;
+    font-family:var(--font-body);font-size:12px;font-weight:700;letter-spacing:0}
+  
+  .opts{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+  /* кнопки по содержимому с переносом — для коротких значений вроде 55×44 */
+  /* столбиком одинаковой ширины — у этих опций разной длины описания, по контенту плашки рвались */
+  .opts--rows{display:grid;grid-template-columns:1fr;gap:10px}
+  .opts--rows .opt,.opts--rows .opt span{width:100%}
+  .opts--rows .opt__desc{max-width:none}
+  .opts--flow{display:flex;flex-wrap:wrap;gap:8px}
+  .opts--flow .opt{flex:0 0 auto;width:fit-content}
+  .opts--flow .opt span{width:fit-content;min-width:0;padding:11px 15px;min-height:44px}
+  .opts--flow .opt__txt{width:auto}
+  .opts--flow .opt__inp{width:100%;min-height:0;padding:11px 15px;text-align:center}
+  /* только плашка-поле «Свой» занимает остаток строки и читается как ПОЛЕ, а не как пресет
+     (раньше ширина была 9.5ch под маску 99x99) */
+  /* «Свой размер»/«Свой тираж» — по содержимому, как остальные плашки. Было flex:1 1 140px,
+     и поле растягивалось на всю колонку. Ширина в ch по самому длинному плейсхолдеру
+     («Свой размер» = 11 знаков), он же служит подписью поля. Падинги 15px компенсируем в calc:
+     при box-sizing:border-box они съедали бы ширину, и плейсхолдер обрезался. */
+  .opts--flow .opt--wide{flex:0 0 auto;width:fit-content}
+  .opts--flow .opt--wide span{width:fit-content}
+  /* Ширина = ТЕКСТ КОНКРЕТНОГО плейсхолдера плюс те же 15px по бокам, что у кнопок.
+     Одна общая ширина не годится: «Свой размер» 97px, «Свой тираж» 90px, и у второго
+     отступы получались 21px против 15 у кнопок. Значения в ch посчитаны по замеру. */
+  .opts--flow .opt--wide .opt__inp{width:calc(10.6ch + 30px)}
+  .opts--flow .opt--wide #qtyOwn{width:calc(9.85ch + 30px)}
+  /* две колонки — для длинных списков с описаниями */
+  /* потолок 340px: при 255 справа зияло ~276px, при 1fr плашка становилась слишком широкой
+     и картинку отжимало к её правому краю — ближе к соседней колонке, чем к своему тексту */
+  .opts--two{grid-template-columns:repeat(2,minmax(0,340px))!important}
+  .opts--2col{display:grid;grid-template-columns:repeat(2,minmax(0,340px));gap:8px}
+  /* плашка по содержимому: при фиксированной ширине справа от картинки оставалась пустая
+     полоса внутри плашки. Потолок 340 держит перенос описания. */
+  .opts--near.opts--2col{grid-template-columns:repeat(2,max-content)}
+  .opts--near.opts--2col .opt,.opts--near.opts--2col .opt span{width:max-content;max-width:340px}
+  .opts--2col .opt span{max-width:none;width:100%;height:100%}
+  /* На мобилке .opts--near.opts--2col оставался в ДВЕ колонки по max-content: две плашки
+     по 340px давали 680 при доступных ~460 и тянули горизонтальный скролл всей странице.
+     Здесь и колонка одна, и ширина по месту, а не по содержимому. */
+  @media(max-width:860px){
+    /* Иконки обрезались низом плашки: их размер рассчитан на высокую десктопную карточку.
+       Селектор из четырёх классов — базовые правила трёхклассовые и перебивали более слабые. */
+    .calc .opts .opt .opt__ico{width:56px;height:56px;bottom:0;right:8px;align-self:flex-end}
+    /* Две в ряд, но колонки ДОЛЕВЫЕ, а не по содержимому: max-content давал 340px на плашку
+       и 680 на ряд при доступных ~460 — отсюда и был горизонтальный скролл. */
+    .opts--2col,.opts--near.opts--2col{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .opts--near.opts--2col .opt,.opts--near.opts--2col .opt span{width:100%;max-width:none}
+    .opts--near .opt span,.opts--near .opt span.opt--card{padding:12px 14px}
+    .opts--near .opt__txt{font-size:15px}
+  }
+  /* переключатель-плашка: радио спрятано, вид даёт label (как кнопки в ките) */
+  .opt>input[type=radio],.opt>input[type=checkbox]{position:absolute;opacity:0;width:0;height:0}
+  /* картинка в плашке — необязательная: файл calc-icons/<поле>-<индекс>.webp (png в .gitignore!), нет файла — нет иконки */
+  .opt__ico{position:absolute;right:8px;bottom:-8px;width:54px;height:54px;flex:none;
+    object-fit:contain;object-position:top center;pointer-events:none;
+    filter:drop-shadow(0 4px 8px rgba(20,18,18,.35))}
+  /* картинка СРАЗУ ЗА ТЕКСТОМ, а не у правого края: на широкой плашке приколотая справа
+     картинка оказывалась ближе к соседней опции, чем к своему тексту (проблема близости) */
+  /* ЕДИНОЕ правило для шагов 1–3: картинка сразу за текстом, одинаковый размер, положение и срез */
+  .opts--near .opt span{align-items:center}
+  /* текст НЕ растягиваем: иначе картинку отжимает к правому краю плашки и она отрывается
+     от своей подписи. Так она стоит сразу за текстом при любой ширине плашки. */
+  .opts--near .opt__txt{flex:0 1 auto;min-width:0}
+  /* плашки ниже: высоту задавала картинка 78px с полями, а не текст */
+  .opts--near .opt span,.opts--near .opt span.opt--card{min-height:0;padding:10px 14px}
+  .opts--near .opt__ico{position:static;align-self:flex-end;flex:none;
+    width:64px;height:64px;margin:8px 0 -20px 12px;object-position:center top}
+  .opts--near .opt span.has-ico .opt__desc,.opts--near .opt span.opt--card.has-ico .opt__desc{padding-right:0}
+  /* резерв под картинку даём ТОЛЬКО описанию: картинка внизу справа, а заголовок наверху
+     и может занимать всю ширину. Раньше padding-right на всей плашке зря рвал заголовок. */
+  .opt span.has-ico .opt__desc{padding-right:58px}
+  /* шаг «Материал» — ВЕРТИКАЛЬНАЯ плашка: заголовок и описание во всю ширину, картинка
+     приколота в правый нижний угол и срезается низом плашки (clip-path у span) */
+  /* высота как у плашек шагов 1 и 3 (98px). Специфичность выше .opt span.opt--card (0,2,1),
+     иначе его min-height:74 перебивал наше правило и ряды шагов были разной высоты. */
+  .opts--vert .opt span.opt--card,
+  .opts--vert .opt span{flex-direction:column;align-items:flex-start;justify-content:flex-start;
+    min-height:96px;padding:12px 14px 14px;height:100%}
+  .opts--vert .opt__txt{width:100%}
+  /* специфичность выше .opt span.opt--card.has-ico .opt__desc (0,4,1): иначе резерв под
+     картинку применялся дважды (62px у .opt__txt + 84px здесь), на текст оставалось 99px
+     и описание из трёх слов вставало по одному слову в строку */
+  .opts--vert .opt span.opt--card.has-ico .opt__desc,
+  .opts--vert .opt span .opt__desc{max-width:none;padding-right:0}
+  /* текст не должен доезжать до картинки: резерв справа у всего текстового блока,
+     иначе длинный заголовок уходит под стикер (проверено рендером) */
+  .opts--vert .opt__txt{padding-right:62px}
+  /* размер картинки задаём с той же специфичностью, что и правило .opt--card, иначе оно
+     перебивает наши 76px своими 86 и заголовок опять уходит под стикер */
+  .opts--vert .opt span.opt--card .opt__ico,
+  .opts--vert .opt__ico{position:absolute;right:4px;bottom:-12px;width:62px;height:62px;margin:0;
+    object-position:center top}
+  /* четыре в ряд: ряд ровный, карточки одной высоты (height:100% у span) */
+  .opts--four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-12)}
+  /* span по умолчанию inline-flex и жмётся по содержимому — без этого карточка уже ячейки,
+     а приколотая к её правому краю картинка вылезает на соседнюю */
+  .opts--four .opt,.opts--four .opt span{width:100%;max-width:none}
+  @media(max-width:860px){.opts--four{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .opt__txt{display:flex;flex-direction:column;gap:3px;font-weight:600;text-wrap:balance}
+  .opt__desc{font-style:normal;font-size:12.5px;line-height:16px;font-weight:400;
+    color:var(--text-secondary);max-width:20ch}
+  .opt>input:checked + span .opt__desc{color:rgba(255,255,255,.7)}
+  /* вариант с описанием — крупнее, картинка справа от текста */
+  /* «Свой» — плашка-поле: инпут занимает её целиком, плейсхолдер вместо подписи */
+  .opt span.opt--own{padding:0}
+  .opt__inp{width:100%;min-height:54px;font:inherit;font-size:var(--t-body);font-weight:600;
+    color:var(--text-primary);background:none;border:0;padding:14px 18px;border-radius:inherit}
+  .opt__inp::placeholder{color:var(--text-secondary);font-weight:600}
+  /* Гасим кольцо только для мыши: у самого поля «своё значение» замены не было вовсе,
+     а соседние чипы её имеют (.opt>input:focus-visible + span). С клавиатуры поле
+     оказывалось единственным местом калькулятора без видимого фокуса. */
+  .opt__inp:focus{outline:none}
+  .opt__inp:focus-visible{outline:3px solid var(--v-ink);outline-offset:-3px;border-radius:inherit}
+  .opt>input:checked + span .opt__inp:focus-visible{outline-color:var(--brand)}
+  .opt>input:checked + span .opt__inp{color:var(--surface-card)}
+  .opt>input:checked + span .opt__inp::placeholder{color:rgba(255,255,255,.6)}
+  .opt span.opt--card{min-height:74px;padding:13px 16px;align-items:flex-start}
+  .opt span.opt--card:not(.has-ico){min-height:0;padding:14px 18px}
+  .opt span.opt--card.has-ico .opt__desc{padding-right:84px}
+  .opt span.opt--card .opt__ico{width:86px;height:86px;right:4px;bottom:-16px}
+  /* плашки — крупные скруглённые прямоугольники: срез иконки по низу совпадает с формой */
+  .opt span{position:relative;clip-path:inset(-80px 0 0 0 round 0 0 14px 14px);
+    display:inline-flex;align-items:center;min-height:48px;padding:11px 15px;
+    border-radius:var(--radius-outside);background:var(--surface-card);
+    font-size:var(--t-body);font-weight:600;cursor:pointer;
+    transition:background .15s ease,box-shadow .15s ease}
+  /* обводка отдельным слоем ПОВЕРХ картинки — тогда стикер выглядит торчащим из кнопки */
+  .opt span::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:2;
+    pointer-events:none;box-shadow:inset 0 0 0 1px var(--border)}
+  .opt__ico{z-index:1;transition:transform .28s cubic-bezier(.34,1.4,.64,1),filter .28s ease}
+  /* при наведении стикер чуть выныривает из плашки и подкручивается */
+  .opt:hover .opt__ico{transform:translateY(-7px) rotate(-5deg) scale(1.04);
+    filter:drop-shadow(0 10px 14px rgba(20,18,18,.4))}
+  .opt>input:checked ~ span .opt__ico{transform:translateY(-3px) rotate(-3deg)}
+  .opt:hover>input:checked ~ span .opt__ico{transform:translateY(-8px) rotate(-6deg) scale(1.04)}
+  @media(prefers-reduced-motion:reduce){.opt__ico{transition:none}.opt:hover .opt__ico{transform:none}}
+  .opt>input:checked + span{background:var(--v-ink);color:var(--surface-card)}
+  .opt>input:checked + span::after{box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+  .opt>input:focus-visible + span{outline:3px solid var(--v-ink);outline-offset:2px}
+  .opt span:hover{background:var(--surface-gray)}
+  .opt>input:checked + span:hover{background:var(--v-ink-hover)}
+  /* итог */
+  /* итоговая панель: тёплая тёмная (не плоский чёрный), светлый внутренний контур и мягкая тень —
+     чтобы читалась как часть той же системы плашек, а не вставленный блок */
+  /* итог — ПЛАШКА. Раньше лежал прямо на фоне и читался как седьмой шаг, а не как ответ.
+     Единственный контейнер в секции: всё слева — выбор, справа — результат. */
+  .calc__out{display:flex;flex-direction:column;gap:var(--sp-12);
+    color:var(--text-primary);background:var(--surface-card);border-radius:var(--radius-outside);
+    padding:var(--sp-20);box-shadow:inset 0 0 0 1px var(--border),0 18px 34px -26px rgba(20,18,18,.45)}
+  .calc__price{font-family:var(--font-head);font-weight:800;font-size:clamp(30px,3vw,40px);line-height:1;letter-spacing:-.01em}
+  /* «от» вдвое мельче цены и тише по цвету: приставка не должна спорить с цифрой,
+     но обязана быть в одном с ней объекте — иначе читается как отдельная подпись */
+  .calc__from{font-style:normal;font-size:.5em;color:var(--text-secondary);margin-right:.28em}
+  /* 11.5px — тот же кегль метки, что у легенд шагов слева. Было 12 против 11.5: разницу не видно,
+     а система от этого перестаёт быть системой */
+  .calc__cap{display:block;font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--text-secondary);margin-bottom:8px}
+  /* сумма и цена за штуку — в одну строку по базовой линии: за штуку тише, через точку */
+  .calc__sum{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 12px}
+  .calc__unit{font-size:var(--t-small);font-weight:700;color:var(--text-secondary)}
+  .calc__unit::before{content:"·";margin-right:9px;color:var(--v-hair)}
+  /* срок и тираж — два факта в ряд (подпись сверху, значение снизу): линейка не нужна,
+     группы держит расстояние. Прежняя схема «подпись слева / значение справа» читалась как таблица */
+  .calc__rows{display:flex;flex-wrap:wrap;gap:var(--sp-20);margin-top:var(--sp-12);
+    padding-bottom:var(--sp-16);border-bottom:1px solid var(--border)}
+  .calc__row{display:flex;flex-direction:column;gap:3px}
+  .calc__row span{font-size:11.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--text-secondary)}
+  .calc__row b{font-size:var(--t-body);color:var(--text-primary);font-weight:700}
+  /* членение карточки: данные сверху, действие снизу. Раньше четыре смысловых блока
+     (цена → факты → кнопка → мелочи) шли одним зазором 12px */
+  /* Правило ДС воронки: чёрный = действие, жёлтый = ценность (плашка оффера B2B, цифра итога).
+     Была жёлтой только здесь, на остальной странице действия чёрные. См. FUNNEL.md §5. */
+  .calc__cta{margin-top:var(--sp-16);padding-top:0;display:inline-flex;align-items:center;justify-content:center;
+    background:var(--v-ink);color:var(--surface-card);text-decoration:none;font-weight:800;font-size:16px;
+    padding:14px 22px;border-radius:14px}
+  .calc__cta:hover{background:var(--v-ink-hover)}
+  .calc__cta:focus-visible{outline:3px solid var(--v-ink);outline-offset:3px}
+  .calc__promo{margin:var(--sp-12) 0 0;padding:7px 12px;border-radius:10px;
+    background:var(--brand);color:var(--v-ink);font-size:12.5px;font-weight:800;letter-spacing:.01em}
+  /* плашка крупного тиража — вторая карточка правой колонки, зазор даёт .calc__right (gap 28).
+     Жёлтая заливка, а не белая: рядом с белым итогом белая плашка читалась бы его продолжением. */
+  .calc__big{background:var(--brand);color:var(--v-ink);border-radius:var(--radius-outside);
+    padding:var(--sp-20);display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+  .calc__big b{font-size:var(--t-body);font-weight:800;line-height:1.25}
+  .calc__big p{margin:0;font-size:var(--t-small);line-height:20px;color:var(--v-gold-text)}
+  .calc__big-cta{margin-top:6px;display:inline-flex;align-items:center;justify-content:center;
+    background:var(--v-ink);color:var(--surface-card);text-decoration:none;font-weight:700;
+    font-size:14.5px;padding:11px 18px;border-radius:12px}
+  .calc__big-cta:hover{background:var(--v-ink-hover)}
+  .calc__big-cta:focus-visible{outline:3px solid var(--v-ink);outline-offset:3px}
+  /* оговорка к цене — тише итога и без плашки: это сноска, а не второй акцент */
+  .calc__mark{margin:10px 0 0;font-size:12.5px;line-height:17px;color:var(--text-secondary)}
+  /* подпись про макет — тем же тихим кеглем, что и остальные пояснения шагов */
+  .calc__note-art{margin:var(--sp-12) 0 0;font-size:var(--t-small);line-height:20px;
+    color:var(--text-secondary);max-width:58ch}
+  .calc__own{display:flex;align-items:center;gap:10px;margin-top:var(--sp-12);font-size:var(--t-small)}
+  .calc__own input{width:120px;font:inherit;padding:9px 12px;border:1px solid var(--border);
+    border-radius:var(--radius-md);background:var(--surface-card)}
+  .calc__own input:focus-visible{outline:3px solid var(--v-ink);outline-offset:2px}
+  /* ссылка на требования — тихая, внутри той же строки, со стрелкой «уходит наружу» */
+  /* ссылка отдельной строкой, весом как текст: жирная со стрелкой перебивала сам абзац */
+  .calc__req{display:inline-block;margin-top:6px;color:var(--text-secondary);
+    font-size:var(--t-small);line-height:20px;font-weight:400;
+    text-decoration:underline;text-decoration-color:rgba(20,18,18,.25);text-underline-offset:3px}
+  .calc__req:hover{color:var(--text-primary);text-decoration-color:var(--text-primary)}
+  /* форму отделяем расстоянием и очень тонкой линией — жёсткая 1px рвала блок */
+  .calc__lead{display:flex;flex-direction:column;gap:var(--sp-12);margin-top:var(--sp-20);
+    padding-top:0}
+  .calc__f{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-secondary)}
+  /* Рецепт полей взят из прототипа услуги (.cbm input): высота 46, --border-strong,
+     --t-ui, плейсхолдер --text-tertiary, фокус — жёлтое свечение, а не чёрная обводка. */
+  .calc__f input{font:inherit;font-size:var(--t-ui);height:46px;color:var(--text-primary);
+    background:var(--surface-card);border:1px solid var(--border-strong);
+    border-radius:var(--radius-md);padding:0 14px;outline:none;
+    transition:border-color .15s,box-shadow .15s}
+  .calc__f input::placeholder{color:var(--text-tertiary)}
+  /* Поля ввода 16px на телефоне: ниже этого iOS Safari зумит всю страницу при фокусе, и
+     заявка заполняется в увеличенном, съехавшем вбок макете. Кегль десктопа (--t-ui 15px)
+     не трогаем — там зума нет. Правило стоит ПОСЛЕ объявления .calc__f input: в мобильном
+     медиазапросе героя (он выше по файлу) оно проигрывало по порядку при равной
+     специфичности — замер показывал прежние 15px. */
+  @media(max-width:860px){
+    .calc__f input,.opt__inp{font-size:16px}
+  }
+  .calc__f span i{font-style:normal;color:var(--danger)}
+  /* Ошибка — как .cbm-field.invalid в прототипе услуги: красная граница, красное свечение
+     в фокусе и текст под полем. Кнопку НЕ гасим: спрятанный disabled не объясняет, что не так. */
+  .calc__err{display:none;font-size:var(--t-micro);line-height:var(--t-micro-lh);color:var(--danger)}
+  .calc__f--bad input{border-color:var(--danger)}
+  .calc__f--bad input:focus{box-shadow:0 0 0 3px rgba(224,72,58,.12)}
+  .calc__f--bad .calc__err{display:block}
+  .calc__ok--bad{color:var(--danger)}
+  .calc__ok--bad .mk-check{border-color:var(--danger)}
+  .calc__done{margin:9px 0 0;padding:9px 12px;border-radius:10px;background:var(--brand-soft);
+    font-size:12px;line-height:1.35;color:var(--v-ink-2)}
+  .calc__f input:focus,.calc__f input:focus-visible{border-color:var(--brand);
+    box-shadow:0 0 0 3px var(--brand-soft)}
+  /* Строка согласия и сам чекбокс — ДОСЛОВНО из прототипа услуги (.cbm-check) и кита (.mk-check).
+     Кит на этой странице не подключён, поэтому рецепт продублирован без изменений: ступени
+     --t-caption и --sp-6 вместо прежних 13/16 и 6px, галочка --on-brand, фокус --brand-dark. */
+  .calc__ok{display:flex;gap:var(--sp-10);align-items:flex-start;cursor:pointer;
+    font-size:var(--t-caption);line-height:var(--t-caption-lh);color:var(--text-secondary);
+    min-height:44px;padding-block:var(--sp-6)}
+  .calc__ok input{margin-top:1px}
+  .calc__ok a{color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
+  .calc__ok a:hover{color:var(--text-primary)}
+  .calc__ok em{color:var(--v-muted-2);font-style:normal}
+  .mk-check{appearance:none;-webkit-appearance:none;margin:0;flex-shrink:0;
+    width:22px;height:22px;border:1px solid var(--border-strong);border-radius:var(--radius-inside);
+    background:var(--surface-card);cursor:pointer;position:relative;
+    transition:background .15s,border-color .15s}
+  .mk-check:hover{border-color:var(--text-primary)}
+  .mk-check:checked{background:var(--brand);border-color:var(--brand)}
+  .mk-check:checked::after{content:"";position:absolute;left:50%;top:46%;
+    width:10px;height:5px;transform:translate(-50%,-50%) rotate(-45deg);
+    border-left:2px solid var(--on-brand);border-bottom:2px solid var(--on-brand)}
+  .mk-check:focus-visible{outline:2px solid var(--brand-dark);outline-offset:2px}
+  /* мелкий вариант из кита — на случай 12px набора */
+  .mk-check--sm{width:18px;height:18px}
+  .mk-check--sm:checked::after{width:8px;height:4px}
+  .calc__cta{border:0;cursor:pointer}
+  .calc__pick,.calc__file{display:flex;flex-direction:column;gap:6px;margin-top:var(--sp-12);
+    font-size:12px;color:var(--text-secondary)}
+  .calc__pick select{font:inherit;font-size:15px;color:var(--text-primary);background:var(--surface-card);
+    border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;max-width:340px}
+  .calc__file{align-items:flex-start;gap:8px;cursor:pointer}
+  .calc__file input{position:absolute;opacity:0;width:0;height:0}
+  .calc__filebtn{display:inline-flex;align-items:center;gap:8px;font-size:var(--t-small);font-weight:600;
+    color:var(--text-primary);background:var(--surface-card);box-shadow:inset 0 0 0 1px var(--border);
+    border-radius:var(--radius-md);padding:11px 15px}
+  .calc__file:hover .calc__filebtn{background:var(--surface-gray)}
+  .calc__file input:focus-visible + .calc__filebtn{outline:2px solid var(--v-ink);outline-offset:2px}
+  .calc__file em{font-style:normal;font-size:12px;color:var(--v-muted-2)}
+  .calc__hint{margin-top:10px;font-size:12.5px;line-height:17px;color:var(--text-secondary)}
+  /* кнопка-модалка и внешняя ссылка выглядят ОДИНАКОВО (цвет, кегль, подчёркивание);
+     единственное отличие — стрелка ↗ у той, что уводит с сайта */
+  .calc__hint a{color:var(--text-primary);text-decoration:underline;
+    text-decoration-color:rgba(20,18,18,.25);text-underline-offset:3px}
+  .calc__hint a:hover{text-decoration-color:var(--text-primary)}
+  /* разное поведение — разный вид: кнопка открывает модалку тут же, ссылка уводит на mdmprint.ru */
+  .calc__hint{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-12)}
+  .calc__ext{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+  .calc__ext svg{width:12px;height:12px;flex:none}
+  .calc__hint:empty{display:none}
+  .calc__pick[hidden],.calc__file[hidden]{display:none}
+  .calc__demo{margin-top:var(--sp-16);font-size:13px;line-height:18px;color:var(--text-secondary)}
+  /* ── МОДАЛКА «Доставка и самовывоз» ── */
+  .calc__link{font:inherit;font-size:inherit;color:var(--text-primary);background:none;border:0;padding:0;
+    cursor:pointer;text-decoration:underline;text-decoration-color:rgba(20,18,18,.25);text-underline-offset:3px}
+  .calc__link:hover{text-decoration-color:var(--text-primary)}
+  .calc__link:focus-visible{outline:2px solid var(--v-ink);outline-offset:3px;border-radius:3px}
+  .sheet{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:var(--sp-16);
+    background:rgba(20,18,18,.55)}
+  .sheet[open]{display:grid}
+  /* Шапка (z 50), мобильная полоса (55) и плавающая CTA (60) лежат НИЖЕ оверлея (80), поэтому
+     светлое стекло шапки просвечивало сквозь затемнение квадратной плашкой сверху — заметно
+     только на скролле, когда стекло включено. Прячем на время любой шторки: :has() покрывает
+     обе модалки без JS. */
+  body:has(.sheet[open]) .hd,
+  body:has(.sheet[open]) .calcbar,
+  body:has(.sheet[open]) .rbar{opacity:0;pointer-events:none}
+  .sheet__box{position:relative;width:min(720px,100%);max-height:88vh;overflow:auto;
+    background:var(--surface-card);border-radius:var(--radius-outside);padding:var(--sp-32)}
+  .sheet__title{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
+    font-size:24px;line-height:1.05;margin:0 56px 0 0}
+  .sheet__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--sp-20);
+    margin-top:var(--sp-20)}
+  .sheet__item b{display:block;font-size:var(--t-body);margin-bottom:5px}
+  .sheet__item p{margin:0;font-size:var(--t-small);line-height:20px;color:var(--text-secondary)}
+  .sheet__item a{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
+  .sheet__item a:hover{color:var(--text-primary)}
+  /* 14px, а не круг: на странице все действия — скруглённые прямоугольники 14px. Крестик остался
+     пилюлей с раннего варианта, когда пилюли были и в шапке. Пилюля теперь только у бейджа героя. */
+  .sheet__close{position:absolute;right:14px;top:14px;width:40px;height:40px;display:grid;place-items:center;
+    border:0;border-radius:14px;background:var(--surface-gray);cursor:pointer;color:var(--text-primary)}
+  .sheet__close:hover{background:var(--surface-gray-2)}
+  .sheet__close:focus-visible{outline:2px solid var(--v-ink);outline-offset:2px}
+  .sheet__close svg{width:18px;height:18px}
+  @media(max-width:860px){.sheet__box{padding:var(--sp-20)}}
+  /* ── МОДАЛКА ЗАКАЗА ── */
+  /* Правила только для #orderSheet: .sheet__box общий с модалкой доставки, ей это не нужно. */
+  /* Шире обычной шторки: две колонки в форме укладывают её в экран без внутреннего скролла. */
+  /* 94vh вместо общих 88vh: при 88 форма не влезала на 46px и появлялся скролл. */
+  #orderSheet .sheet__box{display:flex;flex-direction:column;overflow:hidden;padding:0;
+    width:min(720px,100%);max-height:94vh}   /* 880 было лишним: ширина как у модалки доставки */
+  /* Шапка — только заголовок: цена переехала в подвал к кнопке. Справа 64px — там крестик. */
+  #orderSheet .ord__head{flex:none;padding:var(--sp-16) 64px var(--sp-16) var(--sp-24);
+    border-bottom:1px solid rgba(20,18,18,.08)}
+  /* Крестик: общий .sheet__close стоит 14/14 под шторку доставки с падингом 32. Здесь падинги
+     16/24, поэтому центр кнопки был на 5px ниже центра заголовка, а глиф — на 25px от края
+     вместо колонки 24. Правим только для этой шторки. */
+  #orderSheet .sheet__close{top:9px;right:13px}
+  /* margin-right у .sheet__title стоит под крестик; здесь крестик отодвинут паддингом шапки,
+     а этот отступ ломал строку и цена уезжала под заголовок. */
+  #orderSheet .sheet__title{margin:0}
+  #orderSheet .ord__price{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 9px;
+    margin:0;min-width:0}
+  /* без max-width: при 42ch (252px) фраза ложилась в две строки и подвал раздувался до 127px.
+     Ширину и так ограничивает кнопка справа. */
+  #orderSheet .ord__note{margin:0;font-size:12px;line-height:1.35;color:var(--text-secondary)}
+  #orderSheet .ord__big{font-family:var(--font-head);font-weight:800;font-size:26px;line-height:1;
+    letter-spacing:-.01em}
+  /* как было (13px, основной шрифт), но плашкой: рядом с крупной суммой одинокий мелкий
+     текст висел без опоры. Подложка полупрозрачная, чтобы не спорить с жёлтой плашкой акции. */
+  #orderSheet .ord__per{font-size:13px;font-weight:700;color:var(--text-secondary);
+    padding:4px 10px;border-radius:8px;background:rgba(20,18,18,.055)}
+  #orderSheet .ord__promo{padding:4px 10px;border-radius:8px;background:var(--brand);color:var(--v-ink);
+    font-size:12px;font-weight:800}
+  /* Спека тем же языком, что факты в карточке итога калькулятора: подпись сверху, значение снизу.
+     Было ключ–значение через space-between, и в двух колонках значение левой пары оказывалось
+     в 28px от ключа правой, а от своего ключа — в 250: пары рассыпались. У блочных пар
+     этого натяжения нет вовсе. */
+  #orderSheet .ord__spec{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:var(--sp-12) var(--sp-20);margin:0;align-content:start}
+  #orderSheet .ord__spec div{display:flex;flex-direction:column;gap:2px;min-width:0}
+  #orderSheet .ord__spec dt{font-family:var(--font-body);font-size:11px;
+    font-weight:700;letter-spacing:var(--t-label-ls);text-transform:uppercase;color:var(--text-secondary)}
+  #orderSheet .ord__spec dd{margin:0;font-size:14px;font-weight:700;line-height:1.2}
+  /* в режиме образца расчёта нет — цену не показываем вообще */
+  #orderSheet.sheet--sample .ord__price{display:none}
+  /* gap:0 — в общем правиле .ord__form стоит 20px, и в шторке он рисовал белую полосу
+     между прокруткой формы и подвалом: подвал белый, зона прокрутки белая, а между ними
+     пустая щель — выглядело как плашка, обрезающая форму. Здесь подвал должен прилегать. */
+  #orderSheet .ord__form{flex:1 1 auto;min-height:0;margin-top:0;padding:0;gap:0;
+    display:flex;flex-direction:column}
+  /* Прокручивается только эта часть. Контакты и «макет и опции» рядом — так короче по высоте. */
+  /* Колоночная идея снята: спека и форма рядом теряли обе. Спека — ПОЛОСОЙ в начале,
+     на своей подложке, чтобы читалась как сводка, а не как часть формы. Форма ниже. */
+  /* overscroll-behavior: докрутив форму до конца, дальше прокручиваешь страницу ПОД шторкой —
+     закрыв её, оказываешься не там, где был */
+  #orderSheet .ord__scroll{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+    padding:var(--sp-16) var(--sp-24);
+    display:flex;flex-direction:column;gap:var(--sp-16)}
+  /* во всю ширину шторки: отрицательные margin'ы гасят падинги .ord__scroll,
+     скругления нет, снизу линия */
+  /* Спека — полоса во всю ширину: без скруглений, отрицательные margin'ы гасят падинги
+     .ord__scroll. padding с !important: .ord__grp{padding-top:0} объявлен ниже и обнулял верх. */
+  #orderSheet .ord__grp--spec{background:var(--surface-gray);
+    margin:calc(var(--sp-16) * -1) calc(var(--sp-24) * -1) 0;
+    padding:var(--sp-16) var(--sp-24) !important}
+  #orderSheet .ord__spec{grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-12) var(--sp-20)}
+  /* контакты и опции рядом — так форма короче; согласия и мелкий шрифт во всю ширину */
+  /* Одна колонка: файл ушёл ВНИЗ, под контакты. Контакты — три поля в ряд, почта справа
+     от телефона (было имя|телефон, почта во всю ширину). */
+  #orderSheet .ord__main{display:flex;flex-direction:column;gap:var(--sp-16);min-width:0}
+  #orderSheet .ord__fields{grid-template-columns:repeat(3,minmax(0,1fr))}
+  #orderSheet .ord__fields .calc__f:nth-child(3){grid-column:auto}
+  /* Подвал: цена слева, действие справа. Не уезжает при прокрутке. */
+  #orderSheet .ord__foot{flex:none;padding:var(--sp-16) var(--sp-24);background:var(--surface-card);
+    border-top:1px solid rgba(20,18,18,.08)}
+  #orderSheet .ord__foot{display:grid;grid-template-columns:minmax(0,1fr) auto;
+    gap:8px var(--sp-24);align-items:center}
+  #orderSheet .ord__price{grid-column:1;grid-row:1}
+  #orderSheet .ord__foot .calc__cta{grid-column:2;grid-row:1;margin-top:0;align-self:center}
+  #orderSheet .ord__note{grid-column:1;grid-row:2}
+  /* линию сверху у групп снимаем: она есть у .ord__head, а рядом стоящие группы её дублировали */
+  #orderSheet .ord__grp{grid-column:auto;padding-top:0;border-top:0;gap:6px}
+  /* ДВЕ колонки, не три (три Omar завернул). Стопка «контакты над опциями» пробовалась и
+     оказалась дороже по высоте на 156px — вернулся скролл. Поэтому поля рядом в первом ряду,
+     а «Ваш заказ» — широкой полосой под ними, парами в две колонки: шесть строк в три. */
+
+  /* согласия во всю ширину: в половинной колонке каждое ложилось в две строки — 95px против 50 */
+  #orderSheet .ord__legal{gap:7px}
+  /* зона загрузки: пунктир — тот же приём высечки, что у «места для вашего стикера» в B2B */
+  #orderSheet .ord__drop{padding:5px;border-radius:14px;
+    border:1.5px dashed rgba(20,18,18,.22);background:transparent;
+    transition:border-color .15s ease,background-color .15s ease}
+  /* иконка и текст в ОДНУ строку, форматы отдельной — столбиком бокс занимал 115px
+     под тремя строчками, при том что зона всё равно остаётся крупной целью для перетаскивания */
+  #orderSheet .ord__drop-cta{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+    gap:3px 9px;padding:var(--sp-12);border-radius:10px;cursor:pointer;text-align:center}
+  #orderSheet .ord__drop-cta em{flex-basis:100%}
+  #orderSheet .ord__drop input{position:absolute;opacity:0;width:0;height:0}
+  #orderSheet .ord__drop-cta svg{width:18px;height:18px;color:var(--v-muted);flex:none}
+  #orderSheet .ord__drop-txt{font-size:14px;font-weight:700;color:var(--text-primary)}
+  #orderSheet .ord__drop-cta em{font-style:normal;font-size:11.5px;line-height:1.35;color:var(--v-muted-2)}
+  #orderSheet .ord__drop:hover{border-color:rgba(20,18,18,.4)}
+  #orderSheet .ord__drop-cta:hover{background:rgba(20,18,18,.03)}
+  #orderSheet .ord__drop[data-over]{border-color:var(--v-ink);background:rgba(255,193,0,.12)}
+  /* с файлами приглашение ещё компактнее: форматы уходят, остаётся счётчик в одну строку */
+  #orderSheet .ord__drop[data-has] .ord__drop-cta{padding:9px 12px}
+  #orderSheet .ord__drop[data-has] .ord__drop-cta em{flex-basis:auto}
+  #orderSheet .ord__drop[data-has] .ord__drop-cta svg{width:16px;height:16px;color:var(--v-ink)}
+  #orderSheet .ord__drop[data-has] .ord__drop-txt{font-size:13px}
+  /* список выбранных файлов — внутри рамки */
+  #orderSheet .ord__files{list-style:none;margin:0;padding:0;display:flex;
+    flex-direction:column;gap:4px}
+  #orderSheet .ord__files li{display:flex;align-items:center;gap:10px;
+    padding:8px 10px 8px 12px;border-radius:10px;background:var(--surface-gray)}
+  #orderSheet .ord__files b{flex:1 1 auto;min-width:0;font-size:13px;font-weight:600;
+    color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #orderSheet .ord__files span{flex:none;font-size:12px;color:var(--text-secondary);
+    font-variant-numeric:tabular-nums}
+  #orderSheet .ord__files button{flex:none;width:26px;height:26px;display:grid;place-items:center;
+    border:0;border-radius:8px;background:transparent;color:var(--v-muted);cursor:pointer;
+    transition:background-color .13s ease,color .13s ease}
+  #orderSheet .ord__files button:hover{background:rgba(20,18,18,.08);color:var(--v-ink)}
+  #orderSheet .ord__files button svg{width:14px;height:14px}
+  #orderSheet .ord__err{margin:8px 0 0;font-size:12px;line-height:1.35;color:var(--v-err)}
+  /* Тач-цель 44px оставлена как в услуге. Раньше я ужимал её до 32px на мыши, чтобы форма
+     влезала без скролла — это было отступление от ДС, снято по просьбе Omar. */
+  @media(max-width:860px){
+    #orderSheet .ord__form{grid-template-columns:1fr}
+    #orderSheet .ord__spec{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:860px){
+    #orderSheet .ord__head{padding:var(--sp-16) 56px var(--sp-16) var(--sp-20)}
+    #orderSheet .ord__scroll{padding:var(--sp-16) var(--sp-20)}
+    #orderSheet .ord__grp--spec{margin-inline:calc(var(--sp-20) * -1);padding-inline:var(--sp-20) !important}
+    #orderSheet .ord__fields{grid-template-columns:1fr}
+    #orderSheet .ord__spec{grid-template-columns:1fr 1fr}
+    /* safe-area: на iPhone нижняя кромка отдана системному индикатору, без запаса кнопка
+       «Отправить заявку» упирается в него */
+    /* Подвал занимал 147px из 844 — шестую часть экрана под цену, кнопку и заметку.
+       Ужат: поля меньше, заметка мельче и в одну-две строки. */
+    #orderSheet .ord__foot{padding:10px var(--sp-20)
+      calc(10px + env(safe-area-inset-bottom,0px));gap:4px var(--sp-16)}
+    #orderSheet .ord__note{font-size:11px;line-height:1.3}
+    #orderSheet .ord__price{font-size:26px}
+    /* Заметка про предоплату во всю ширину, под ценой и кнопкой. В колонке рядом с кнопкой
+       она ложилась в СЕМЬ строк и занимала четверть экрана — на телефоне это дороже,
+       чем сама форма. */
+    #orderSheet .ord__note{grid-column:1 / -1;grid-row:2}
+    /* Шторка во весь экран: рамка по 16px по кругу съедала ~10% высоты, а прокручивать
+       на телефоне и так приходится больше. */
+    #orderSheet{padding:0;place-items:stretch}
+    #orderSheet .sheet__box{width:100%;max-height:none;height:100dvh;border-radius:0}
+    /* На одной колонке спека сверху отжимала первое поле за экран: человек открывает шторку
+       и не видит, что от него хотят. На узких экранах она уходит под поля, на десктопе
+       остаётся первой (проверить заказ дешевле, чем переделывать после ввода). */
+    /* Сводка стояла ВПЛОТНУЮ к чекбоксам согласий: у неё отрицательные поля для растяжки
+       на всю ширину, а верхнего отступа не было вовсе — блок читался как продолжение
+       строки согласия. */
+    #orderSheet .ord__grp--spec{order:2;margin-top:var(--sp-20)!important;
+      padding-top:var(--sp-16)!important}
+  }
+  /* .ord__sum удалён 30.07: <dl> плашек заменён на .ord__price и .ord__spec */
+  .ord__form{display:flex;flex-direction:column;gap:var(--sp-20);margin-top:var(--sp-20)}
+  /* Смысловые группы вместо одного потока: было четыре сущности подряд (файл, опции, контакты,
+     согласия), разделённые единственной линией, и четыре одинаковых чекбокса не читались. */
+  .ord__grp{display:flex;flex-direction:column;gap:10px;padding-top:var(--sp-16);
+    border-top:1px solid rgba(20,18,18,.07)}
+  /* у первой группы линии и отступа нет: сводка выше и так отделяет, иначе под ней дыра */
+  .ord__form > .ord__grp:first-of-type{padding-top:0;border-top:0}
+  .ord__grp .ord__fields{margin-top:2px}
+  .ord__lab{font-family:var(--font-body);font-size:var(--t-label);font-weight:700;
+    letter-spacing:var(--t-label-ls);text-transform:uppercase;color:var(--text-secondary)}
+  .ord__lab em{font-style:normal;letter-spacing:.06em;color:var(--v-muted-3)}
+  .ord__lab-row{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-12)}
+  .ord__req{flex:none;font-size:var(--t-micro);line-height:var(--t-micro-lh);
+    color:var(--text-secondary);text-decoration:underline;text-underline-offset:2px}
+  .ord__req:hover{color:var(--text-primary)}
+  /* Хит-зона мелких текстовых контролов доведена до 24px по высоте. Сам текст остаётся
+     прежнего кегля — растёт только область нажатия, невидимая на глаз. Замер показывал
+     17–21px: на телефоне в такие ссылки промахиваются. Расширяем ТОЛЬКО по вертикали,
+     чтобы соседние зоны в одной строке не наложились друг на друга. */
+  .calc__link,.calc__ext,.show__link,.ord__req{position:relative}
+  .calc__link::after,.calc__ext::after,.show__link::after,.ord__req::after{
+    content:"";position:absolute;left:0;right:0;top:50%;height:24px;
+    transform:translateY(-50%);pointer-events:auto}
+  /* согласия — юридический мелкий шрифт, не опции заказа: тише и плотнее */
+  /* кегль не переопределяем: строка согласия живёт на ступени --t-caption, как в услуге */
+  .ord__legal{display:flex;flex-direction:column;gap:9px}
+
+  /* Режим образца: в сводке одна плашка вместо семи, поэтому двойной отступ читается как дыра
+     (та же грабля, что со скелетоном отзыва). И подсказка про предварительную цену повисает —
+     цены в этом режиме не показываем вообще, её назовёт менеджер. */
+  .sheet--sample .ord__sum,.sheet--sample .ord__form{margin-top:var(--sp-12)}
+  .sheet--sample .ord__art .calc__file{margin-top:0}
+  .ord__art{display:flex;flex-direction:column;gap:8px;padding-bottom:var(--sp-16);
+    border-bottom:1px solid rgba(20,18,18,.07)}
+  .ord__fields{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-12)}
+  .ord__fields .calc__f:nth-child(3){grid-column:1/-1}
+  @media(max-width:640px){.ord__fields{grid-template-columns:1fr}}
+
+  /* ── МОБИЛЬНАЯ ПОЛОСА: одна поверхность у нижней кромки, два состояния ── */
+  /* Состояния взаимоисключающие: в калькуляторе — цена и «Оформить» (.calcbar), на остальной
+     странице — каналы связи и «Заказать» (.rbar). Общая светлая подложка нужна не только для
+     вида: именно по цвету у нижней кромки iOS Safari красит свой тулбар. */
+  .calcbar,.rbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:55;
+    align-items:center;justify-content:space-between;gap:var(--sp-16);
+    padding:12px 16px calc(env(safe-area-inset-bottom,0px) + 12px);
+    background:var(--surface-card);box-shadow:0 -12px 30px -24px rgba(20,18,18,.6),
+    inset 0 1px 0 rgba(20,18,18,.08)}
+  /* Полоса цены не переключается display'ом, а уезжает вниз: display нельзя анимировать, а нам
+     нужна передача эстафеты карточке итога. Пока карточка не видна — полоса внизу; как только
+     она появилась, полоса уходит к ней (сжимается и опускается), чтобы цена не дублировалась. */
+  .calcbar{transform:translateY(115%);transform-origin:50% 100%;opacity:0;
+    will-change:transform,opacity}
+  .calcbar b{display:block;font-family:var(--font-head);font-weight:800;font-size:22px;line-height:1.1}
+  .calcbar span{display:block;font-size:12px;color:var(--text-secondary)}
+  /* то же действие, что «Оформить заказ» → чёрная по правилу воронки (полоса на светлой карточке) */
+  .calcbar__btn{font:inherit;font-weight:800;font-size:15px;color:var(--surface-card);background:var(--v-ink);
+    border:0;border-radius:14px;padding:14px 20px;cursor:pointer;white-space:nowrap}
+  .calcbar--live{display:flex}
+  /* полоса с ценой висит поверх содержимого — даём калькулятору её высоту снизу,
+     иначе последний шаг остаётся под ней и до него не долистать */
+  body.has-calcbar .calc{padding-bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  /* ── КОНТАКТНОЕ СОСТОЯНИЕ: каналы слева, действие справа ── */
+  /* Геометрия та же, что у полосы цены (содержимое слева, чёрная кнопка справа), поэтому при
+     входе в калькулятор и выходе из него полоса не перестраивается, а меняет содержимое. */
+  /* В отличие от полосы цены, эта живёт постоянно и прячется сдвигом вниз: display нельзя
+     анимировать, а переключать его в кадре появления — значит потерять переход. */
+  .rbar{transform:translateY(115%);opacity:0;pointer-events:none;
+    transition:opacity .22s ease,transform .22s ease}
+  @media(max-width:860px){.rbar{display:flex}}
+  .rbar--on{transform:translateY(0);opacity:1;pointer-events:auto}
+  .rbar__chans{display:flex;gap:8px}
+  /* 44×44 — минимальная тап-цель; иконки те же, что в меню «Связаться» на десктопе */
+  .rbar__chan{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;
+    background:var(--surface-gray);color:var(--text-primary);text-decoration:none}
+  .rbar__chan:active{background:var(--surface-gray-2)}
+  .rbar__chan img,.rbar__chan svg{width:20px;height:20px;display:block}
+  /* кнопка забирает весь остаток строки: каналы по содержимому, действие — во всю ширину */
+  .rbar__btn{flex:1;text-align:center;font:inherit;font-weight:800;font-size:15px;
+    color:var(--surface-card);background:var(--v-ink);border-radius:14px;padding:14px 20px;
+    text-decoration:none;white-space:nowrap}
+  .rbar__btn:active{background:var(--v-ink-press)}
+  .rbar__chan:focus-visible,.rbar__btn:focus-visible{outline:3px solid var(--v-ink);outline-offset:2px}
+  /* iPhone SE и прочие 320–360: четыре канала по 44 плюс кнопка не влезали — кнопка уезжала
+     за правый край на 18px (кнопка nowrap и не сжимается). Ужимаем зазоры и сами каналы. */
+  @media(max-width:360px){
+    .rbar{gap:10px;padding-inline:12px}
+    .rbar__chans{gap:6px}
+    .rbar__chan{width:40px;height:40px;border-radius:12px}
+    .rbar__btn{padding:13px 12px;font-size:14.5px}
+  }
+  @media(prefers-reduced-motion:reduce){.rbar{transition:opacity .22s ease}}
+  @media(min-width:861px){.calcbar,.rbar{display:none!important}}
