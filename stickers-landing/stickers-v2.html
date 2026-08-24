@@ -150,7 +150,7 @@
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="../assets/css/fonts.css?v=20260720a">
 <link rel="stylesheet" href="../assets/css/tokens.css?v=20260817a">
-<link rel="stylesheet" href="assets/stickers.css?v=20260821a">
+<link rel="stylesheet" href="assets/stickers.css?v=20260824n">
 </head>
 <body>
 
@@ -172,15 +172,20 @@
     <nav class="hd__nav">
       <!-- «Бизнесу» первым: секция B2B поднята сразу за героя 03.08, а порядок пунктов
            обязан совпадать с порядком секций — иначе подсветка активного прыгает не по списку -->
+      <!-- 24.08: «О нас» и «Отзывы» из меню убраны. После добавления «Контактов» пунктов
+           стало восемь и ряд разъезжался; оба блока человек проходит скроллом по пути,
+           а меню должно вести к шагам воронки. Порядок пунктов обязан совпадать
+           с порядком секций, иначе подсветка активного прыгает не по списку. -->
       <a href="#b2b">Бизнесу</a>
       <!-- было «Стикеры» — дублировало слово из логотипа и не описывало блок -->
       <a href="#vidy">Виды</a>
       <a href="#calc" data-goal="calc_click" data-place="menu">Расчёт</a>
       <a href="#portfolio">Портфолио</a>
-      <a href="#reviews">Отзывы</a>
       <!-- ЧАВО в меню 31.07: туда идут за сроками и «подойдёт ли мой макет». Порядок пунктов
            = порядок секций, иначе подсветка активного при скролле прыгает не по списку.
            Преимущества, Производство и Требования сознательно без ссылок — читаются по пути. -->
+      <!-- 24.08: «Контакты» — правка маркетолога. Стоит перед «Вопросами», как и секция. -->
+      <a href="#showroom">Контакты</a>
       <a href="#faq">Вопросы</a>
     </nav>
     <div class="hd__contacts">
@@ -230,9 +235,11 @@
            H1 был описанием того, что мы делаем; теперь он про выгоду, ключ «3D-стикеры»
            остался на месте и в леттеринге. -->
       <span class="hero__eyebrow">Брендам, селлерам и агентствам</span>
-      <h1><span class="hl">3D-стикеры</span> и стикерпаки, которые замечают</h1>
-      <p class="hero__sub">Со смолой, любой формы и покрытия — от пробной штуки до тиража
-        в 50 000. Считаем цену на странице, срок от трёх дней.</p>
+      <h1><span class="hl">3D-стикеры</span> и стикерпаки, которые заметят</h1>
+      <!-- 24.08: подзаголовок заменён по правке маркетолога. Прежний перечислял условия
+           (смола, тиражи, срок), а те же цифры стоят строкой ниже в .hero__facts. -->
+      <p class="hero__sub">Печатаем объёмный мерч для брендов и людей,
+        чтобы вы выделялись каждый день.</p>
       <div class="hero__cta">
         <a class="btn btn--primary" href="#calc" data-goal="calc_click" data-place="hero">Рассчитать стоимость</a>
         <!-- образец = 1 шт, а калькулятор не считает меньше 10 → открываем шторку заказа
@@ -244,12 +251,14 @@
            «недорого» сознательно не используем: сверки с рынком у нас нет. -->
       <p class="hero__promo"><b>−30%</b> на тиражи от 1000 шт — до 31 августа</p>
       <div class="hero__facts">
-        <div><b>от 3 дней</b>срок изготовления</div>
-        <div><b>от 1 шт</b>пробный стикер</div>
+        <div><b>от 3 дней</b>печатаем в срок</div>
+        <div><b>от 1 шт</b>по выгодной цене</div>
         <!-- было «4 плёнки / включая голографию» — единственный факт про ассортимент в ряду
              про выгоду. Заменено на подтверждённое маркетологом 30.07: «Контроль качества
              каждого тиража, брак переделываем». -->
-        <div><b>переделаем</b>если брак — за нами</div>
+        <!-- 24.08: «переделаем / если брак — за нами» заменено по правке маркетолога.
+             Гарантия на брак не пропала: она осталась в блоке преимуществ и в ЧАВО. -->
+        <div><b>льём больше смолы</b>за те же деньги</div>
       </div>
       <!-- строка соцдоверия убрана 30.07: «Всегда в срок» директор не подтвердил, «Всегда в цвет»
            ни о чём. Место под реальные аргументы качества от маркетолога (полимерная смола,
@@ -309,6 +318,135 @@
   <!-- 2. ВИДЫ И ПОКРЫТИЯ: лента карточек. Картинка-постер сразу, 3D подгружается апгрейдом. -->
   <!-- обёртка светлых секций: один непрерывный фон-переливы на всех -->
   <div class="page-bg">
+  <!-- О НАС / ПРОИЗВОДСТВО (по ТЗ). Цифры про годы и рейтинг НЕ выдумывал — ждём от бизнеса.
+       Медиа по имени файла: about/p1.webp, about/p2.webp, about/v1.mp4 -->
+  <section class="abt" id="o-nas">
+    <div class="abt__in">
+      <div>
+        <!-- Заголовок и лид переписаны 03.08: маркетолог просила акцент на ПОЛНОЙ АВТОМАТИЗАЦИИ
+             и на больших тиражах в короткий срок, а не «всё в кучу». Цифры 10 шт / 3 дня
+             и 50 000 / месяц — дословный ответ директора 30.07, см. ANSWERS.md. -->
+        <!-- «Две линии» — не наше допущение: в акциях их карточки на Яндекс.Картах
+             (снято 05.08) сказано, что установлена ВТОРАЯ машина для автоматической
+             заливки стикеров полимерной смолой. Дословно — в ANSWERS.md. -->
+        <h2>Создаём мерч вместе с брендами</h2>
+        <!-- 24.08: заголовок и текст — дословная правка маркетолога. Прежний заголовок
+             «Смолу льют две автоматические линии» она попросила убрать как отдельный раздел,
+             а его содержание (линии, автоматизация, объём) переехало сюда в её формулировке.
+             Два фото рядом остались от того раздела — тоже её решение. -->
+        <p class="abt__text">Мы — типография МДМпринт, более 10 лет печатаем мерч и брендируем
+          сувениры для наших клиентов, а объёмные 3D-стикеры теперь одно из наших любимых
+          направлений. Поэтому в 2026 мы запустили две новые автоматические линии по заливке
+          смолой и обучили своих дизайнеров и технологов всем нюансам работы — ради стабильного
+          насыщенного цвета и идеальной формы без подтёков. Полная автоматизация производства
+          позволяет печатать более 200 000 стикеров в месяц и гарантирует быстрые сроки,
+          низкую стоимость тиража и минимальную вероятность брака.</p>
+      </div>
+      <!-- Видео производства (about/v1) убрано 03.08: на нём РУЧНАЯ заливка — прямо спорит
+           с тезисом об автоматизации (замечание маркетолога). Ждём съёмку линии, слот вернуть
+           одной строкой: <figure class="abt__cell abt__cell--tall" data-media="about/v1">. -->
+      <div class="abt__media">
+        <figure class="abt__cell" data-media="about/p1">
+          <span class="abt__ph"><b>Фото</b>оборудование</span>
+        </figure>
+        <figure class="abt__cell" data-media="about/p2">
+          <span class="abt__ph"><b>Фото</b>цех</span>
+        </figure>
+      </div>
+    </div>
+    <!-- Факты плашками, а не списком (правка маркетолога 03.08: «раскрыть отдельными плашками»).
+         Порядок по важности: сначала автоматизация и тиражи, потом материал и приёмка. -->
+    <div class="abt__cards">
+      <article class="abt__card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="9" width="16" height="8" rx="1.6"/><path d="M7 9V4.5h10V9M7 17v2.5h10V17"/></svg>
+        <h3>Две линии заливки</h3>
+        <p>Вторую машину поставили, чтобы тираж в тысячи штук не превращался в недели ожидания.</p>
+      </article>
+      <article class="abt__card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v5l3.2 2"/><circle cx="12" cy="12" r="9.2"/></svg>
+        <h3>Тираж от 10 штук до 50 000</h3>
+        <p>Срок от трёх дней. На пятьдесят тысяч берём месяц — называем дату до оплаты.</p>
+      </article>
+      <article class="abt__card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.4" cy="5.4" r="2.4"/><circle cx="5.4" cy="18.6" r="2.4"/><path d="M7.6 7 20 18.8M7.6 17 20 5.2"/></svg>
+        <h3>Плоттерная резка на месте</h3>
+        <p>Фигурная высечка по контуру любого рисунка — без сторонних подрядчиков и лишних дней.</p>
+      </article>
+      <!-- аргументы маркетолога 30.07, см. ANSWERS.md -->
+      <article class="abt__card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7v10l8 4 8-4V7l-8-4Z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg>
+        <h3>Полимерная смола</h3>
+        <!-- 24.08: убрано «в отличие от дешёвой эпоксидки». По ответу директора эпоксидную
+             смолу мы сами льём на тиражах до 100 штук — страница ругала собственный
+             материал на малых заказах. Обещание то же, сравнения нет. -->
+        <p>Мягкая и эластичная, с эффектом «антистресс»: не дубеет со временем и не желтеет.</p>
+      </article>
+      <article class="abt__card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v6c0 4.4-3.1 8.2-7.5 9.4C7.6 20.2 4.5 16.4 4.5 12V6L12 3Z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg>
+        <h3>Контроль каждого тиража</h3>
+        <p>Смотрим партию перед отправкой. Брак переделываем.</p>
+      </article>
+      <!-- факты от директора 29.07: минимальный заказ и адреса производства -->
+      <article class="abt__card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M10.6 9.2 12.6 8v8M10.4 16h4.4"/></svg>
+        <!-- цены и условия дал бизнес 05.08 -->
+        <h3>Пробный стикер — 1 700 ₽</h3>
+        <p>Одна штука за 3 дня: посмотрите вживую, как ляжет смола на ваш макет. Стикерпак —
+          2 500 ₽. Закажете тираж от 20 000 ₽ — стоимость пробника зачтём в него.</p>
+      </article>
+      <article class="abt__card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M5 20V9l7-5 7 5v11"/><path d="M9.5 20v-5h5v5"/></svg>
+        <h3>Своя типография в Москве</h3>
+        <p>Производство на Автозаводской, офис на Орджоникидзе — можно приехать и забрать.</p>
+      </article>
+      <article class="abt__card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+        <h3>Самовывоз и доставка</h3>
+        <p>Забрать можно с производства или из офиса. Курьер по Москве и области, в регионы —
+          СДЭК или другой перевозчик на выбор.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 24.08: «С кем мы работали» вынесено из блока для брендов в свою секцию
+       и поставлено сразу за «О нас» — порядок блоков по правке маркетолога. -->
+  <section class="b2b b2b--logos" id="clients">
+    <div class="b2b__in">
+      <!-- 24.08: h2 без класса .b2b__cap. Класс задавал кегль «уровнем ниже секции»
+           (28px против 42px) и был уместен, пока заголовок жил ВНУТРИ блока для брендов.
+           Теперь это своя секция, и мелкий заголовок читался как разнобой. -->
+      <h2>С кем мы работали</h2>
+      <div class="b2b__logos">
+          <!-- Логотипы взяты из блока «Клиенты и их благодарности» на mdmprint.ru: это уже
+               опубликованные самой компанией знаки, к каждому на их сайте приложено
+               благодарственное письмо. Выбор крупных клиентов — Omar 05.08.
+               ВАЖНО: блок говорит «работали», а не «печатали 3D-стикеры» — часть этих
+               клиентов заказывала полиграфию. Рисовать им стикеры нельзя. -->
+          <div class="b2b__logo" data-logo="b2b/logo-rzd.svg" data-name="РЖД">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-sber.svg" data-name="Сбер">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-bam.svg" data-name="Бамстройпуть">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-mosquar.svg" data-name="Москвариум">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-prime.svg" data-name="Прайм">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-genpro.svg" data-name="Генпро">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-golubka.svg" data-name="Голубка">Логотип</div>
+          <!-- vitobox собран из двух присланных картинок (иконка + надпись) в один знак:
+               белый фон снят, поэтому плашка просвечивает, как у векторных соседей -->
+          <div class="b2b__logo" data-logo="b2b/logo-vitobox.webp" data-name="Vitobox">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-ferro.svg" data-name="Феррострой">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-endomet.svg" data-name="Эндомедпроект">Логотип</div>
+          <div class="b2b__logo" data-logo="b2b/logo-oil.webp" data-name="Oil Energy">Логотип</div>
+          <div class="b2b__logo b2b__logo--you">Место для вашего стикера</div>
+      </div>
+    </div>
+  </section>
   <!-- B2B поднят сразу за героя 03.08: маркетолог считает этот блок важнее, чем в исходном ТЗ —
        лендинг заточен под бренды, поэтому «зачем это бренду» человек читает до видов и цены.
        Заголовок — её формулировка. Логотипы по имени файла: b2b/logo-1.webp… -->
@@ -316,38 +454,42 @@
     <div class="b2b__in">
       <div class="b2b__head">
         <div>
-          <h2>Помогаем брендам выделяться</h2>
-          <p class="b2b__lead">Селлерам на маркетплейсах, рекламным агентствам и дизайнерам:
-            объёмный стикер со смолой замечают там, где плоскую наклейку просто не видят.
-            Тираж от небольшого, срок от 3 дней, макет проверим и доработаем.</p>
+          <h2>3D-стикеры нужны каждому бренду</h2>
+          <!-- 24.08: лид переписан под новый заголовок и укорочен вдвое. Совсем без него
+               шапка блока разваливалась: заголовок в одну строку слева и крупное фото
+               справа, между ними дыра во всю высоту кадра. -->
+          <p class="b2b__lead">Селлерам, агентствам и дизайнерам: объёмный стикер
+            замечают там, где плоскую наклейку просто не видят.</p>
         </div>
         <!-- продукт в шапке секции: стикерпак в упаковке — ровно то, что покупает B2B -->
         <figure class="b2b__shot"><img src="b2b/pack.webp" width="900" height="900" alt="Стикерпак в упаковке" loading="lazy" decoding="async"></figure>
       </div>
       <ul class="b2b__grid">
         <li class="b2b__item">
-          <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4v13h16V7Z"/><path d="M2 7h20v4H2zM12 7v13M12 7S9.5 3 7.5 3a2.5 2.5 0 0 0 0 5M12 7s2.5-4 4.5-4a2.5 2.5 0 0 1 0 5"/></svg>Подарок</span>
-          <h3>Подарок, который клеят</h3>
-          <p>Стикерпак кладём в заказ или дарим на встрече — клиент сам выберет, куда наклеить:
-            ноутбук, термос, телефон, чехол.</p>
+          <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7H4v13h16V7Z"/><path d="M2 7h20v4H2zM12 7v13M12 7S9.5 3 7.5 3a2.5 2.5 0 0 0 0 5M12 7s2.5-4 4.5-4a2.5 2.5 0 0 1 0 5"/></svg>Дайте бонус к заказу</span>
+          <h3>Сделайте подарок, который отметят</h3>
+          <p>Кладём прикольный стикер в заказ, человек с радостью поделится им в соцсетях
+            и оставит о вас отзыв.</p>
         </li>
         <!-- Второй сценарий (маркетолог 10.08): стикером брендируют СВОИ подарки.
              Формулировки осторожные: «дешевле» — про печать на каждом изделии, без цифр. -->
         <li class="b2b__item">
-          <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2c0 .5.2 1 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4Z"/><path d="M7.5 7.5h.01"/></svg>Экономия</span>
-          <h3>Брендируйте свои подарки</h3>
-          <p>Наклейка превращает в фирменный подарок что угодно — коробку, блокнот, бутылку.
-            Дешевле, чем печатать логотип на каждом изделии, и не нужен большой тираж.</p>
+          <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2c0 .5.2 1 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4Z"/><path d="M7.5 7.5h.01"/></svg>Сэкономьте на мерче</span>
+          <h3>Дарите стикерпаки на мероприятиях</h3>
+          <p>Клиент сам выберет, куда его наклеить. Дешевле и круче обычной раздатки: блокноты
+            с лого, ручки, пакеты и так далее.</p>
         </li>
         <li class="b2b__item">
-          <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Охват</span>
-          <h3>Реклама, которая работает годами</h3>
-          <p>Клиент видит стикер каждый день — на ноутбуке, машине, бутылке. Бренд остаётся в поле зрения.</p>
+          <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>Получайте охваты</span>
+          <h3>Бесплатная реклама, которая работает на вас</h3>
+          <p>Клиент и окружающие видят ваши стикеры каждый день: на ноутбуке, телефоне, кружке.
+            Бренд остаётся в поле зрения надолго.</p>
         </li>
         <li class="b2b__item">
-          <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.4"/><circle cx="17.5" cy="10.5" r="1.4"/><circle cx="8.5" cy="7.5" r="1.4"/><circle cx="6.5" cy="12.5" r="1.4"/><path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.6-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4A4.7 4.7 0 0 0 22 10.6C22 5.9 17.5 2 12 2Z"/></svg>Бренд</span>
-          <h3>Под ваш фирменный стиль</h3>
-          <p>Печатаем по вашему макету или дорисуем: цвет, форма и контур высечки — под бренд.</p>
+          <span class="b2b__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r="1.4"/><circle cx="17.5" cy="10.5" r="1.4"/><circle cx="8.5" cy="7.5" r="1.4"/><circle cx="6.5" cy="12.5" r="1.4"/><path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.6-1.4-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4A4.7 4.7 0 0 0 22 10.6C22 5.9 17.5 2 12 2Z"/></svg>Брендируйте сами</span>
+          <h3>Просто всё наклейте</h3>
+          <p>Выбираете подарки для мерча, мы печатаем стикеры, вы приклеиваете и дарите своим
+            клиентам. Поверхность любая. С дизайном поможем.</p>
         </li>
       </ul>
       <!-- ФОТО-СРАВНЕНИЕ (просьба маркетолога 03.08): печать → плоская наклейка → 3D со смолой.
@@ -382,28 +524,6 @@
           </figure>
         </div>
       </div>
-      <h3 class="b2b__cap">С кем мы работали</h3>
-      <div class="b2b__logos">
-          <!-- Логотипы взяты из блока «Клиенты и их благодарности» на mdmprint.ru: это уже
-               опубликованные самой компанией знаки, к каждому на их сайте приложено
-               благодарственное письмо. Выбор крупных клиентов — Omar 05.08.
-               ВАЖНО: блок говорит «работали», а не «печатали 3D-стикеры» — часть этих
-               клиентов заказывала полиграфию. Рисовать им стикеры нельзя. -->
-          <div class="b2b__logo" data-logo="b2b/logo-rzd.svg" data-name="РЖД">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-sber.svg" data-name="Сбер">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-bam.svg" data-name="Бамстройпуть">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-mosquar.svg" data-name="Москвариум">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-prime.svg" data-name="Прайм">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-genpro.svg" data-name="Генпро">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-golubka.svg" data-name="Голубка">Логотип</div>
-          <!-- vitobox собран из двух присланных картинок (иконка + надпись) в один знак:
-               белый фон снят, поэтому плашка просвечивает, как у векторных соседей -->
-          <div class="b2b__logo" data-logo="b2b/logo-vitobox.webp" data-name="Vitobox">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-ferro.svg" data-name="Феррострой">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-endomet.svg" data-name="Эндомедпроект">Логотип</div>
-          <div class="b2b__logo" data-logo="b2b/logo-oil.webp" data-name="Oil Energy">Логотип</div>
-          <div class="b2b__logo b2b__logo--you">Место для вашего стикера</div>
-      </div>
     </div>
   </section>
   <section class="forms" id="vidy">
@@ -419,36 +539,36 @@
       <article class="fcard fcard--glow">
         <h3>Светится в темноте</h3>
         <p>Это покрытие, а не форма: светиться может любая высечка. Гейминг, техника, ночной мерч.</p>
-        <div class="fcard__art">
-          <img src="models/card-m1-glow.webp" width="584" height="438" alt="Круглый светящийся стикер с надписью «работает не трогай»" loading="lazy" decoding="async">
+        <div class="fcard__art fcard__art--dark">
+          <img src="models/card-m1-glow.webp?v=20260824b" width="584" height="438" alt="Круглый светящийся стикер с надписью «работает не трогай»" loading="lazy" decoding="async">
         </div>
       </article>
       <article class="fcard fcard--pill">
         <h3>Пилюля</h3>
         <p>Упаковка и коробки — влезает название бренда со слоганом.</p>
-        <div class="fcard__art">
-          <img src="models/card-m2.webp" width="584" height="438" alt="Стикер-пилюля с логотипом SALT" loading="lazy" decoding="async">
+        <div class="fcard__art fcard__art--plate">
+          <img src="models/card-m2.webp?v=20260824b" width="584" height="438" alt="Стикер-пилюля с логотипом SALT" loading="lazy" decoding="async">
         </div>
       </article>
       <article class="fcard fcard--diecut">
         <h3>Фигурный по контуру</h3>
         <p>Персонажи и леттеринг — режем точно по рисунку.</p>
-        <div class="fcard__art">
-          <img src="models/card-m3.webp" width="584" height="438" alt="Фигурный стикер с надписью mellow, вырезанный по контуру" loading="lazy" decoding="async">
+        <div class="fcard__art fcard__art--plate">
+          <img src="models/card-m3.webp?v=20260824b" width="584" height="438" alt="Фигурный стикер с надписью mellow, вырезанный по контуру" loading="lazy" decoding="async">
         </div>
       </article>
       <article class="fcard fcard--rect">
         <h3>Прямоугольный</h3>
         <p>Техника и ноутбуки — влезает иллюстрация целиком с деталями.</p>
-        <div class="fcard__art">
-          <img src="models/card-m4.webp" width="584" height="438" alt="Прямоугольный стикер с иллюстрацией Санкт-Петербурга" loading="lazy" decoding="async">
+        <div class="fcard__art fcard__art--plate">
+          <img src="models/card-m4.webp?v=20260824c" width="584" height="438" alt="Прямоугольный стикер с иллюстрацией Санкт-Петербурга" loading="lazy" decoding="async">
         </div>
       </article>
       <article class="fcard fcard--round">
         <h3>Круглый</h3>
         <p>Самая ходовая форма: логотип, эмблема, значок. Мерч, раздатка, подарки клиентам.</p>
-        <div class="fcard__art">
-          <img src="models/card-m5.webp" width="584" height="438" alt="Круглый стикер с логотипом NORDA" loading="lazy" decoding="async">
+        <div class="fcard__art fcard__art--plate">
+          <img src="models/card-m5.webp?v=20260824b" width="584" height="438" alt="Круглый стикер с логотипом NORDA" loading="lazy" decoding="async">
         </div>
       </article>
     </div>
@@ -551,19 +671,23 @@
                пак значило бы занижать. Вопрос 20 в ANSWERS.md. -->
           <p class="calc__mark" id="calcMark" hidden></p>
           <button class="calc__cta" type="button" id="orderOpen">Оформить заказ</button>
-          <p class="calc__hint"><button class="calc__link" type="button" id="shipOpen">Доставка и самовывоз</button>
-            <!-- width/height обязательны: без них SVG без размеров растягивается до 300×150 -->
-            <a class="calc__ext" href="https://mdmprint.ru/publichnaya-oferta" target="_blank" rel="noopener">Оферта<svg
-              width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
-              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></a></p>
+          <!-- 24.08: оферта убрана отсюда на форму заказа (правка маркетолога): под расчётом
+               человек ещё выбирает, а не соглашается на условия. «Доставка и самовывоз»
+               осталась одна и стала заметнее — она отвечает на вопрос, который возникает
+               ровно здесь, вместе с ценой. -->
+          <p class="calc__hint"><button class="calc__link calc__link--lead" type="button" id="shipOpen">Условия доставки, самовывоз и оплата</button></p>
         </div>
         <!-- Крупный тираж — просьба маркетолога 03.08: завлечь больших клиентов прямо у расчёта.
              Порога в штуках нет сознательно: маркетолог его не называла, а прайс выше 1000 шт
              мы всё равно не знаем. Жёлтая = выгода, кнопка чёрная = действие (FUNNEL.md §5). -->
         <aside class="calc__big">
           <b>У вас большой тираж?</b>
-          <p>Посчитаем отдельно и сделаем индивидуальный оффер — с ценой за штуку ниже расчётной.</p>
-          <a class="calc__big-cta" href="#zayavka">Обсудить тираж</a>
+          <!-- 24.08: текст и подпись кнопки — правка маркетолога. Цифру она дала «более 50 000
+               в месяц»; в блоке «О нас» её же текст говорит «более 200 000». Расхождение
+               оставлено по решению Omar — обе формулировки её. -->
+          <p>Сделаем индивидуальный расчёт стоимости. Наше производство может печатать
+            более 50 000 стикеров в месяц.</p>
+          <a class="calc__big-cta" href="#zayavka">Обсудить проект</a>
         </aside>
         </div>
       </div>
@@ -616,12 +740,13 @@
       <!-- Заголовок переписан 03.08: «Печать с нами — это легко и быстро» ничего не обещало
            про сам продукт. Маркетолог просила сказать, что стикеры крутые, и дальше обосновать —
            карточки ниже как раз обоснования. -->
-      <h2>Почему наши стикеры крутые</h2>
+      <!-- 24.08: заголовок — правка маркетолога. -->
+      <h2>Почему наши 3D-стикеры — это круто</h2>
       <div class="adv__grid">
           <article class="adv__card adv__cell">
           <span class="adv__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.6"/><path d="M12 1.8v2.6M12 19.6v2.6M1.8 12h2.6M19.6 12h2.6M4.8 4.8l1.9 1.9M17.3 17.3l1.9 1.9M19.2 4.8l-1.9 1.9M6.7 17.3l-1.9 1.9"/></svg>Цвет</span>
-          <h3>Яркая картинка, которую не стереть</h3>
+          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.6"/><path d="M12 1.8v2.6M12 19.6v2.6M1.8 12h2.6M19.6 12h2.6M4.8 4.8l1.9 1.9M17.3 17.3l1.9 1.9M19.2 4.8l-1.9 1.9M6.7 17.3l-1.9 1.9"/></svg>Яркий цвет</span>
+          <h3>Наклейка, которая не стирается и не выцветает</h3>
           </article>
           <figure class="adv__media adv__cell" data-media="adv/p1">
             <span class="adv__ph"><b>Фото</b>работа</span>
@@ -629,8 +754,8 @@
           <div class="adv__cell adv__empty" aria-hidden="true"></div>
           <article class="adv__card adv__cell">
           <span class="adv__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.2 3.4h9.9l5.9 5.9v10.3a1.6 1.6 0 0 1-1.6 1.6H4.2a1.6 1.6 0 0 1-1.6-1.6V5a1.6 1.6 0 0 1 1.6-1.6Z"/><path d="M14.1 3.4v5.3a.6.6 0 0 0 .6.6h5.3"/></svg>Наклейка</span>
-          <h3>Легко клеятся и легко снимаются</h3>
+          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.2 3.4h9.9l5.9 5.9v10.3a1.6 1.6 0 0 1-1.6 1.6H4.2a1.6 1.6 0 0 1-1.6-1.6V5a1.6 1.6 0 0 1 1.6-1.6Z"/><path d="M14.1 3.4v5.3a.6.6 0 0 0 .6.6h5.3"/></svg>Удобство</span>
+          <h3>Быстро клеятся, крепко держатся, но легко снимаются</h3>
           <p>Не оставляют липких следов.</p>
           </article>
           <figure class="adv__media adv__cell" data-media="adv/v1">
@@ -638,8 +763,8 @@
           </figure>
           <article class="adv__card adv__cell">
           <span class="adv__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.4" cy="5.4" r="2.8"/><circle cx="5.4" cy="18.6" r="2.8"/><path d="M7.8 7.1 21 19.2M7.8 16.9 21 4.8"/></svg>Резка</span>
-          <h3>Чёткие края и точная резка</h3>
+          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.4" cy="5.4" r="2.8"/><circle cx="5.4" cy="18.6" r="2.8"/><path d="M7.8 7.1 21 19.2M7.8 16.9 21 4.8"/></svg>Чёткая форма</span>
+          <h3>Режем любую форму на плоттере с высокой точностью</h3>
           </article>
           <article class="adv__card adv__cell">
           <span class="adv__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -652,108 +777,21 @@
           </figure>
           <article class="adv__card adv__cell">
           <span class="adv__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.2c4.4 5.2 6.8 8.6 6.8 11.6a6.8 6.8 0 0 1-13.6 0c0-3 2.4-6.4 6.8-11.6Z"/></svg>Смола</span>
-          <h3>Никаких подтёков смолы</h3>
+          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.2c4.4 5.2 6.8 8.6 6.8 11.6a6.8 6.8 0 0 1-13.6 0c0-3 2.4-6.4 6.8-11.6Z"/></svg>Полимерная смола</span>
+          <h3>Мягкая, с эффектом «антистресс»</h3>
+          <p>Не дубеет со временем, не желтеет и держит форму без подтёков.</p>
           </article>
           <div class="adv__cell adv__empty" aria-hidden="true"></div>
           <article class="adv__card adv__cell">
           <span class="adv__badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.6" y="5" width="18.8" height="12" rx="1.8"/><path d="M1.4 20h21.2"/></svg>Поверхности</span>
-          <h3>Подходит для любых поверхностей</h3>
-          <p>Чехол телефона, ноутбук, скейтборд, бутылка, холодильник.</p>
+          stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.6" y="5" width="18.8" height="12" rx="1.8"/><path d="M1.4 20h21.2"/></svg>Для любых поверхностей</span>
+          <h3>Клеится куда угодно</h3>
+          <p>Чехол телефона, ноутбук, скейтборд, бутылка, блокнот, холодильник.</p>
           </article>
           <figure class="adv__media adv__cell" data-media="adv/v2">
             <span class="adv__ph"><b>Видео</b>9:16 · заливка смолой</span>
           </figure>
       </div>
-    </div>
-  </section>  <!-- О НАС / ПРОИЗВОДСТВО (по ТЗ). Цифры про годы и рейтинг НЕ выдумывал — ждём от бизнеса.
-       Медиа по имени файла: about/p1.webp, about/p2.webp, about/v1.mp4 -->
-  <section class="abt" id="o-nas">
-    <div class="abt__in">
-      <div>
-        <!-- Заголовок и лид переписаны 03.08: маркетолог просила акцент на ПОЛНОЙ АВТОМАТИЗАЦИИ
-             и на больших тиражах в короткий срок, а не «всё в кучу». Цифры 10 шт / 3 дня
-             и 50 000 / месяц — дословный ответ директора 30.07, см. ANSWERS.md. -->
-        <!-- «Две линии» — не наше допущение: в акциях их карточки на Яндекс.Картах
-             (снято 05.08) сказано, что установлена ВТОРАЯ машина для автоматической
-             заливки стикеров полимерной смолой. Дословно — в ANSWERS.md. -->
-        <h2>Смолу льют две автоматические линии</h2>
-        <!-- «типография полного цикла» и «ламинация» убраны 30.07: ни в ТЗ, ни в ответах,
-             ни на их сайте этого нет. Осталось подтверждённое ТЗ оборудование. -->
-        <p class="abt__text">Заливка идёт потоком, а не вручную по одному стикеру, и линий
-          на производстве две — поэтому большой тираж не растягивает срок. Десять штук делаем
-          за три дня, пятьдесят тысяч — за месяц. Печать и фигурная резка тоже свои,
-          без подрядчиков.</p>
-      </div>
-      <!-- Видео производства (about/v1) убрано 03.08: на нём РУЧНАЯ заливка — прямо спорит
-           с тезисом об автоматизации (замечание маркетолога). Ждём съёмку линии, слот вернуть
-           одной строкой: <figure class="abt__cell abt__cell--tall" data-media="about/v1">. -->
-      <div class="abt__media">
-        <figure class="abt__cell" data-media="about/p1">
-          <span class="abt__ph"><b>Фото</b>оборудование</span>
-        </figure>
-        <figure class="abt__cell" data-media="about/p2">
-          <span class="abt__ph"><b>Фото</b>цех</span>
-        </figure>
-      </div>
-    </div>
-    <!-- Факты плашками, а не списком (правка маркетолога 03.08: «раскрыть отдельными плашками»).
-         Порядок по важности: сначала автоматизация и тиражи, потом материал и приёмка. -->
-    <div class="abt__cards">
-      <article class="abt__card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="9" width="16" height="8" rx="1.6"/><path d="M7 9V4.5h10V9M7 17v2.5h10V17"/></svg>
-        <h3>Две линии заливки</h3>
-        <p>Вторую машину поставили, чтобы тираж в тысячи штук не превращался в недели ожидания.</p>
-      </article>
-      <article class="abt__card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v5l3.2 2"/><circle cx="12" cy="12" r="9.2"/></svg>
-        <h3>Тираж от 10 штук до 50 000</h3>
-        <p>Срок от трёх дней. На пятьдесят тысяч берём месяц — называем дату до оплаты.</p>
-      </article>
-      <article class="abt__card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.4" cy="5.4" r="2.4"/><circle cx="5.4" cy="18.6" r="2.4"/><path d="M7.6 7 20 18.8M7.6 17 20 5.2"/></svg>
-        <h3>Плоттерная резка на месте</h3>
-        <p>Фигурная высечка по контуру любого рисунка — без сторонних подрядчиков и лишних дней.</p>
-      </article>
-      <!-- аргументы маркетолога 30.07, см. ANSWERS.md -->
-      <article class="abt__card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 7v10l8 4 8-4V7l-8-4Z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg>
-        <h3>Полимерная смола</h3>
-        <p>Мягкая и эластичная: не дубеет со временем и не желтеет, в отличие от дешёвой эпоксидки.</p>
-      </article>
-      <article class="abt__card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v6c0 4.4-3.1 8.2-7.5 9.4C7.6 20.2 4.5 16.4 4.5 12V6L12 3Z"/><path d="m9 12 2.2 2.2L15.4 10"/></svg>
-        <h3>Контроль каждого тиража</h3>
-        <p>Смотрим партию перед отправкой. Брак переделываем.</p>
-      </article>
-      <!-- факты от директора 29.07: минимальный заказ и адреса производства -->
-      <article class="abt__card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.2"/><path d="M10.6 9.2 12.6 8v8M10.4 16h4.4"/></svg>
-        <!-- цены и условия дал бизнес 05.08 -->
-        <h3>Пробный стикер — 1 700 ₽</h3>
-        <p>Одна штука за 3 дня: посмотрите вживую, как ляжет смола на ваш макет. Стикерпак —
-          2 500 ₽. Закажете тираж от 20 000 ₽ — стоимость пробника зачтём в него.</p>
-      </article>
-      <article class="abt__card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M5 20V9l7-5 7 5v11"/><path d="M9.5 20v-5h5v5"/></svg>
-        <h3>Своя типография в Москве</h3>
-        <p>Производство на Автозаводской, офис на Орджоникидзе — можно приехать и забрать.</p>
-      </article>
-      <article class="abt__card">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
-        <h3>Самовывоз и доставка</h3>
-        <p>Забрать можно с производства или из офиса. Курьер по Москве и области, в регионы —
-          СДЭК или другой перевозчик на выбор.</p>
-      </article>
     </div>
   </section>
   <!-- ОТЗЫВЫ (по ТЗ). Тексты НЕ выдуманы: слоты под реальные скрины из Я.Карт, 2ГИС, соцсетей.
@@ -823,12 +861,20 @@
         <!-- Слово «шоурум» вернулось: Omar подтвердил 05.08, что в офисе он есть.
              До этого писали обтекаемо «приезжайте посмотреть», потому что маркетолог просила
              звать в шоурум, а подтверждения его существования у нас не было. -->
+        <!-- 24.08: надзаголовок «Контакты» — правка маркетолога, вместе с пунктом в меню. -->
+        <span class="show__eyebrow">Контакты</span>
         <h2>Приезжайте в наш шоурум</h2>
         <p>Покажем образцы разных плёнок и толщины смолы, дадим потрогать готовые стикеры
           и подскажем, что лучше сядет на вашу упаковку. Без записи и без обязательств.</p>
       </div>
       <div class="show__meta">
         <p class="show__addr"><b>Москва, ул. Орджоникидзе, 11с1А</b>подъезд 29, ежедневно 9:00–22:00</p>
+        <!-- 24.08, аудит: пункт меню «Контакты» ведёт сюда, а телефона и почты в блоке не было —
+             только адрес и карта. Они жили в шапке и футере, то есть человек, пришедший
+             по прямой ссылке на контакты, их не находил. -->
+        <p class="show__contacts">
+          <a href="tel:+74952561000" data-goal="phone" data-place="showroom">+7 (495) 256-10-00</a>
+          <a href="mailto:zakaz@mdmprint.ru" data-goal="mail" data-place="showroom">zakaz@mdmprint.ru</a></p>
         <div class="show__acts">
           <a class="show__btn" href="https://yandex.ru/maps/?text=Москва, улица Орджоникидзе, 11с1А"
             target="_blank" rel="noopener">Показать на карте</a>
@@ -1181,6 +1227,6 @@
 <!-- Рантайм model-viewer (модульный скрипт = defer, первый экран не блокирует).
      В бою запинить конкретную версию. -->
 <script type="module" src="https://unpkg.com/@google/model-viewer@4.3.1/dist/model-viewer.min.js"></script>
-<script src="assets/stickers.js?v=20260821a"></script>
+<script src="assets/stickers.js?v=20260824e"></script>
 </body>
 </html>

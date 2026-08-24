@@ -301,8 +301,10 @@
   .hero__promo b{display:inline-flex;align-items:center;padding:6px 11px;border-radius:999px;
     background:var(--v-ink);color:var(--brand);font-family:var(--font-head);font-size:14px;
     letter-spacing:.005em}
+  /* 24.08, аудит: подписи под цифрами шли цветом --v-muted и давали контраст 3,54 при 12,5px —
+     ниже нормы 4,5 для мелкого текста, причём на первом экране. Взят --v-text-warm (5,12). */
   .hero__facts{display:flex;gap:26px;flex-wrap:wrap;margin-top:24px;font-size:12.5px;
-    line-height:1.35;color:var(--v-muted)}
+    line-height:1.35;color:var(--v-text-warm)}
   .hero__facts b{display:block;font-size:14.5px;font-weight:800;color:var(--text-primary);
     line-height:1.3}
   /* кнопки — простые тихие (акцент на стикерах) */
@@ -339,6 +341,12 @@
     transition:background .15s ease,transform .12s ease,box-shadow .12s ease;
     box-shadow:inset 0 1.5px 0 rgba(255,255,255,.34),inset 0 -2px 0 rgba(0,0,0,.55),
       0 2px 0 rgba(20,18,18,.45),0 12px 22px -12px rgba(20,18,18,.85)}
+  /* 24.08: общий transition выше затирал раскрытие кнопки шапки — она появлялась рывком
+     вместо выезда. Правило объёмных кнопок идёт ПОЗЖЕ .hd__cta и побеждало по порядку
+     (проверено getComputedStyle: transition-property был background/transform/box-shadow).
+     Возвращаем ширину, поля и прозрачность, объёмные свойства оставляем. */
+  .hd__cta{transition:max-width .3s ease,padding .3s ease,margin .3s ease,opacity .2s ease,
+    background .15s ease,transform .12s ease,box-shadow .12s ease}
   .btn--primary::before,.hd__cta::before,.calc__cta::before,.calc__big-cta::before,
   .show__btn::before,.rbar__btn::before,.calcbar__btn::before{
     content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;
@@ -551,6 +559,15 @@
   /* Кадры вместо живых моделей: интерактив в карточках убран, пять GLB на 30 МБ больше
      не грузятся. Постеры сняты с тех же моделей, поэтому картинка не изменилась. */
   .fcard__art img{width:100%;height:100%;object-fit:cover;display:block}
+  /* 24.08: снятые кадры приходят на белом фоне, а не на серой плитке. multiply гасит белое
+     об белую карточку — фон исчезает, остаётся стикер со своей тенью. Ставится ПОКАРТОЧНО:
+     на тёмной .fcard--glow multiply съел бы кадр целиком, а у старых рендеров подложка
+     серая и от multiply только грязнеет. Класс уходит по мере замены кадров. */
+  .fcard__art--plate img{mix-blend-mode:multiply}
+  /* Тёмная карточка: кадр снят на чёрном, поэтому зеркальный приём — screen. Чёрное поле
+     кадра исчезает, свечение и белый кант проходят, и зелёное гало карточки видно
+     сквозь кадр (иначе непрозрачный прямоугольник обрезал бы его по краям). */
+  .fcard__art--dark{mix-blend-mode:screen}
   /* Первая карточка тёмная — здесь темнота это СМЫСЛ: свечение видно только в темноте.
      Зелёное гало под стикером — на CSS, радиальным градиентом в ::after кадра. */
   /* Гало на ВСЕЙ карточке, а не внутри кадра: внутри его закрывал белый лист и видно было
@@ -566,24 +583,30 @@
   .lane__foot{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-16);
     max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
   .lane__nav{display:flex;gap:8px}
-  .lane__btn{display:grid;place-items:center;width:40px;height:40px;border:0;cursor:pointer;
-    border-radius:14px;background:transparent;color:var(--text-primary);
-    box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.3);
+  /* 24.08: маркетолог — «стрелки прокрутки внизу плохо заметны, кнопка посчитать тираж тоже».
+     Обе были контуром на прозрачном: на песочном фоне секции такой контур почти пропадает.
+     Дали им белую поверхность, плотный контур и тень — читаются, но плотными чёрными
+     не становятся: блок это ступень «убедиться», плотный акцент здесь спорил бы
+     и с кнопкой шапки, и с кнопкой самого калькулятора. */
+  .lane__btn{display:grid;place-items:center;width:44px;height:44px;border:0;cursor:pointer;
+    border-radius:14px;background:var(--surface-card);color:var(--text-primary);
+    box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.45),0 2px 8px -4px rgba(20,18,18,.35);
     transition:background-color .15s ease,box-shadow .15s ease,opacity .15s ease}
   .lane__btn svg{width:17px;height:17px}
-  .lane__btn:hover{background:rgba(255,255,255,.8);box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.45)}
+  .lane__btn:hover{box-shadow:inset 0 0 0 1.5px var(--text-primary),0 4px 12px -5px rgba(20,18,18,.45)}
   /* на краях кнопка гаснет, но остаётся на месте — иначе вторая прыгает */
-  .lane__btn[disabled]{opacity:.32;cursor:default;box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.18)}
-  .lane__btn[disabled]:hover{background:transparent}
+  .lane__btn[disabled]{opacity:.4;cursor:default;box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.22)}
+  .lane__btn[disabled]:hover{box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.22)}
   /* тот же язык, что у стрелок рядом: контур 1.5px, радиус 14px, высота 40px в один уровень.
      Плотной чёрной не делаем — блок это ступень «убедиться», плотный акцент тут спорил бы
      и с CTA шапки, и с кнопкой самого калькулятора. */
-  .lane__calc{display:inline-flex;align-items:center;gap:9px;height:40px;padding:0 19px;
-    border-radius:14px;text-decoration:none;font-weight:800;font-size:15px;
-    color:var(--text-primary);box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.3);
+  .lane__calc{display:inline-flex;align-items:center;gap:9px;height:44px;padding:0 22px;
+    border-radius:14px;text-decoration:none;font-weight:800;font-size:15.5px;
+    color:var(--text-primary);background:var(--surface-card);
+    box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.45),0 2px 8px -4px rgba(20,18,18,.35);
     transition:background-color .15s ease,box-shadow .15s ease}
   .lane__calc svg{width:15px;height:15px;transition:transform .15s ease}
-  .lane__calc:hover{background:rgba(255,255,255,.8);box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.45)}
+  .lane__calc:hover{box-shadow:inset 0 0 0 1.5px var(--text-primary),0 4px 12px -5px rgba(20,18,18,.45)}
   .lane__calc:hover svg{transform:translateX(3px)}
   @media(max-width:860px){
     .lane__foot{padding-inline:20px}
@@ -746,8 +769,11 @@
   /* Высота в АБСОЛЮТНЫХ единицах, а не в процентах: у плашки высота задана через
      aspect-ratio, и процентный max-height ребёнка в этом случае не резолвится — ограничивала
      только ширина. Квадратный Oil Energy из-за этого вылезал за пределы плашки. */
-  .b2b__logo img{max-width:calc(74% * var(--k,1));
-    max-height:calc(clamp(17px,2.1vw,30px) * var(--k,1));
+  /* 24.08: правка маркетолога «логотипы должны чётко читаться». Оба лимита подняты
+     на 15% (74%→80%, 30→34px) — растить только высоту нельзя: знаки, упёртые в ширину
+     (Бамстройпуть, Феррострой), остались бы прежними и ряд бы разъехался по весу. */
+  .b2b__logo img{max-width:calc(80% * var(--k,1));
+    max-height:calc(clamp(19px,2.4vw,34px) * var(--k,1));
     object-fit:contain;display:block}
   /* Доводка по ОПТИЧЕСКОМУ весу: после обрезки холста знаки одинаковы по габаритам, но не
      по массе — жирный плашечный РЖД тяжелее тонкого Москвариума при равной высоте.
@@ -778,6 +804,9 @@
     font-size:clamp(20px,2.2vw,28px);line-height:1.08;letter-spacing:-.005em;
     color:var(--text-primary)}
   .b2b__cap{margin-top:clamp(28px,3.5vw,44px)}
+  /* 24.08: секция клиентов стала самостоятельной. У .b2b h2 стоит margin:0 — заголовок
+     прилипал к ряду плашек, отступа не было вовсе. */
+  .b2b--logos h2{margin-bottom:clamp(20px,2.4vw,30px)}
   /* ── ФОТО-СРАВНЕНИЕ внутри B2B (просьба маркетолога 03.08): обычный мерч → плоская наклейка
      → 3D-стикер. Третья карточка выделена обводкой: сравнение должно заканчиваться выводом. ── */
   .cmp{margin-top:clamp(28px,3.5vw,48px)}
@@ -858,7 +887,18 @@
   .abt__cards{max-width:var(--v-max);margin:clamp(28px,3.5vw,48px) auto 0;padding-inline:var(--v-pad);
     display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--sp-12)}
   @media(max-width:1100px){.abt__cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media(max-width:560px){.abt__cards{grid-template-columns:1fr}}
+  /* 24.08, аудит: на телефоне восемь карточек в столбик давали 4 200 px простыни, причём
+     вторым экраном — до первого продуктового блока человек листал и листал. Переводим их
+     в горизонтальную ленту тем же приёмом, что у видов стикеров: карточка обрезается
+     по краю экрана и этим показывает, что ряд можно листать. */
+  @media(max-width:560px){
+    .abt__cards{display:flex;grid-template-columns:none;overflow-x:auto;
+      scroll-snap-type:x mandatory;overscroll-behavior-x:contain;
+      scrollbar-width:none;-webkit-overflow-scrolling:touch;
+      padding-bottom:var(--sp-12);scroll-padding-inline:20px}
+    .abt__cards::-webkit-scrollbar{display:none}
+    .abt__card{flex:0 0 min(78vw,300px);scroll-snap-align:start}
+  }
   .abt__card{background:var(--surface-card);border-radius:var(--radius-outside);
     padding:var(--sp-20);box-shadow:inset 0 0 0 1px rgba(20,18,18,.07)}
   .abt__card svg{width:22px;height:22px;color:var(--v-gold-deep);display:block}
@@ -962,6 +1002,10 @@
     padding:clamp(24px,3vw,36px) clamp(20px,2.5vw,32px);
     box-shadow:inset 0 0 0 1px rgba(20,18,18,.07)}
   @media(max-width:860px){.show__band{grid-template-columns:1fr;align-items:start}}
+  /* 24.08: надзаголовок «Контакты» — правка маркетолога. Тем же языком, что метки секций
+     в других блоках: капслок, разрядка, приглушённый. */
+  .show__eyebrow{display:block;margin-bottom:8px;font-size:11.5px;font-weight:700;
+    letter-spacing:.10em;text-transform:uppercase;color:var(--v-muted)}
   .show h2{margin:0;font-family:var(--font-head);font-weight:800;text-transform:uppercase;
     font-size:clamp(22px,2.4vw,32px);line-height:1.02;letter-spacing:-.005em}
   .show__text p{margin:10px 0 0;font-size:var(--t-small);line-height:var(--t-small-lh);
@@ -969,6 +1013,12 @@
   /* адрес — факт, поэтому крупнее подписи и тёмным; часы тише строкой ниже */
   .show__addr{margin:0 0 var(--sp-16);font-size:var(--t-small);line-height:20px;color:var(--text-secondary)}
   .show__addr b{display:block;font-size:var(--t-body);color:var(--text-primary);margin-bottom:3px}
+  /* 24.08: телефон и почта в блоке контактов — фактами, а не кнопками: рядом уже стоит
+     чёрная «Показать на карте», второй акцент здесь спорил бы с ней. */
+  .show__contacts{display:flex;flex-wrap:wrap;gap:4px var(--sp-16);margin:0 0 var(--sp-16)}
+  .show__contacts a{font-size:var(--t-body);font-weight:700;color:var(--text-primary);
+    text-decoration:underline;text-decoration-color:rgba(20,18,18,.25);text-underline-offset:3px}
+  .show__contacts a:hover{text-decoration-color:var(--text-primary)}
   .show__acts{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-16)}
   .show__btn{display:inline-flex;align-items:center;justify-content:center;background:var(--v-ink);
     color:var(--surface-card);text-decoration:none;font-weight:700;font-size:15px;
@@ -1470,6 +1520,12 @@
   .calc__link{font:inherit;font-size:inherit;color:var(--text-primary);background:none;border:0;padding:0;
     cursor:pointer;text-decoration:underline;text-decoration-color:rgba(20,18,18,.25);text-underline-offset:3px}
   .calc__link:hover{text-decoration-color:var(--text-primary)}
+  /* 24.08: маркетолог — «ссылка Условия доставки, контакты, оплата нужно заметнее сделать».
+     Осталась единственной под кнопкой (оферта уехала на форму заказа), поэтому ей можно
+     дать вес: кегль как у основного текста, плотное подчёркивание и иконка-подсказка,
+     что откроется окно, а не уход со страницы. */
+  .calc__link--lead{font-size:14px;font-weight:700;
+    text-decoration-color:rgba(20,18,18,.55);text-underline-offset:4px}
   .calc__link:focus-visible{outline:2px solid var(--v-ink);outline-offset:3px;border-radius:3px}
   .sheet{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:var(--sp-16);
     background:rgba(20,18,18,.55)}
