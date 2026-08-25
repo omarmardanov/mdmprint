@@ -435,6 +435,23 @@
     const fileLabelText = fileLabel ? fileLabel.textContent : '';
     let lastFocus = null;
 
+    /* ОДНА МОДАЛКА НА ДВА ПОВОДА. «Заказать звонок» в шапке и «Заказать образец» в первом
+       экране просят одно и то же — номер, поэтому вторая форма не заводится: кнопка приносит
+       свои тексты в data-lead-*, а дефолт лежит в разметке и возвращается при открытии
+       из шапки. Ветка лида уходит в скрытом context. */
+    const LEAD_SWAP = [['leadTitle','.cbm-title'], ['leadSub','.cbm-sub'],
+                       ['leadSubmit','.mk-submit'], ['leadFine','.mk-fine']]
+      .map(([key, sel]) => { const el = formWrap && formWrap.querySelector(sel);
+                             return el && {key, el, def: el.textContent}; })
+      .filter(Boolean);
+    const ctxField = form.querySelector('input[name="context"]');
+    const ctxDef   = ctxField ? ctxField.value : '';
+    function applyLead(trigger){
+      const d = (trigger && trigger.dataset) || {};
+      LEAD_SWAP.forEach(s => s.el.textContent = d[s.key] || s.def);
+      if(ctxField) ctxField.value = d.leadContext || ctxDef;
+    }
+
     /* ФАЙЛЫ. input[type=file] по своей природе ЗАМЕНЯЕТ список при каждом выборе, а не
        дополняет: выбрал второй файл — первый исчез, и убрать лишний нечем.
        Поэтому ведём собственный массив, а сам input пересобираем через DataTransfer,
@@ -530,6 +547,7 @@
       formWrap.scrollTop = 0;                    // и открываемся всегда с начала формы,
       formWrap.classList.remove('scrolled');     // а линия под шапкой при этом не висит
       formWrap.hidden = false; doneWrap.hidden = true;
+      applyLead(e && e.currentTarget);
       back.classList.add('show'); back.setAttribute('aria-hidden','false');
       document.body.style.overflow = 'hidden';
       if(typeof closeMega==='function') closeMega();

@@ -1177,6 +1177,7 @@
           </div>
           <!-- honeypot: скрытое поле-ловушка для ботов; люди его не видят и не заполняют -->
           <input type="text" class="mk-hp" name="company" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <input type="hidden" name="context" value="Тиснение фольгой">
           <label class="mk-checkrow">
             <input type="checkbox" class="mk-check" id="cbmConsent" data-role="consent" required>
             <span>Я даю согласие на обработку <a href="#" target="_blank" rel="noopener">персональных данных</a> и принимаю <a href="#" target="_blank" rel="noopener">политику конфиденциальности</a></span>
@@ -1522,7 +1523,12 @@
             </ul>
             <div class="hero-cta">
               <button class="tb-cta mk-btn mk-btn--primary">Оставить заявку на расчёт</button>
-              <a class="cb mk-btn mk-btn--ghost">Заказать образец</a>
+              <a class="cb mk-btn mk-btn--ghost"
+                 data-lead-title="Заказать образец"
+                 data-lead-sub="Оставьте номер. Перезвоним, уточним адрес и отправим образец тиснения."
+                 data-lead-submit="Жду образец"
+                 data-lead-fine="Мы используем номер только для связи по заявке на образец."
+                 data-lead-context="Тиснение фольгой — образец">Заказать образец</a>
             </div>
           </div>
           <div class="hero-media">
@@ -2477,7 +2483,7 @@
 
   <!-- Скрипты страницы: в конце <body>, без defer — код рассчитывает на разобранный DOM
        и на то, что вся разметка страницы уже есть (виджет отзывов объявлен выше). -->
-  <script src="../assets/js/usluga.js?v=20260819a"></script>
+  <script src="../assets/js/usluga.js?v=20260825a"></script>
 
   <script src="https://res.smartwidgets.ru/app.js" defer></script>
 
