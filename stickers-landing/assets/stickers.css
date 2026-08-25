@@ -528,8 +528,6 @@
   .forms h2{font-family:var(--font-head);font-weight:800;text-transform:uppercase;
     font-size:clamp(28px,3.6vw,46px);line-height:1;letter-spacing:-.005em;
     max-width:27ch;text-wrap:balance}
-  .forms__note{margin-top:14px;max-width:60ch;color:var(--text-secondary);
-    font-size:var(--t-body);line-height:var(--t-body-lh)}
   /* лента. ГЛАВНОЕ: scroll-padding обязателен — без него снап прижимает первую карточку
      к нулю и padding-left визуально исчезает (проверено замером: scrollLeft = padding). */
   .lane{--lane-pad:max(var(--v-pad),calc((100vw - var(--v-max))/2 + var(--v-pad)));
@@ -542,14 +540,41 @@
     scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .lane::-webkit-scrollbar{display:none}
   .lane:focus-visible{outline:3px solid var(--text-primary);outline-offset:-3px;border-radius:var(--radius-md)}
+  /* 25.08: на десктопе — сетка 3×2, все шесть карточек на виду. Прокрутка со снапом остаётся
+     на узких экранах: там шесть карточек в столбик дали бы простыню, а лента листается пальцем. */
+  @media(min-width:861px){
+    .lane{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:var(--gap-card);overflow:visible;
+      max-width:var(--v-max);margin:0 auto;padding:0 var(--v-pad)}
+    .fcard{flex:none}
+    /* у ленты отступ снизу давал padding прокрутки, в сетке его нет — кнопка липла к карточкам */
+    .forms .lane__foot{margin-top:clamp(28px,3vw,44px)}
+    /* карточки в сетке шире ленточных, и при 4:3 кадр делал их слишком высокими.
+       Срезается только воздух вокруг стикера: кадры пересняты с запасом. */
+    .lane .fcard__art{aspect-ratio:16/10}
+  }
   /* gap влияет только на пару заголовок→текст: кадр внизу прижат своим margin-top:auto */
   .fcard{flex:0 0 clamp(236px,25vw,292px);scroll-snap-align:start;
     display:flex;flex-direction:column;gap:var(--sp-6);
     background:var(--surface-card);border-radius:var(--radius-outside);padding:var(--sp-16)}
-  .fcard h3{font-family:var(--font-head);font-weight:800;text-transform:uppercase;margin:0;
+  .fcard h3{font-family:var(--font-head);font-weight:800;text-transform:uppercase;margin:0 0 var(--sp-16);
     font-size:var(--t-h4);line-height:var(--t-h4-lh);letter-spacing:var(--t-h4-ls)}
-  .fcard p{margin:0 0 var(--sp-12);font-size:var(--t-small);line-height:var(--t-small-lh);
-    color:var(--text-secondary);min-height:calc(var(--t-small-lh) * 3)}
+  /* 25.08: в ленте и формы, и отделка. Сущность вписана в название карточки, отдельной
+     метки над заголовком нет — так просил Omar. */
+  /* «Круглые самые популярные — просто это выделить маркером» (правка маркетолога).
+     Плашки-ярлыка тут быть не может: 10.08 она просила убрать «хит»/«топ»/«наш вариант»
+     из блока сравнения именно как плашки. Осталась только жёлтая обводка (Omar 25.08):
+     подпись, которая её объясняла, убрана — в .cmp такая подпись есть, здесь нет. */
+  .fcard--pop{position:relative}
+  /* обводка в ::after, а не box-shadow карточки: внутренняя тень рисуется ПОД содержимым,
+     и кадр, лежащий в край, съел бы её снизу (та же грабля, что в .cmp__item) */
+  .fcard--pop::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+    border-radius:inherit;box-shadow:inset 0 0 0 2px var(--brand)}
+  /* бейдж сидит НА линии обводки в правом верхнем углу: половиной высоты он выше карточки,
+     эту половину принимает верхний padding ленты (иначе overflow-y ленты его срежет) */
+  .fcard__hit{position:absolute;top:0;right:16px;transform:translateY(-50%);z-index:3;
+    padding:4px 10px;border-radius:999px;background:var(--brand);color:var(--v-ink);
+    font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
   /* кадр = сам рендер: плитка со стикером и есть лицо карточки, цветных полей нет
      (плитка на них читалась как серый квадрат в рамке, а чёрное поле спорило с белой карточкой) */
   /* кадр без отступов: минусовые поля гасят padding карточки, плитка ложится в край,
@@ -578,25 +603,15 @@
       rgba(126,255,122,.55), rgba(126,255,122,.16) 52%, rgba(126,255,122,0) 82%), var(--v-ink)}
   .fcard--glow > *{position:relative;z-index:1}
   .fcard--glow h3{color:var(--surface-card)}
-  .fcard--glow p{color:rgba(255,255,255,.72)}
 
-  .lane__foot{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-16);
+  .lane__foot{display:flex;align-items:center;justify-content:flex-start;gap:var(--sp-16);
     max-width:var(--v-max);margin:0 auto;padding-inline:var(--v-pad)}
-  .lane__nav{display:flex;gap:8px}
   /* 24.08: маркетолог — «стрелки прокрутки внизу плохо заметны, кнопка посчитать тираж тоже».
      Обе были контуром на прозрачном: на песочном фоне секции такой контур почти пропадает.
      Дали им белую поверхность, плотный контур и тень — читаются, но плотными чёрными
      не становятся: блок это ступень «убедиться», плотный акцент здесь спорил бы
      и с кнопкой шапки, и с кнопкой самого калькулятора. */
-  .lane__btn{display:grid;place-items:center;width:44px;height:44px;border:0;cursor:pointer;
-    border-radius:14px;background:var(--surface-card);color:var(--text-primary);
-    box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.45),0 2px 8px -4px rgba(20,18,18,.35);
-    transition:background-color .15s ease,box-shadow .15s ease,opacity .15s ease}
-  .lane__btn svg{width:17px;height:17px}
-  .lane__btn:hover{box-shadow:inset 0 0 0 1.5px var(--text-primary),0 4px 12px -5px rgba(20,18,18,.45)}
   /* на краях кнопка гаснет, но остаётся на месте — иначе вторая прыгает */
-  .lane__btn[disabled]{opacity:.4;cursor:default;box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.22)}
-  .lane__btn[disabled]:hover{box-shadow:inset 0 0 0 1.5px rgba(20,18,18,.22)}
   /* тот же язык, что у стрелок рядом: контур 1.5px, радиус 14px, высота 40px в один уровень.
      Плотной чёрной не делаем — блок это ступень «убедиться», плотный акцент тут спорил бы
      и с CTA шапки, и с кнопкой самого калькулятора. */
@@ -610,7 +625,6 @@
   .lane__calc:hover svg{transform:translateX(3px)}
   @media(max-width:860px){
     .lane__foot{padding-inline:20px}
-    .lane__nav{display:none}   /* на тач лента и так листается пальцем */
     .forms__head{padding-inline:20px}
     .lane{--lane-pad:20px}
     .fcard{flex-basis:min(76vw,300px)}
@@ -1002,10 +1016,6 @@
     padding:clamp(24px,3vw,36px) clamp(20px,2.5vw,32px);
     box-shadow:inset 0 0 0 1px rgba(20,18,18,.07)}
   @media(max-width:860px){.show__band{grid-template-columns:1fr;align-items:start}}
-  /* 24.08: надзаголовок «Контакты» — правка маркетолога. Тем же языком, что метки секций
-     в других блоках: капслок, разрядка, приглушённый. */
-  .show__eyebrow{display:block;margin-bottom:8px;font-size:11.5px;font-weight:700;
-    letter-spacing:.10em;text-transform:uppercase;color:var(--v-muted)}
   .show h2{margin:0;font-family:var(--font-head);font-weight:800;text-transform:uppercase;
     font-size:clamp(22px,2.4vw,32px);line-height:1.02;letter-spacing:-.005em}
   .show__text p{margin:10px 0 0;font-size:var(--t-small);line-height:var(--t-small-lh);

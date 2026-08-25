@@ -690,6 +690,10 @@
          калькулятор берёт столбец прайса; у «своего» размера столбца нет, там интерполяция. */
       size: [['10×10',10],['15×15',15],['20×20',20],['25×25',25],['50×50',50],
              ['Свой','own','Свой размер']],
+      /* Выдача: ОДИН выбор из трёх вместо двух независимых галочек (25.08). Цены у резки
+         и упаковки нет — оба варианта уходят в заявку флагом, как и раньше. */
+      pack: [['Листом',0,'Как есть, на подложке'],['Поштучно',1,'Порежем, цену назовёт менеджер'],
+             ['По одному',2,'Каждый стикер в свой пакет']],
       sheet:[['А7',0],['А6',1],['А5',2]],   // у паков свой размер не задаётся, число — столбец прайса
       /* Ступени тиража — ровно узлы прайса. Ступень 300 убрана 07.08: в прайсе её нет,
          а между 100 и 500 сумма заказа не меняется вовсе, так что своей ступени она
@@ -698,7 +702,7 @@
              ['Своё','own','Свой тираж']],
       qtyPack:[[10,10],[50,50],[100,100],[500,500],[1000,1000],['Своё','own','Свой тираж']],
     };
-    const S={kind:0,mat:0,size:0,qty:2};
+    const S={kind:0,mat:0,size:0,qty:2,pack:0};
     const $=id=>document.getElementById(id);
     const rub=n=>n.toLocaleString('ru-RU')+' \u20BD';
 
@@ -820,10 +824,11 @@
       const P=BIZ.promo, promoLive = new Date(P.till + 'T23:59:59') >= new Date(),
         onPromo = promoLive && q >= (packs?P.minPack:P.minSt);
       if(onPromo) unit *= (1 - P.off);
+      const design=$('needDesign');
       // «Поштучно» бессмысленно для стикерпака: пак и есть лист
-      const single=$('optSingle'), box=$('optBox'), design=$('needDesign');
-      $('optSingleWrap').hidden = packs;
-      if(packs) single.checked=false;
+      const packOpts=$('pack').children;
+      packOpts[1].hidden = packs;
+      if(packs && S.pack===1){ S.pack=0; packOpts[0].querySelector('input').checked=true; }
       // контур — фиксированная сумма за заказ. У поштучной резки и упаковки цены НЕТ (не выдумываем),
       // они уходят в заявку флагами и показываются строкой «Допы» в сводке.
       /* Дизайн больше НЕ прибавляет фиксированную сумму (решение 05.08): 900 ₽ — это была
@@ -855,8 +860,8 @@
       mark.textContent = packs && S.mat!==0
         ? 'Цена по белому глянцу. Пак на другой плёнке посчитает менеджер.' : '';
       mark.hidden = !mark.textContent;
-      const extras=[design.checked?'дизайн контура':null, single.checked?'поштучно':null,
-        box.checked?'инд. упаковка':null].filter(Boolean);
+      const extras=[design.checked?'дизайн контура':null,
+        [null,'поштучно','инд. упаковка'][S.pack]].filter(Boolean);
       // q уходит дальше только на показ (сводка заказа и нижняя панель) — сразу с разрядами
       const L = {sum, unit:Math.round(unit), per, q:q.toLocaleString('ru-RU'), packs, term, resin, extras,
         perLong: unitTxt+' за '+(packs?'пак':'штуку'),
@@ -868,7 +873,8 @@
       if(bp){ bp.textContent='от '+per; bm.textContent='от '+rub(sum)+' · '+L.q+(packs?' паков':' шт')+' · '+term; }
     }
     build('kind',F.kind); build('mat',F.mat); build('size',F.size); build('qty',F.qty);
-    ['needDesign','optSingle','optBox'].forEach(id=>$(id).addEventListener('change',calc));
+    build('pack',F.pack);
+    $('needDesign').addEventListener('change',calc);
     // имя выбранного файла — вместо надписи на кнопке
     /* ═══ ЗАГРУЗКА МАКЕТОВ ═══
        Несколько файлов, добавление (а не замена), удаление по одному, лимиты.

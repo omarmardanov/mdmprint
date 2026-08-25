@@ -150,7 +150,7 @@
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="../assets/css/fonts.css?v=20260720a">
 <link rel="stylesheet" href="../assets/css/tokens.css?v=20260817a">
-<link rel="stylesheet" href="assets/stickers.css?v=20260824n">
+<link rel="stylesheet" href="assets/stickers.css?v=20260825j">
 </head>
 <body>
 
@@ -503,8 +503,8 @@
         <h3 class="cmp__cap">Что из этого захочется оставить себе</h3>
         <div class="cmp__grid">
           <figure class="cmp__item" data-media="b2b/cmp-1">
-            <span class="cmp__ph"><b>Фото</b>печать на изделии</span>
-            <figcaption><b>Печать на изделии</b>Наносим прямо на предмет. Дёшево, а взгляд не цепляет.</figcaption>
+            <span class="cmp__ph"><b>Фото</b>обычный мерч</span>
+            <figcaption><b>Обычный мерч</b>Блокноты, ручки, пакеты с логотипом. Дёшево, а взгляд не цепляет.</figcaption>
           </figure>
           <figure class="cmp__item cmp__item--win" data-media="b2b/cmp-3">
             <span class="cmp__fly" aria-hidden="true">
@@ -519,8 +519,8 @@
             <figcaption><b>3D-стикер со смолой</b>Объём и глянец: его хочется потрогать и оставить на виду.</figcaption>
           </figure>
           <figure class="cmp__item" data-media="b2b/cmp-2">
-            <span class="cmp__ph"><b>Фото</b>плоская наклейка</span>
-            <figcaption><b>Плоская наклейка</b>Печать на плёнке. Дёшево и быстро, но рядом с объёмной — просто картинка.</figcaption>
+            <span class="cmp__ph"><b>Фото</b>обычная наклейка</span>
+            <figcaption><b>Обычная наклейка</b>Печать на плёнке. Дёшево и быстро, но рядом с объёмной — просто картинка.</figcaption>
           </figure>
         </div>
       </div>
@@ -528,63 +528,56 @@
   </section>
   <section class="forms" id="vidy">
     <div class="forms__head">
-      <h2>Любая форма под ваш бренд</h2>
-      <!-- Форма и покрытие названы РАЗНЫМИ осями по правке маркетолога 03.08: круглые бывают
-           не только с логотипом, светящиеся — не только круглыми. -->
-      <p class="forms__note">Форму и покрытие выбираете отдельно: любая высечка — круг, пилюля,
-        прямоугольник, контур по рисунку — может быть белой глянцевой, голографической
-        или светящейся в темноте.</p>
+      <!-- 25.08: блок перестал быть только про форму. Маркетолог попросила показать в ленте
+           и отделку («можно добавить голографических и тп видов отделки»), поэтому карточки
+           смешивают две оси. Сущность вписана в САМО название («Круглая форма»,
+           «Голографическая отделка»), отдельной метки над заголовком нет.
+           Текст под заголовком блока убран по её же правке. -->
+      <h2>Печатаем стикеры любой формы и отделки</h2>
     </div>
     <div class="lane" tabindex="0" role="group" aria-label="Виды стикеров — прокрутите по горизонтали">
-      <article class="fcard fcard--glow">
-        <h3>Светится в темноте</h3>
-        <p>Это покрытие, а не форма: светиться может любая высечка. Гейминг, техника, ночной мерч.</p>
-        <div class="fcard__art fcard__art--dark">
-          <img src="models/card-m1-glow.webp?v=20260824b" width="584" height="438" alt="Круглый светящийся стикер с надписью «работает не трогай»" loading="lazy" decoding="async">
+      <article class="fcard fcard--round fcard--pop">
+        <span class="fcard__hit">Хит</span>
+        <h3>Круглая форма</h3>
+        <div class="fcard__art fcard__art--plate">
+          <img src="models/card-cat.webp?v=20260825b" width="584" height="438" alt="Круглый жёлтый стикер с мордой кота" loading="lazy" decoding="async">
         </div>
       </article>
       <article class="fcard fcard--pill">
-        <h3>Пилюля</h3>
-        <p>Упаковка и коробки — влезает название бренда со слоганом.</p>
+        <h3>Форма-пилюля</h3>
         <div class="fcard__art fcard__art--plate">
-          <img src="models/card-m2.webp?v=20260824b" width="584" height="438" alt="Стикер-пилюля с логотипом SALT" loading="lazy" decoding="async">
+          <img src="models/card-pill.webp?v=20260825b" width="584" height="438" alt="Стикер-пилюля белого глянца с надписью «Можно, а зачем?»" loading="lazy" decoding="async">
         </div>
       </article>
       <article class="fcard fcard--diecut">
-        <h3>Фигурный по контуру</h3>
-        <p>Персонажи и леттеринг — режем точно по рисунку.</p>
+        <h3>Форма по контуру</h3>
         <div class="fcard__art fcard__art--plate">
-          <img src="models/card-m3.webp?v=20260824b" width="584" height="438" alt="Фигурный стикер с надписью mellow, вырезанный по контуру" loading="lazy" decoding="async">
+          <img src="models/card-diecut.webp?v=20260825b" width="584" height="438" alt="Фигурный стикер с надписью «Всё получится», вырезанный по контуру букв" loading="lazy" decoding="async">
         </div>
       </article>
       <article class="fcard fcard--rect">
-        <h3>Прямоугольный</h3>
-        <p>Техника и ноутбуки — влезает иллюстрация целиком с деталями.</p>
+        <h3>Прямоугольная форма</h3>
         <div class="fcard__art fcard__art--plate">
-          <img src="models/card-m4.webp?v=20260824c" width="584" height="438" alt="Прямоугольный стикер с иллюстрацией Санкт-Петербурга" loading="lazy" decoding="async">
+          <img src="models/card-rect.webp?v=20260825a" width="584" height="438" alt="Прямоугольный стикер с ретро-кассетой mixtape" loading="lazy" decoding="async">
         </div>
       </article>
-      <article class="fcard fcard--round">
-        <h3>Круглый</h3>
-        <p>Самая ходовая форма: логотип, эмблема, значок. Мерч, раздатка, подарки клиентам.</p>
+      <article class="fcard fcard--holo">
+        <h3>Голографическая отделка</h3>
         <div class="fcard__art fcard__art--plate">
-          <img src="models/card-m5.webp?v=20260824b" width="584" height="438" alt="Круглый стикер с логотипом NORDA" loading="lazy" decoding="async">
+          <img src="models/card-holo.webp?v=20260825b" width="584" height="438" alt="Фигурный стикер-привидение с радужным голографическим переливом" loading="lazy" decoding="async">
+        </div>
+      </article>
+      <article class="fcard fcard--glow">
+        <h3>Отделка со свечением в темноте</h3>
+        <div class="fcard__art fcard__art--dark">
+          <img src="models/card-glow.webp?v=20260825c" width="584" height="438" alt="Круглый светящийся в темноте стикер с надписью «Я свечусь»" loading="lazy" decoding="async">
         </div>
       </article>
     </div>
-    <!-- Лента прокручивается, но единственным сигналом было обрезание пятой карточки — на тач
-         понятно, на десктопе нет. Стрелки под первой карточкой, слева, тем же языком, что кнопки
-         страницы: контур 1.5px и радиус 14px. Плюс тихий выход на следующую ступень воронки:
-         из «убедиться» человек идёт считать, а не сразу отдавать контакт. -->
+    <!-- 25.08: на десктопе лента стала сеткой 3×2 (решение Omar) — шесть карточек влезают
+         целиком, ничего не прячется за краем. Прокрутка со снапом осталась только на узких
+         экранах, там она и работает пальцем. Стрелки убраны: на сетке им нечего листать. -->
     <div class="lane__foot">
-      <div class="lane__nav">
-        <button class="lane__btn" type="button" data-lane="-1" aria-label="Предыдущие виды"><svg
-          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-          stroke-linejoin="round" aria-hidden="true"><path d="m15 5-7 7 7 7"/></svg></button>
-        <button class="lane__btn" type="button" data-lane="1" aria-label="Следующие виды"><svg
-          viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
-          stroke-linejoin="round" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button>
-      </div>
       <a class="lane__calc" href="#calc" data-goal="calc_click" data-place="lane">Посчитать тираж<svg viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"
         aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></a>
@@ -622,19 +615,20 @@
               <legend id="qtyLeg">Количество, штук</legend>
               <div class="opts opts--flow" id="qty"></div>
             </fieldset>
+            <!-- 25.08: «Дополнительно» разведено на два шага. Раньше в одной группе стояли
+                 услуга (дизайн) и способ выдачи, причём «поштучно» и «упаковать по одному»
+                 можно было отметить ОБА, хотя это одно измерение. Выдача стала выбором
+                 из трёх с явным «листом» по умолчанию — правка маркетолога о том,
+                 что «непонятно, что отжать, если не нужно». -->
+            <fieldset class="fs calc__extra">
+            <legend>Как отдадим тираж</legend>
+            <div class="opts" id="pack"></div>
+            </fieldset>
             <fieldset class="fs calc__extra">
             <legend>Дополнительно</legend>
             <div class="opts">
               <label class="opt"><input type="checkbox" id="needDesign">
               <span class="opt--card"><b class="opt__txt">Нужен дизайн<em class="opt__desc">Нарисуем макет, стоимость скажет менеджер</em></b></span></label>
-              <!-- Цены резки в калькуляторе НЕТ (решение Omar 07.08): тариф 300 ₽ + 8,25 ₽/шт
-                   без шкалы снижения на тысяче штук выходит дороже печати и пугает цифрой,
-                   которой не будет. Сам факт остаётся — стикеры сдаются листом, резка за доплату,
-                   поэтому все цифры калькулятора подписаны «от». -->
-              <label class="opt" id="optSingleWrap"><input type="checkbox" id="optSingle">
-              <span class="opt--card"><b class="opt__txt">Порезать поштучно<em class="opt__desc">Приедут отдельными, а не листом. Цену назовёт менеджер</em></b></span></label>
-              <label class="opt"><input type="checkbox" id="optBox">
-              <span class="opt--card"><b class="opt__txt">Упаковать по одному<em class="opt__desc">Каждый стикер в свой пакет</em></b></span></label>
             </div>
             <!-- Требования к макетам: целого блока под них не нужно (маркетолог 03.08),
                  ссылка живёт здесь — рядом с «Нужен дизайн», где человек и думает про макет.
@@ -861,9 +855,9 @@
         <!-- Слово «шоурум» вернулось: Omar подтвердил 05.08, что в офисе он есть.
              До этого писали обтекаемо «приезжайте посмотреть», потому что маркетолог просила
              звать в шоурум, а подтверждения его существования у нас не было. -->
-        <!-- 24.08: надзаголовок «Контакты» — правка маркетолога, вместе с пунктом в меню. -->
-        <span class="show__eyebrow">Контакты</span>
-        <h2>Приезжайте в наш шоурум</h2>
+        <!-- 25.08: блок называется «Контакты» — правка маркетолога, вместе с пунктом в меню.
+             Строка «Приезжайте в наш шоурум» убрана (Omar): о шоуруме говорит текст ниже. -->
+        <h2>Контакты</h2>
         <p>Покажем образцы разных плёнок и толщины смолы, дадим потрогать готовые стикеры
           и подскажем, что лучше сядет на вашу упаковку. Без записи и без обязательств.</p>
       </div>
@@ -1227,6 +1221,6 @@
 <!-- Рантайм model-viewer (модульный скрипт = defer, первый экран не блокирует).
      В бою запинить конкретную версию. -->
 <script type="module" src="https://unpkg.com/@google/model-viewer@4.3.1/dist/model-viewer.min.js"></script>
-<script src="assets/stickers.js?v=20260824e"></script>
+<script src="assets/stickers.js?v=20260825a"></script>
 </body>
 </html>
